@@ -38,6 +38,8 @@ DEFAULT_WANTLIST_URL = (
 )
 
 BASE_DIR = Path(__file__).parent.resolve()
+LOCAL_SNIPER_DIR = Path(r"C:\discogs_sniper")
+LEGACY_SNIPER_DIR = Path(r"C:\DiscogsSniper")
 SEED_FILE = BASE_DIR / "seed_snapshot.json"
 LEGACY_SEEN_FILE = BASE_DIR / "seen_listings.json"
 CONFIG_FILE = BASE_DIR / "sniper_config.json"
@@ -47,7 +49,8 @@ LOCK_FILE = BASE_DIR / "sniper.lock"
 DATA_DIR = BASE_DIR / "data"
 RELEASES_CACHE_FILE = DATA_DIR / "releases_cache.json"
 VAULT_CROSSREF_FILE = DATA_DIR / "vault_crossref.json"
-SIBLING_COLLECTION_DIR = Path(r"C:\DiscogsCollection\discogs_collection")
+SIBLING_COLLECTION_DIR = Path(r"C:\Discogs_collection")
+LEGACY_COLLECTION_DIR = Path(r"C:\DiscogsCollection\discogs_collection")
 
 MAX_HISTORY = 2000
 LOCK_STALE_SECONDS = 180
@@ -61,42 +64,52 @@ logging.basicConfig(
     ],
 )
 
+_TOKEN_PLACEHOLDERS = {
+    "your_discogs_personal_access_token_here",
+    "your_discogs_token_here",
+    "your_token_here",
+    "replace_me",
+    "changeme",
+    "none",
+    "null",
+}
+
 
 # =====================================================================
-# CREDENTIAL & CONFIG AUTO-DISCOVERY (.env + Windows HKCU Registry)
+# CREDENTIAL & CONFIG AUTO-DISCOVERY (C:\discogs_sniper\.env + Windows Env)
 # =====================================================================
+def is_env_reference_or_placeholder(raw_val: str | None) -> bool:
+    if not raw_val:
+        return True
+    s = str(raw_val).strip().strip("\"'` ")
+    if not s:
+        return True
+    s_low = s.lower()
+    if s_low in _TOKEN_PLACEHOLDERS or "your_discogs" in s_low or "your_16_char" in s_low:
+        return True
+    if s.startswith("$env:") or s.startswith("${") or (s.startswith("%") and s.endswith("%")):
+        return True
+    return False
+
+
 def sanitize_token(raw_token: str | None) -> str:
-    """Strips control chars, quotes, and prefixes from a Discogs Personal Access Token."""
-    if not raw_token:
+    """Strips control chars, quotes, and prefixes from a Discogs Personal Access Token, rejecting placeholders."""
+    if not raw_token or is_env_reference_or_placeholder(raw_token):
         return ""
     cleaned = re.sub(r"[\x00-\x1f\x7f-\x9f]+", "", str(raw_token)).strip().strip("\"'` ")
     for prefix in ("DISCOGS_TOKEN=", "Discogs token=", "token=", "Bearer "):
         if cleaned.lower().startswith(prefix.lower()):
             cleaned = cleaned[len(prefix) :].strip().strip("\"'` ")
+    if is_env_reference_or_placeholder(cleaned):
+        return ""
     return re.sub(r"[^A-Za-z0-9._\-]", "", cleaned)
 
 
 def sanitize_username(raw_user: str | None, default: str = "krunked") -> str:
-    if not raw_user:
+    if not raw_user or is_env_reference_or_placeholder(raw_user):
         return default
     cleaned = re.sub(r"[\x00-\x1f\x7f-\x9f]+", "", str(raw_user)).strip().strip("\"'` ")
     return cleaned or default
-
-
-def parse_dotenv_file(dotenv_path: Path) -> dict[str, str]:
-    values: dict[str, str] = {}
-    if not dotenv_path.exists():
-        return values
-    try:
-        for line in dotenv_path.read_text(encoding="utf-8", errors="ignore").splitlines():
-            s = line.strip()
-            if not s or s.startswith("#") or "=" not in s:
-                continue
-            k, v = s.split("=", 1)
-            values[k.strip()] = v.strip().strip("\"'` ")
-    except Exception:
-        pass
-    return values
 
 
 def query_windows_env_var(var_name: str) -> str:
@@ -112,7 +125,7 @@ def query_windows_env_var(var_name: str) -> str:
                 try:
                     with winreg.OpenKey(hive, subkey, 0, winreg.KEY_READ) as key:
                         val, _ = winreg.QueryValueEx(key, var_name)
-                        if val:
+                        if val and not is_env_reference_or_placeholder(str(val)):
                             return str(val).strip()
                 except Exception:
                     pass
@@ -143,6 +156,80 @@ def query_windows_env_var(var_name: str) -> str:
         except Exception:
             pass
     return ""
+
+
+def parse_dotenv_file(dotenv_path: Path) -> dict[str, str]:
+    """Parses a .env file, automatically expanding $env:VAR / ${VAR} / %VAR% references from the system environment."""
+    values: dict[str, str] = {}
+    if not dotenv_path.exists():
+        return values
+    try:
+        for line in dotenv_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            s = line.strip()
+            if not s or s.startswith("#") or "=" not in s:
+                continue
+            k, v = s.split("=", 1)
+            key = k.strip()
+            val = v.strip().strip("\"'` ")
+            if val.startswith("$env:"):
+                ref_name = val[5:].strip()
+                val = os.getenv(ref_name) or query_windows_env_var(ref_name) or ""
+            elif val.startswith("${") and val.endswith("}"):
+                ref_name = val[2:-1].strip()
+                val = os.getenv(ref_name) or query_windows_env_var(ref_name) or ""
+            elif val.startswith("%") and val.endswith("%") and len(val) > 2:
+                ref_name = val[1:-1].strip()
+                val = os.getenv(ref_name) or query_windows_env_var(ref_name) or ""
+            if val and not is_env_reference_or_placeholder(val):
+                values[key] = val
+    except Exception:
+        pass
+    return values
+
+
+def sync_resolved_token_to_local_dotenv(
+    token: str,
+    env_path: Path | None = None,
+    force: bool = False,
+) -> bool:
+    """Writes the resolved DISCOGS_TOKEN into C:\\discogs_sniper\\.env if it currently holds $env:DISCOGS_TOKEN or a placeholder."""
+    if not token or is_env_reference_or_placeholder(token):
+        return False
+    if not force and os.name != "nt" and env_path is None:
+        return False
+    target_file = env_path or (BASE_DIR / ".env")
+    if not target_file.exists():
+        return False
+    try:
+        raw_text = target_file.read_text(encoding="utf-8")
+        if "$env:DISCOGS_TOKEN" in raw_text or "your_discogs" in raw_text:
+            updated = re.sub(
+                r"^DISCOGS_TOKEN\s*=.*$",
+                f"DISCOGS_TOKEN={token}",
+                raw_text,
+                flags=re.MULTILINE,
+            )
+            if updated != raw_text:
+                target_file.write_text(updated, encoding="utf-8")
+                return True
+    except Exception:
+        pass
+    return False
+
+
+def migrate_legacy_profile_if_needed() -> None:
+    """If running in C:\\discogs_sniper and chrome_discogs_profile is still in C:\\DiscogsSniper, copies it automatically."""
+    if PROFILE_DIR.exists():
+        return
+    legacy_profile = LEGACY_SNIPER_DIR / "chrome_discogs_profile"
+    if legacy_profile.exists():
+        try:
+            import shutil
+
+            logging.info(f"Migrating persistent browser session from {legacy_profile} to {PROFILE_DIR}...")
+            shutil.copytree(legacy_profile, PROFILE_DIR)
+        except Exception as e:
+            logging.warning(f"Could not auto-migrate legacy browser profile: {e}")
 
 
 def load_sniper_config() -> dict[str, Any]:
@@ -196,29 +283,46 @@ def resolve_runtime_credentials(
     cli_username: str | None = None,
     config: dict[str, Any] | None = None,
 ) -> dict[str, str]:
-    """Resolves Discogs API + SMTP + ntfy credentials from CLI, env, .env, sibling collection .env, or Windows Registry."""
+    """
+    Resolves Discogs API + SMTP + ntfy credentials from:
+      1. CLI flags (--token, --username)
+      2. Process & Windows User/Machine Environment Variables (DISCOGS_TOKEN)
+      3. C:\\discogs_sniper\\.env (BASE_DIR / .env)
+      4. Legacy C:\\DiscogsSniper\\.env
+      5. Sibling C:\\discogs_collection\\.env or C:\\DiscogsCollection\\discogs_collection\\.env
+    """
     cfg = config or load_sniper_config()
     dotenv_vars: dict[str, str] = {}
     for candidate in (
+        LEGACY_COLLECTION_DIR / ".env",
         SIBLING_COLLECTION_DIR / ".env",
+        LEGACY_SNIPER_DIR / ".env",
+        LOCAL_SNIPER_DIR / ".env",
         Path.cwd() / ".env",
         BASE_DIR / ".env",
+        BASE_DIR / ".env.local",
     ):
         dotenv_vars.update(parse_dotenv_file(candidate))
 
     def get_var(keys: tuple[str, ...], default: str = "") -> str:
         for k in keys:
-            val = os.getenv(k) or dotenv_vars.get(k)
-            if val:
-                return val.strip()
+            env_val = os.getenv(k)
+            if env_val and not is_env_reference_or_placeholder(env_val):
+                return env_val.strip()
+        for k in keys:
+            file_val = dotenv_vars.get(k)
+            if file_val and not is_env_reference_or_placeholder(file_val):
+                return file_val.strip()
         for k in keys:
             reg_val = query_windows_env_var(k)
-            if reg_val:
+            if reg_val and not is_env_reference_or_placeholder(reg_val):
                 return reg_val
         return default
 
-    raw_token = cli_token or get_var(("DISCOGS_TOKEN", "DISCOGS_API_TOKEN"))
+    raw_token = cli_token if (cli_token and not is_env_reference_or_placeholder(cli_token)) else get_var(("DISCOGS_TOKEN", "DISCOGS_API_TOKEN"))
     token = sanitize_token(raw_token)
+    if token:
+        sync_resolved_token_to_local_dotenv(token)
 
     raw_user = cli_username or get_var(("DISCOGS_USERNAME", "DISCOGS_USER"), cfg.get("discogs_username", "krunked"))
     username = sanitize_username(raw_user, default="krunked")
@@ -557,35 +661,36 @@ def load_vault_lookup() -> tuple[dict[str, Any], dict[str, list[Any]], dict[str,
         except Exception:
             pass
 
-    live_col_path = SIBLING_COLLECTION_DIR / "data" / "collection.json"
-    if live_col_path.exists():
-        try:
-            col = json.loads(live_col_path.read_text(encoding="utf-8"))
-            for r in col.get("records", []):
-                rid = str(r["release_id"])
-                imgs = r.get("images") or {}
-                cover = imgs.get("cover_image_url") or imgs.get("remote_pressing_image_url") or ""
-                entry = {
-                    "release_id": rid,
-                    "artist": r.get("artist", ""),
-                    "title": r.get("title", ""),
-                    "format_string": r.get("format_string", ""),
-                    "estimated_value_usd": r.get("estimated_value_usd", 0),
-                    "date_added": r.get("date_added", ""),
-                    "media_condition": r.get("media_condition", "NM"),
-                    "cover_image_url": cover,
-                }
-                owned_by_rid[rid] = entry
-                if cover:
-                    cdn_by_rid.setdefault(rid, cover)
-                a_norm = re.sub(r"\s*\(\d+\)", "", r.get("artist", "").lower().strip())
-                t_norm = re.sub(r"\s*\(\d+\)", "", r.get("title", "").lower().strip())
-                ak = f"{a_norm} - {t_norm}"
-                owned_by_album.setdefault(ak, [entry])
-                if cover:
-                    cdn_by_album.setdefault(ak, cover)
-        except Exception:
-            pass
+    for col_dir in (SIBLING_COLLECTION_DIR, LEGACY_COLLECTION_DIR):
+        live_col_path = col_dir / "data" / "collection.json"
+        if live_col_path.exists():
+            try:
+                col = json.loads(live_col_path.read_text(encoding="utf-8"))
+                for r in col.get("records", []):
+                    rid = str(r["release_id"])
+                    imgs = r.get("images") or {}
+                    cover = imgs.get("cover_image_url") or imgs.get("remote_pressing_image_url") or ""
+                    entry = {
+                        "release_id": rid,
+                        "artist": r.get("artist", ""),
+                        "title": r.get("title", ""),
+                        "format_string": r.get("format_string", ""),
+                        "estimated_value_usd": r.get("estimated_value_usd", 0),
+                        "date_added": r.get("date_added", ""),
+                        "media_condition": r.get("media_condition", "NM"),
+                        "cover_image_url": cover,
+                    }
+                    owned_by_rid[rid] = entry
+                    if cover:
+                        cdn_by_rid.setdefault(rid, cover)
+                    a_norm = re.sub(r"\s*\(\d+\)", "", r.get("artist", "").lower().strip())
+                    t_norm = re.sub(r"\s*\(\d+\)", "", r.get("title", "").lower().strip())
+                    ak = f"{a_norm} - {t_norm}"
+                    owned_by_album.setdefault(ak, [entry])
+                    if cover:
+                        cdn_by_album.setdefault(ak, cover)
+            except Exception:
+                pass
 
     return owned_by_rid, owned_by_album, cdn_by_rid, cdn_by_album
 
@@ -1670,6 +1775,8 @@ def main():
     with SingleInstanceLock(LOCK_FILE) as lock:
         if not lock.acquired:
             return
+
+        migrate_legacy_profile_if_needed()
 
         with sync_playwright() as p:
             context = p.chromium.launch_persistent_context(
