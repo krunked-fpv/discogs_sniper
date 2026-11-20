@@ -672,41 +672,85 @@ class DiscogsAPIClient:
         self._save_releases_cache()
         return summary
 
-    def fetch_wantlist_ids(self) -> list[str]:
-        """Fetches all release IDs currently on the user's Discogs Wantlist via GET /users/{username}/wants."""
+    def fetch_wantlist_ids(self) -> list[str] | None:
+        """
+        Fetches all release IDs currently on the user's Discogs Wantlist via GET /users/{username}/wants.
+        Returns None if the API request fails so callers can distinguish API errors from an empty wantlist.
+        """
         ids: list[str] = []
+        seen: set[str] = set()
         page = 1
+        user_q = urllib.parse.quote(self.username, safe="")
         while True:
-            data = self._get(f"/users/{self.username}/wants", params={"page": page, "per_page": 100})
-            if not isinstance(data, dict):
-                break
+            data = self._get(f"/users/{user_q}/wants", params={"page": page, "per_page": 100})
+            if not isinstance(data, dict) or "wants" not in data:
+                return None
             wants = data.get("wants") or []
             for w in wants:
-                if isinstance(w, dict) and w.get("id"):
-                    ids.append(str(w["id"]))
+                if not isinstance(w, dict):
+                    continue
+                raw_id = w.get("id") or (w.get("basic_information") or {}).get("id")
+                if raw_id:
+                    rid = str(raw_id)
+                    if rid not in seen:
+                        seen.add(rid)
+                        ids.append(rid)
             pagination = data.get("pagination") or {}
-            if page >= int(pagination.get("pages", 1)):
+            total_pages = int(pagination.get("pages", 1) or 1)
+            if page >= total_pages:
                 break
             page += 1
         return ids
 
+    def remove_from_wantlist_detailed(self, release_id: str) -> tuple[str, int | None, str]:
+        """
+        Removes a release from the user's Discogs Wantlist via DELETE /users/{username}/wants/{release_id}.
+        Returns (status, http_code, detail) where status is one of:
+        'removed', 'already_absent', 'unauthenticated', 'failed'.
+        """
+        if not self.is_authenticated:
+            return ("unauthenticated", None, "DISCOGS_TOKEN not configured")
+        if self.ratelimit_remaining <= 2:
+            time.sleep(1.5)
+
+        user_q = urllib.parse.quote(self.username, safe="")
+        rid_q = urllib.parse.quote(str(release_id), safe="")
+        url = f"{DISCOGS_API_BASE}/users/{user_q}/wants/{rid_q}"
+
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(url, headers=self.headers, method="DELETE")
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    rem = resp.headers.get("X-Discogs-Ratelimit-Remaining")
+                    if rem and str(rem).isdigit():
+                        self.ratelimit_remaining = int(rem)
+                    if resp.status in (200, 204):
+                        return ("removed", resp.status, "OK")
+                    return ("failed", resp.status, f"Unexpected HTTP {resp.status}")
+            except urllib.error.HTTPError as he:
+                rem = he.headers.get("X-Discogs-Ratelimit-Remaining") if he.headers else None
+                if rem and str(rem).isdigit():
+                    self.ratelimit_remaining = int(rem)
+                if he.code == 429 and attempt == 0:
+                    logging.warning("Discogs API rate limit reached (429) on DELETE; pausing 5s...")
+                    time.sleep(5)
+                    continue
+                if he.code == 404:
+                    return ("already_absent", 404, "Not on live wantlist")
+                try:
+                    err_body = he.read().decode("utf-8", errors="replace").strip()[:160]
+                except Exception:
+                    err_body = str(he)
+                return ("failed", he.code, err_body or f"HTTP {he.code}")
+            except Exception as e:
+                logging.warning(f"Could not delete release {release_id} from wantlist: {e}")
+                return ("failed", None, str(e))
+        return ("failed", 429, "Rate limit exceeded")
+
     def remove_from_wantlist(self, release_id: str) -> bool:
         """Removes a release from the user's Discogs Wantlist via DELETE /users/{username}/wants/{release_id}."""
-        if not self.is_authenticated:
-            return False
-        try:
-            req = urllib.request.Request(
-                f"{DISCOGS_API_BASE}/users/{self.username}/wants/{release_id}",
-                headers=self.headers,
-                method="DELETE",
-            )
-            with urllib.request.urlopen(req, timeout=12) as resp:
-                return resp.status in (204, 200)
-        except urllib.error.HTTPError as he:
-            return he.code == 404
-        except Exception as e:
-            logging.warning(f"Could not delete release {release_id} from wantlist: {e}")
-            return False
+        status, _, _ = self.remove_from_wantlist_detailed(release_id)
+        return status == "removed"
 
 
 # =====================================================================
@@ -1735,6 +1779,33 @@ def run_check_on_page(
 # =====================================================================
 # CLI COMMANDS: --api-check & --prune-owned
 # =====================================================================
+def _format_owned_release_title(
+    rid: str,
+    owned_by_rid: dict[str, Any],
+    snapshot_titles: dict[str, str] | None = None,
+) -> str:
+    if snapshot_titles and snapshot_titles.get(rid):
+        return snapshot_titles[rid]
+    r_info = owned_by_rid.get(rid) or {}
+    artist = str(r_info.get("artist") or "").strip()
+    title = str(r_info.get("title") or "").strip()
+    if artist and title:
+        return f"{artist} - {title}"
+    return title or f"Release #{rid}"
+
+
+def _collect_snapshot_owned_overlaps(
+    items: dict[str, Any], owned_by_rid: dict[str, Any]
+) -> dict[str, str]:
+    overlaps: dict[str, str] = {}
+    for it in items.values():
+        m = re.search(r"/release/(\d+)", it.get("release_url", ""))
+        rid = m.group(1) if m else ""
+        if rid and rid in owned_by_rid and rid not in overlaps:
+            overlaps[rid] = it.get("title") or _format_owned_release_title(rid, owned_by_rid)
+    return overlaps
+
+
 def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") -> int:
     print("=" * 72)
     print(f"  DISCOGS SNIPER v{SNIPER_VERSION} // OFFICIAL DISCOGS API & VAULT DIAGNOSTICS")
@@ -1761,26 +1832,53 @@ def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") ->
             else:
                 print(f"    - {p} (missing)")
 
+    ident = None
+    live_wants: list[str] | None = None
     if api_client.is_authenticated:
         ident = api_client.get_identity()
         if ident:
             print(f"[ok] Authenticated via /oauth/identity as @{ident.get('username')} (ID: {ident.get('id')})")
+            live_wants = api_client.fetch_wantlist_ids()
             print(f"[ok] API Rate Limit Remaining: {api_client.ratelimit_remaining}/60 req/min")
         else:
             print("[warn] Could not reach api.discogs.com/oauth/identity (check network or token validity).")
 
     items, ledger = load_seed_snapshot()
-    exact_overlaps = []
-    for it in items.values():
-        m = re.search(r"/release/(\d+)", it.get("release_url", ""))
-        rid = m.group(1) if m else ""
-        if rid in owned_by_rid and rid not in [x[0] for x in exact_overlaps]:
-            exact_overlaps.append((rid, it.get("title", "")))
+    snapshot_overlaps = _collect_snapshot_owned_overlaps(items, owned_by_rid)
 
     print(f"[*] Snapshot Items Tracked  : {len(items)} listings ({len(ledger)} relist fingerprints)")
-    print(f"[*] Exact Owned Pressings Still on Wantlist ({len(exact_overlaps)} releases):")
-    for rid, ttl in exact_overlaps:
-        print(f"    - Release #{rid:<10} : {ttl}")
+
+    if live_wants is not None:
+        live_want_set = set(live_wants)
+        live_overlaps = sorted(
+            [
+                (rid, _format_owned_release_title(rid, owned_by_rid, snapshot_overlaps))
+                for rid in live_want_set
+                if rid in owned_by_rid
+            ],
+            key=lambda x: x[0],
+        )
+        print(f"[*] Live Discogs Wantlist   : {len(live_want_set)} releases (via GET /users/{api_client.username}/wants)")
+        print(f"[*] Exact Owned Pressings Still on Live Wantlist ({len(live_overlaps)} releases):")
+        if live_overlaps:
+            for rid, ttl in live_overlaps:
+                print(f"    - Release #{rid:<10} : {ttl}")
+        else:
+            print("    (none — your live Discogs Wantlist has 0 exact-owned Vault overlaps!)")
+
+        snapshot_only = [rid for rid in snapshot_overlaps if rid not in live_want_set]
+        if snapshot_only:
+            print(
+                f"[*] Historical Snapshot Note: {len(snapshot_only)} owned release(s) remain in seed_snapshot.json "
+                "history (already removed from live Wantlist)"
+            )
+    else:
+        if api_client.is_authenticated and ident:
+            print(f"[warn] Could not fetch live Wantlist from GET /users/{api_client.username}/wants; showing snapshot fallback.")
+        print(f"[*] Exact Owned Pressings in Snapshot (offline fallback, {len(snapshot_overlaps)} releases):")
+        for rid, ttl in snapshot_overlaps.items():
+            print(f"    - Release #{rid:<10} : {ttl}")
+
     print("=" * 72)
     return 0
 
@@ -1788,35 +1886,77 @@ def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") ->
 def run_prune_owned_wantlist(api_client: DiscogsAPIClient, dry_run: bool = False) -> int:
     owned_by_rid, _, _, _ = load_vault_lookup()
     items, _ = load_seed_snapshot()
+    snapshot_overlaps = _collect_snapshot_owned_overlaps(items, owned_by_rid)
 
     candidates: dict[str, str] = {}
-    for it in items.values():
-        m = re.search(r"/release/(\d+)", it.get("release_url", ""))
-        rid = m.group(1) if m else ""
-        if rid and rid in owned_by_rid:
-            candidates[rid] = it.get("title", f"Release #{rid}")
-
     if api_client.is_authenticated:
+        ident = api_client.get_identity()
+        if not ident:
+            print("[err] Could not verify DISCOGS_TOKEN via GET /oauth/identity. Aborting prune.")
+            return 1
+
         live_wants = api_client.fetch_wantlist_ids()
+        if live_wants is None:
+            print(f"[err] Could not fetch live Wantlist via GET /users/{api_client.username}/wants. Aborting prune.")
+            return 1
+
         for rid in live_wants:
-            if rid in owned_by_rid and rid not in candidates:
-                r_info = owned_by_rid[rid]
-                candidates[rid] = f"{r_info.get('artist', '')} - {r_info.get('title', '')}"
+            if rid in owned_by_rid:
+                candidates[rid] = _format_owned_release_title(rid, owned_by_rid, snapshot_overlaps)
 
-    if not candidates:
-        print("[ok] Zero exact-owned Collection Vault pressings found on your Wantlist.")
-        return 0
+        if not candidates:
+            print(
+                f"[ok] Zero exact-owned Collection Vault pressings found on your live Discogs Wantlist "
+                f"({len(live_wants)} live wants checked)."
+            )
+            return 0
+    else:
+        candidates = dict(snapshot_overlaps)
+        if not candidates:
+            print("[ok] Zero exact-owned Collection Vault pressings found in seed_snapshot.json.")
+            return 0
 
-    print(f"[*] Found {len(candidates)} exact-owned pressing(s) on your Discogs Wantlist:")
+    scope_lbl = "live Discogs Wantlist" if api_client.is_authenticated else "local snapshot (offline preview)"
+    print(f"[*] Found {len(candidates)} exact-owned pressing(s) on your {scope_lbl}:")
+
+    removed_cnt = 0
+    already_absent_cnt = 0
+    failed_cnt = 0
+
     for rid, ttl in sorted(candidates.items()):
         if dry_run or not api_client.is_authenticated:
             mode_lbl = "DRY-RUN" if dry_run else "NO-TOKEN PREVIEW"
             print(f"  [{mode_lbl}] Would DELETE /users/{api_client.username}/wants/{rid} -> {ttl}")
         else:
-            ok = api_client.remove_from_wantlist(rid)
-            status = "REMOVED" if ok else "FAILED"
-            print(f"  [{status}] DELETE /users/{api_client.username}/wants/{rid} -> {ttl}")
+            status, code, detail = api_client.remove_from_wantlist_detailed(rid)
+            if status == "removed":
+                removed_cnt += 1
+                print(f"  [REMOVED] DELETE /users/{api_client.username}/wants/{rid} -> {ttl}")
+            elif status == "already_absent":
+                already_absent_cnt += 1
+                print(f"  [ALREADY GONE (404)] DELETE /users/{api_client.username}/wants/{rid} -> {ttl}")
+            else:
+                failed_cnt += 1
+                err_code = f"HTTP {code}" if code else "ERR"
+                print(f"  [FAILED ({err_code})] DELETE /users/{api_client.username}/wants/{rid} -> {ttl} ({detail})")
             time.sleep(0.5)
+
+    if api_client.is_authenticated and not dry_run:
+        verified_wants = api_client.fetch_wantlist_ids()
+        if verified_wants is not None:
+            remaining = [rid for rid in set(verified_wants) if rid in owned_by_rid]
+            print(
+                f"[ok] Prune summary: {removed_cnt} removed, {already_absent_cnt} already absent, {failed_cnt} failed. "
+                f"Live Wantlist verification: {len(remaining)} exact-owned overlap(s) remaining "
+                f"({len(verified_wants)} live wants)."
+            )
+        else:
+            print(
+                f"[warn] Prune summary: {removed_cnt} removed, {already_absent_cnt} already absent, {failed_cnt} failed "
+                "(could not re-verify live Wantlist)."
+            )
+        return 0 if failed_cnt == 0 else 1
+
     return 0
 
 

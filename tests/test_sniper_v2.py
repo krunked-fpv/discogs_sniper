@@ -167,6 +167,98 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertNotIn("__INJECT_SNIPER_STATE_JSON__", html_text)
         self.assertNotIn("// __INJECT_APP_JS__", html_text)
         self.assertIn("DISCOGS SNIPER", html_text)
+        self.assertIn("btn-sync-live-wantlist", html_text)
+        self.assertIn("vault-live-sync-status", html_text)
+
+    def test_fetch_wantlist_ids_and_404_semantics(self):
+        import io
+        import urllib.error
+        from unittest.mock import patch
+
+        client = sniper.DiscogsAPIClient(token="ValidTestDiscogsToken1234567890", username="krunked")
+
+        # 1. API failure on _get must return None (not empty list [])
+        with patch.object(client, "_get", return_value=None):
+            self.assertIsNone(client.fetch_wantlist_ids())
+
+        # 2. Multi-page wantlist fetch deduplicates and parses IDs cleanly
+        pages = [
+            {"wants": [{"id": 111}, {"basic_information": {"id": 222}}], "pagination": {"pages": 2}},
+            {"wants": [{"id": 222}, {"id": 333}], "pagination": {"pages": 2}},
+        ]
+        with patch.object(client, "_get", side_effect=pages):
+            self.assertEqual(client.fetch_wantlist_ids(), ["111", "222", "333"])
+
+        # 3. HTTP 404 on DELETE must report already_absent and NOT return True from remove_from_wantlist
+        err_404 = urllib.error.HTTPError(
+            url="https://api.discogs.com/users/krunked/wants/999",
+            code=404,
+            msg="Not Found",
+            hdrs={},
+            fp=io.BytesIO(b'{"message": "Not Found"}'),
+        )
+        with patch("urllib.request.urlopen", side_effect=err_404):
+            status, code, _ = client.remove_from_wantlist_detailed("999")
+            self.assertEqual(status, "already_absent")
+            self.assertEqual(code, 404)
+            self.assertFalse(client.remove_from_wantlist("999"))
+
+    def test_api_check_uses_live_wantlist_not_static_snapshot(self):
+        import contextlib
+        import io
+        from unittest.mock import patch
+
+        client = sniper.DiscogsAPIClient(token="ValidTestDiscogsToken1234567890", username="krunked")
+
+        # Live wantlist has 0 owned overlaps even though seed_snapshot.json still has 10 historical ones
+        buf = io.StringIO()
+        with (
+            patch.object(client, "get_identity", return_value={"username": "krunked", "id": 32496351}),
+            patch.object(client, "fetch_wantlist_ids", return_value=["99999991", "99999992"]),
+            contextlib.redirect_stdout(buf),
+        ):
+            rc = sniper.run_api_diagnostics(client, token_source="test")
+        out = buf.getvalue()
+        self.assertEqual(rc, 0)
+        self.assertIn("Live Discogs Wantlist   : 2 releases", out)
+        self.assertIn("Exact Owned Pressings Still on Live Wantlist (0 releases):", out)
+        self.assertIn("Historical Snapshot Note: 10 owned release(s) remain in seed_snapshot.json", out)
+
+    def test_prune_owned_uses_live_wantlist_as_sole_source_of_truth(self):
+        import contextlib
+        import io
+        from unittest.mock import patch
+
+        client = sniper.DiscogsAPIClient(token="ValidTestDiscogsToken1234567890", username="krunked")
+
+        # Case A: Live wantlist already clean -> must NOT send DELETE for stale snapshot items
+        buf_clean = io.StringIO()
+        with (
+            patch.object(client, "get_identity", return_value={"username": "krunked", "id": 32496351}),
+            patch.object(client, "fetch_wantlist_ids", return_value=["99999991"]),
+            patch.object(client, "remove_from_wantlist_detailed") as mock_del,
+            contextlib.redirect_stdout(buf_clean),
+        ):
+            rc = sniper.run_prune_owned_wantlist(client, dry_run=False)
+        self.assertEqual(rc, 0)
+        mock_del.assert_not_called()
+        self.assertIn("Zero exact-owned Collection Vault pressings found on your live Discogs Wantlist", buf_clean.getvalue())
+
+        # Case B: Live wantlist has 1 owned release -> deletes ONLY that 1 and verifies 0 remaining
+        buf_one = io.StringIO()
+        with (
+            patch.object(client, "get_identity", return_value={"username": "krunked", "id": 32496351}),
+            patch.object(client, "fetch_wantlist_ids", side_effect=[["31082741", "99999991"], ["99999991"]]),
+            patch.object(client, "remove_from_wantlist_detailed", return_value=("removed", 204, "OK")) as mock_del,
+            patch("time.sleep"),
+            contextlib.redirect_stdout(buf_one),
+        ):
+            rc = sniper.run_prune_owned_wantlist(client, dry_run=False)
+        self.assertEqual(rc, 0)
+        mock_del.assert_called_once_with("31082741")
+        out_one = buf_one.getvalue()
+        self.assertIn("[REMOVED] DELETE /users/krunked/wants/31082741", out_one)
+        self.assertIn("Live Wantlist verification: 0 exact-owned overlap(s) remaining", out_one)
 
 
 if __name__ == "__main__":
