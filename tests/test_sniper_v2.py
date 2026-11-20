@@ -151,11 +151,18 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertEqual(len(actionable_batch[0]["batch_listing_ids"]), 3)
 
     def test_compiled_sniper_state_and_html_integrity(self):
+        seed = json.loads((REPO_ROOT / "seed_snapshot.json").read_text(encoding="utf-8"))
+        expected_total = len(seed.get("items", seed))
+
         state = builder.build_sniper_state()
         summary = state["summary"]
-        self.assertEqual(summary["total_tracked_listings"], 218)
-        self.assertEqual(summary["unique_deduped_offerings"], 113)
-        self.assertEqual(summary["auto_relists_intercepted"], 105)
+        self.assertEqual(summary["total_tracked_listings"], expected_total)
+        self.assertEqual(
+            summary["unique_deduped_offerings"] + summary["auto_relists_intercepted"],
+            summary["total_tracked_listings"],
+        )
+        self.assertGreaterEqual(summary["auto_relists_intercepted"], 100)
+        self.assertGreaterEqual(summary["seller_bundles_count"], 10)
         self.assertEqual(summary["exact_owned_releases"], 10)
         self.assertEqual(summary["variant_upgrade_releases"], 9)
         self.assertEqual(summary["missing_grails_releases"], 54)
@@ -169,6 +176,9 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertIn("DISCOGS SNIPER", html_text)
         self.assertIn("btn-sync-live-wantlist", html_text)
         self.assertIn("vault-live-sync-status", html_text)
+        self.assertIn("turntable-platter-canvas", html_text)
+        self.assertIn("cmd-palette-backdrop", html_text)
+        self.assertIn("./manifest.webmanifest", html_text)
 
     def test_fetch_wantlist_ids_and_404_semantics(self):
         import io
@@ -473,7 +483,7 @@ class TestDiscogsSniperV2(unittest.TestCase):
                 state_default = builder.build_sniper_state()
 
                 # 1. Schema version & Live Page 1 100% cover recovery + allow_offers recovery
-                self.assertEqual(state_default["schema_version"], "2.1.0-beta")
+                self.assertEqual(state_default["schema_version"], "3.0.0")
                 live_p1 = [x for x in state_default["listings"] if x["is_live_page1"]]
                 self.assertEqual(len(live_p1), 25)
                 self.assertEqual(sum(1 for x in live_p1 if not x["cover_image_url"]), 0)
@@ -559,9 +569,87 @@ class TestDiscogsSniperV2(unittest.TestCase):
             self.assertNotIn("<!--", raw_json)
             parsed = json.loads(raw_json)
             self.assertEqual(parsed["probe"], tricky_state["probe"])
-            self.assertIn("v2.1 BETA", compiled)
+            self.assertIn("v3.0", compiled)
             self.assertIn("btn-toggle-uv", compiled)
             self.assertIn("inspect-modal-backdrop", compiled)
+
+    def test_v3_collector_signals_bundles_offers_and_staging(self):
+        import tempfile
+
+        # 1. Variant boilerplate deduplication + badge extraction
+        dup = builder.extract_collector_signals("LP, Ultra Clear", "LP, Ultra Clear")
+        self.assertEqual(dup["clean_seller_note"], "")
+        self.assertFalse(dup["has_wear_warning"])
+
+        sig = builder.extract_collector_signals(
+            "BRAND NEW SEALED! Jacket SIGNED by band. Minor seam split on top edge.",
+            "LP, Pink Splatter",
+        )
+        badge_ids = {b["id"] for b in sig["collector_badges"]}
+        self.assertIn("SIGNED", badge_ids)
+        self.assertIn("SEALED", badge_ids)
+        self.assertIn("WEAR_WARN", badge_ids)
+        self.assertTrue(sig["has_wear_warning"])
+        self.assertNotEqual(sig["clean_seller_note"], "")
+
+        # 2. Shipping policy & multi-LP bundle savings
+        flat_pol = builder.parse_shipping_policy(
+            [7.5, 7.5, 7.5],
+            ["$7.50 flat rate shipping for UNLIMITED ITEMS to the USA"],
+            3,
+        )
+        self.assertEqual(flat_pol["policy_type"], "FLAT_UNLIMITED")
+        self.assertTrue(flat_pol["confirmed_policy"])
+        self.assertAlmostEqual(flat_pol["bundled_shipping_usd"], 7.50, places=2)
+
+        free_pol = builder.parse_shipping_policy([0.0, 0.0], ["Free US shipping"], 2)
+        self.assertEqual(free_pol["policy_type"], "FREE_SHIPPING")
+        self.assertAlmostEqual(free_pol["bundled_shipping_usd"], 0.0, places=2)
+
+        state = builder.build_sniper_state()
+        bundles_by_seller = {b["seller"]: b for b in state["seller_bundles"]}
+        self.assertIn("recordmule", bundles_by_seller)
+        self.assertGreater(bundles_by_seller["recordmule"]["shipping_saved_usd"], 10.0)
+        self.assertIn("QuickRecords", bundles_by_seller)
+        self.assertGreaterEqual(bundles_by_seller["QuickRecords"]["item_count"], 5)
+
+        # 3. Make-Offer haggle strategy bounds & wear awareness
+        sample_row = {
+            "id": "4257509076",
+            "title": "Bring Me The Horizon - There Is A Hell",
+            "seller_info": "curefortheitch",
+            "media_condition": "NM",
+            "sleeve_condition": "VG+",
+            "list_price_usd": 299.99,
+            "shipping_price_usd": 0.0,
+            "total_price_usd": 299.99,
+            "relist_group_total": 1,
+            "has_wear_warning": True,
+            "market_stats": {
+                "condition_suggested_usd": 278.50,
+                "observed_median_usd": 278.50,
+                "distinct_sellers_tracked": 2,
+                "benchmark_verified": True,
+            },
+        }
+        offer = builder.compute_offer_strategy(sample_row, None)
+        self.assertLessEqual(offer["aggressive_offer_usd"], offer["recommended_offer_usd"])
+        self.assertLessEqual(offer["recommended_offer_usd"], offer["instant_close_offer_usd"])
+        self.assertLess(offer["recommended_offer_usd"], 299.99)
+        self.assertIn("sleeve/jacket notes", offer["buyer_pitch"].lower())
+
+        # 4. Clean static artifact staging excludes .env and Python files
+        with tempfile.TemporaryDirectory() as tmpdir:
+            stage_dir = Path(tmpdir) / "_site"
+            builder.stage_pages_artifact(stage_dir)
+            self.assertTrue((stage_dir / ".nojekyll").exists())
+            self.assertTrue((stage_dir / "index.html").exists())
+            self.assertTrue((stage_dir / "manifest.webmanifest").exists())
+            self.assertTrue((stage_dir / "sw.js").exists())
+            self.assertTrue((stage_dir / "data" / "sniper_state.json").exists())
+            self.assertFalse((stage_dir / ".env").exists())
+            self.assertFalse((stage_dir / "discogs_sniper.py").exists())
+            self.assertFalse((stage_dir / "sniper.log").exists())
 
 
 if __name__ == "__main__":

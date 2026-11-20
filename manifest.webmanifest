@@ -1,0 +1,29 @@
+{
+  "name": "Discogs Sniper v3.0 — Vinyl Wantlist Command Center",
+  "short_name": "Discogs Sniper",
+  "description": "Boutique hardware-styled Discogs Wantlist radar, 3D vinyl crate & WebAudio turntable deck, seller bundle optimizer, and two-way GitHub sync.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#040509",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "./apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

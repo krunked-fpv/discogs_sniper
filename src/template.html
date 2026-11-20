@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discogs Sniper v2.1-beta — Neon Wantlist Telemetry &amp; Hybrid API Command Center</title>
-  <meta name="description" content="Discogs Sniper v2.1-beta: Hybrid Official Discogs REST API v2.0 + GraphQL Wantlist Command Center with live Wantlist verification, relist forensics, Collection Vault bridge, and 30s studio audition." />
+  <title>Discogs Sniper v3.0 — Obsidian Turntable &amp; Tactical Wantlist Command Center</title>
+  <meta name="description" content="Discogs Sniper v3.0: Boutique hardware vinyl-sniping command center with 3D Crate &amp; WebAudio Turntable Studio, live Token-Bucket API hydration, Combined Shipping Bundle Optimizer, Make-Offer Haggle Desk, Sibling Vault Showdown, and Two-Way GitHub Remote Sync." />
   <meta name="theme-color" content="#040509" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
   <link rel="icon" href="./favicon.ico" sizes="any" />
@@ -18,16 +19,16 @@
   </style>
 </head>
 <body class="mode-neon">
-  <!-- DYNAMIC AMBIENT NEON STAGE & FILM GRAIN -->
+  <!-- DYNAMIC AMBIENT NEON STAGE & ANALOG FILM GRAIN -->
   <div class="stage-backdrop" aria-hidden="true"></div>
   <div class="stage-grain" aria-hidden="true"></div>
 
-  <!-- TOP STICKY HARDWARE COMMAND HEADER -->
+  <!-- TOP STICKY HARDWARE COMMAND CONSOLE HEADER -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
         <button type="button" class="brand-mark-btn" id="btn-brand-home" title="Return to Drop Radar">
-          <svg class="brand-vinyl-svg" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true">
+          <svg class="brand-vinyl-svg" viewBox="0 0 64 64" width="42" height="42" aria-hidden="true">
             <defs>
               <radialGradient id="hdrVinyl" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stop-color="#191f2e"/>
@@ -57,10 +58,14 @@
         <div class="brand-title-wrap">
           <div class="brand-headline-row">
             <h1>DISCOGS SNIPER</h1>
-            <span class="beta-stamp">v2.1 BETA</span>
+            <span class="beta-stamp">v3.0</span>
+            <button type="button" class="heartbeat-pill" id="rig-heartbeat-btn" title="Local 5-min sniper rig sync freshness (click to check GitHub live)">
+              <span class="hb-dot" id="hb-dot"></span>
+              <span id="hb-label">Rig Sync</span>
+            </button>
           </div>
           <div class="brand-subtitle" id="header-telemetry-subtitle">
-            @krunked // API v2 + GRAPHQL + VAULT
+            @krunked // API v2 + GRAPHQL + VAULT + GITHUB REMOTE
           </div>
         </div>
       </div>
@@ -69,32 +74,51 @@
         <button type="button" class="nav-tab active" id="tab-btn-radar" data-view="radar">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
           <span>Drop Radar</span>
-          <span class="nav-tab-count" id="nav-count-radar">113</span>
+          <span class="nav-tab-count" id="nav-count-radar">114</span>
+        </button>
+        <button type="button" class="nav-tab" id="tab-btn-crate" data-view="crate">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M19 5l-5 5"/></svg>
+          <span>3D Crate</span>
+          <span class="nav-tab-count" id="nav-count-crate">Deck</span>
+        </button>
+        <button type="button" class="nav-tab" id="tab-btn-alpha" data-view="alpha">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6 6 .9-4.4 4.3 1 6.1L12 16.4l-5.6 2.9 1-6.1L3 8.9 9 8z"/></svg>
+          <span>Alpha</span>
+          <span class="nav-tab-count" id="nav-count-alpha">16</span>
         </button>
         <button type="button" class="nav-tab" id="tab-btn-forensics" data-view="forensics">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
-          <span>Relist Forensics</span>
-          <span class="nav-tab-count" id="nav-count-forensics">-48.2%</span>
+          <span>Forensics</span>
+          <span class="nav-tab-count" id="nav-count-forensics">-47.9%</span>
         </button>
         <button type="button" class="nav-tab" id="tab-btn-vault" data-view="vault">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M12 7a5 5 0 0 1 5 5"/></svg>
-          <span>Vault Bridge</span>
-          <span class="nav-tab-count" id="nav-count-vault">Syncing...</span>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/></svg>
+          <span>Vault</span>
+          <span class="nav-tab-count" id="nav-count-vault">Syncing</span>
         </button>
         <button type="button" class="nav-tab" id="tab-btn-rules" data-view="rules">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>
-          <span>API &amp; Rules</span>
+          <span>Remote</span>
           <span class="nav-tab-count" id="nav-count-api">API v2</span>
         </button>
       </nav>
 
       <div class="header-actions">
-        <button type="button" class="mode-switch-btn" id="btn-toggle-uv" title="Switch Neon Overdrive / UV Blacklight lighting (Shortcut: U)">
+        <button type="button" class="api-status-btn hydrator-pill" id="hydrator-status-btn" title="Background Token-Bucket Discogs API Hydrator &amp; Sold Sweeper">
+          <span class="hydrator-spinner" id="hydrator-dot"></span>
+          <span id="hydrator-status-label">Hydrate: 0</span>
+        </button>
+
+        <button type="button" class="mode-switch-btn cmd-pill-btn" id="btn-open-cmd-palette" title="Open Command Palette (Ctrl/Cmd + K)">
+          <span>CMD+K</span>
+        </button>
+
+        <button type="button" class="mode-switch-btn" id="btn-toggle-uv" title="Cycle Lighting: NEON / UV BLACKLIGHT / TUBE AMP (Shortcut: U)">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
           <span id="uv-mode-label">NEON</span>
         </button>
 
-        <button type="button" class="api-status-btn" id="btn-open-api-modal" title="Connect or inspect Official Discogs API v2.0 token">
+        <button type="button" class="api-status-btn" id="btn-open-api-modal" title="Connect Discogs API &amp; GitHub PAT (Local Storage Only)">
           <span class="status-dot" id="api-connection-dot"></span>
           <span id="api-connection-label">Connect API</span>
         </button>
@@ -108,59 +132,71 @@
   </header>
 
   <main class="main-container">
-    <!-- 4-CHANNEL INTERACTIVE TELEMETRY RIBBON -->
+    <!-- 5-CHANNEL INTERACTIVE TELEMETRY RIBBON -->
     <section class="kpi-grid" aria-label="Sniper production telemetry">
       <button type="button" class="kpi-card kpi-cyan" id="kpi-card-offerings" data-jump-view="radar" data-jump-scope="ALL">
         <div class="kpi-head">
           <span class="kpi-label">Active Offerings</span>
-          <span class="kpi-badge badge-cyan" id="kpi-raw-total-badge">from 218 raw</span>
+          <span class="kpi-badge badge-cyan" id="kpi-raw-total-badge">from 219 raw</span>
         </div>
         <div class="kpi-value-row">
-          <span class="kpi-value" id="kpi-unique-offerings">113</span>
+          <span class="kpi-value" id="kpi-unique-offerings">114</span>
           <span class="kpi-delta" id="kpi-live-p1-chip">25 Live P1</span>
         </div>
         <span class="kpi-sub" id="kpi-distinct-releases-sub">Across 73 distinct Wantlist pressings</span>
       </button>
 
+      <button type="button" class="kpi-card kpi-lime" id="kpi-card-alpha" data-jump-view="alpha">
+        <div class="kpi-head">
+          <span class="kpi-label">Sniper Alpha</span>
+          <span class="kpi-badge badge-lime" id="kpi-bundle-save-badge">Save up to $22.50</span>
+        </div>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-bundles-count">16</span>
+          <span class="kpi-delta" id="kpi-offers-chip">11 Make Offer</span>
+        </div>
+        <span class="kpi-sub" id="kpi-alpha-sub">Multi-LP seller bundles + Haggle Desk</span>
+      </button>
+
       <button type="button" class="kpi-card kpi-amber" id="kpi-card-relists" data-jump-view="forensics">
         <div class="kpi-head">
-          <span class="kpi-label">Relist Spam Intercepted</span>
-          <span class="kpi-badge badge-amber" id="kpi-spam-pct-badge">-48.2% Noise</span>
+          <span class="kpi-label">Relist Shield</span>
+          <span class="kpi-badge badge-amber" id="kpi-spam-pct-badge">-47.9% Noise</span>
         </div>
         <div class="kpi-value-row">
           <span class="kpi-value" id="kpi-relists-intercepted">105</span>
           <span class="kpi-delta" id="kpi-price-drops-chip">4 Drops</span>
         </div>
-        <span class="kpi-sub" id="kpi-recordmule-sub">recordmule accounts for 99/218 (45.4%)</span>
+        <span class="kpi-sub" id="kpi-recordmule-sub">recordmule drives 99/219 (45.2%)</span>
       </button>
 
       <button type="button" class="kpi-card kpi-magenta" id="kpi-card-vault" data-jump-view="vault">
         <div class="kpi-head">
-          <span class="kpi-label">Collection Vault Bridge</span>
+          <span class="kpi-label">Vault Showdown</span>
           <span class="kpi-badge badge-cyan" id="kpi-owned-overlap-badge">Verifying Live...</span>
         </div>
         <div class="kpi-value-row">
           <span class="kpi-value" id="kpi-missing-grails">54</span>
           <span class="kpi-delta" id="kpi-variants-chip">9 Variants</span>
         </div>
-        <span class="kpi-sub" id="kpi-vault-sub">54 Missing Grails // 9 Variant Targets // 159 Vault LPs</span>
+        <span class="kpi-sub" id="kpi-vault-sub">54 Grails // 9 Variants // 159 Vault LPs</span>
       </button>
 
-      <button type="button" class="kpi-card kpi-lime" id="kpi-card-engine" data-jump-view="forensics">
+      <button type="button" class="kpi-card kpi-violet" id="kpi-card-engine" data-jump-view="rules">
         <div class="kpi-head">
-          <span class="kpi-label">5-Min Engine Telemetry</span>
-          <span class="kpi-badge badge-lime" id="kpi-uptime-badge">98.8% Hydrated</span>
+          <span class="kpi-label">Rig &amp; Hydrator</span>
+          <span class="kpi-badge badge-cyan" id="kpi-hydrated-badge">Live Queue</span>
         </div>
         <div class="kpi-value-row">
-          <span class="kpi-value" id="kpi-total-checks">5,632</span>
-          <span class="kpi-delta">288/day</span>
+          <span class="kpi-value" id="kpi-heartbeat-age">5m Rig</span>
+          <span class="kpi-delta" id="kpi-total-checks">5,632 runs</span>
         </div>
-        <span class="kpi-sub" id="kpi-alerts-sent-sub">225 Priority Alerts // Dual-Trigger Fixed</span>
+        <span class="kpi-sub" id="kpi-alerts-sent-sub">225 Priority Alerts // 98.8% Hydrated</span>
       </button>
     </section>
 
     <!-- =================================================================
-         VIEW 1: LIVE DROP RADAR
+         VIEW 1: TACTICAL DROP RADAR
          ================================================================= -->
     <section class="view-section active" id="view-radar" aria-label="Live Wantlist Drop Radar">
       <div class="controls-panel">
@@ -171,7 +207,7 @@
               type="search"
               id="radar-search-input"
               class="search-input"
-              placeholder="Search artist, album, wax variant, seller, or listing ID..."
+              placeholder="Search artist, album, wax color, seller, badge (SIGNED/FOIL), or ID..."
               autocomplete="off"
             />
             <kbd class="search-kbd" id="search-kbd-hint">/</kbd>
@@ -185,10 +221,19 @@
               </button>
             </div>
 
+            <div class="scope-segmented" role="group" aria-label="Layout density">
+              <button type="button" class="scope-btn active" id="btn-layout-cards" data-layout="cards" title="Tactical Vinyl Cards">Cards</button>
+              <button type="button" class="scope-btn" id="btn-layout-matrix" data-layout="matrix" title="High-Density Matrix Tape">Matrix</button>
+            </div>
+
             <button type="button" class="dedup-toggle-btn active" id="btn-toggle-dedup" title="Collapse duplicate daily relists from the same seller into one card">
               <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               <span>Relist Shield</span>
               <span class="chip-inline" id="dedup-status-chip">ON (-105)</span>
+            </button>
+
+            <button type="button" class="toggle-chip-btn" id="btn-hide-sold" title="Hide listings marked Sold / Removed by live API sweeper">
+              <span>Hide Sold</span>
             </button>
 
             <select id="radar-condition-select" class="select-control" aria-label="Filter by minimum media condition">
@@ -203,6 +248,8 @@
               <option value="DEAL_SCORE">Sort: Deal Score</option>
               <option value="PRICE_ASC">Sort: Lowest Shipped</option>
               <option value="PRICE_DESC">Sort: Highest Value</option>
+              <option value="TARGET_HITS">Sort: Target Hits First</option>
+              <option value="BUNDLE_SAVINGS">Sort: Bundle Savings</option>
               <option value="MOST_RELISTED">Sort: Most Relisted</option>
             </select>
           </div>
@@ -211,7 +258,7 @@
         <div class="filter-pills-row">
           <div class="pill-group" role="tablist" aria-label="Category filters">
             <button type="button" class="filter-pill active" data-filter="ALL" id="pill-filter-all">
-              All Drops <span class="pill-num" id="pill-cnt-all">113</span>
+              All Drops <span class="pill-num" id="pill-cnt-all">114</span>
             </button>
             <button type="button" class="filter-pill" data-filter="MISSING_GRAIL" id="pill-filter-grails">
               <span class="pill-dot dot-lime"></span>Missing Grails <span class="pill-num" id="pill-cnt-grails">54</span>
@@ -222,19 +269,25 @@
             <button type="button" class="filter-pill" data-filter="PRICE_DROP" id="pill-filter-pricedrop">
               <span class="pill-dot dot-amber"></span>Price Drops <span class="pill-num" id="pill-cnt-pricedrop">0</span>
             </button>
+            <button type="button" class="filter-pill" data-filter="BUNDLE_READY" id="pill-filter-bundles">
+              <span class="pill-dot dot-lime"></span>Bundle Ready <span class="pill-num" id="pill-cnt-bundles">0</span>
+            </button>
             <button type="button" class="filter-pill" data-filter="MAKE_OFFER" id="pill-filter-offers">
               <span class="pill-dot dot-cyan"></span>Make Offer <span class="pill-num" id="pill-cnt-offers">0</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="TARGET_HITS" id="pill-filter-targets">
+              <span class="pill-dot dot-amber"></span>Target Hits <span class="pill-num" id="pill-cnt-targets">0</span>
             </button>
             <button type="button" class="filter-pill" data-filter="VARIANT_UPGRADE" id="pill-filter-variants">
               <span class="pill-dot dot-magenta"></span>Variant Hunter <span class="pill-num" id="pill-cnt-variants">9</span>
             </button>
             <button type="button" class="filter-pill" data-filter="ALREADY_OWNED" id="pill-filter-owned">
-              <span class="pill-dot dot-crimson"></span>In Vault (Hist) <span class="pill-num" id="pill-cnt-owned">10</span>
+              <span class="pill-dot dot-crimson"></span>In Vault <span class="pill-num" id="pill-cnt-owned">10</span>
             </button>
           </div>
 
           <div class="controls-right-cluster">
-            <button type="button" class="toggle-chip-btn" id="btn-hide-recordmule" title="Toggle recordmule listings on or off independently of category filters">
+            <button type="button" class="toggle-chip-btn" id="btn-hide-recordmule" title="Toggle recordmule listings independently">
               <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5" y1="5" x2="19" y2="19"/></svg>
               <span>Hide recordmule</span>
             </button>
@@ -247,12 +300,23 @@
             <button type="button" class="btn-ghost-reset" id="btn-quick-reset-filters" hidden>Reset</button>
           </div>
         </div>
+
+        <div class="kbd-legend-strip" aria-hidden="true">
+          <span><kbd>J</kbd><kbd>K</kbd> Focus</span>
+          <span><kbd>Space</kbd> Spin 30s</span>
+          <span><kbd>C</kbd> Cart</span>
+          <span><kbd>O</kbd> Inspect / Offer</span>
+          <span><kbd>T</kbd> Pin Target</span>
+          <span><kbd>M</kbd> Mute Seller</span>
+          <span><kbd>U</kbd> Lighting</span>
+          <span><kbd>Ctrl+K</kbd> Command Palette</span>
+        </div>
       </div>
 
       <div class="results-toolbar">
         <div class="results-summary-wrap">
-          <span id="radar-showing-summary">Showing 113 unique offerings</span>
-          <span class="results-hint">Click any sleeve for full vinyl inspection</span>
+          <span id="radar-showing-summary">Showing 114 unique offerings</span>
+          <span class="results-hint" id="radar-hydrator-inline">Background API sweeper ready</span>
         </div>
         <span id="radar-muted-sellers-bar"></span>
       </div>
@@ -261,9 +325,197 @@
     </section>
 
     <!-- =================================================================
-         VIEW 2: RELIST FORENSICS & SELLER RADAR
+         VIEW 2: 3D CRATE DIGGING & VIRTUAL TURNTABLE STUDIO
+         ================================================================= -->
+    <section class="view-section" id="view-crate" aria-label="3D Vinyl Crate and Direct-Drive Turntable Studio">
+      <div class="crate-studio-grid">
+        <div class="panel-card crate-rack-panel">
+          <div class="panel-title">
+            <div class="panel-title-left">
+              <span class="panel-kicker">3D RECORD STORE CRATE</span>
+              <h2>Tactile Crate Digging</h2>
+            </div>
+            <div class="crate-header-actions">
+              <button type="button" class="btn-action btn-sm" id="btn-grail-radio" title="Auto-advance through crate sleeves as 30s previews finish">
+                <span>📻 Grail Radio: OFF</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="crate-filter-strip" id="crate-filter-strip">
+            <button type="button" class="crate-filter-chip active" data-crate-filter="ALL">All Wax</button>
+            <button type="button" class="crate-filter-chip" data-crate-filter="MISSING_GRAIL">Missing Grails</button>
+            <button type="button" class="crate-filter-chip" data-crate-filter="VARIANT_UPGRADE">Variants</button>
+            <button type="button" class="crate-filter-chip" data-crate-filter="MAKE_OFFER">Make Offer</button>
+            <button type="button" class="crate-filter-chip" data-crate-filter="COLORED">Colored Wax</button>
+          </div>
+
+          <div class="crate-3d-viewport" id="crate-3d-viewport" tabindex="0" aria-label="3D vinyl crate stack; use arrow keys or drag to flip sleeves">
+            <div class="crate-3d-stage" id="crate-3d-stage"></div>
+          </div>
+
+          <div class="crate-scrubber-bar">
+            <button type="button" class="btn-action btn-sm" id="btn-crate-prev" aria-label="Previous sleeve">◀ Prev</button>
+            <input type="range" id="crate-index-slider" class="price-slider crate-slider" min="0" max="10" value="0" aria-label="Crate sleeve index" />
+            <button type="button" class="btn-action btn-sm" id="btn-crate-next" aria-label="Next sleeve">Next ▶</button>
+            <span class="crate-counter-label" id="crate-counter-label">1 / 114</span>
+          </div>
+        </div>
+
+        <div class="panel-card turntable-deck-panel">
+          <div class="panel-title">
+            <div class="panel-title-left">
+              <span class="panel-kicker">QUARTZ DIRECT-DRIVE AUDITION DECK // WEBAUDIO DSP</span>
+              <h2 id="deck-now-title">Select a Record From the Crate</h2>
+            </div>
+            <div class="deck-telemetry-leds">
+              <span class="led-chip" id="deck-rpm-readout">33⅓ RPM</span>
+              <span class="led-chip led-cyan" id="deck-pitch-readout">0.0% QUARTZ</span>
+            </div>
+          </div>
+
+          <div class="turntable-chassis">
+            <div class="platter-bay">
+              <div class="platter-strobe-ring" id="platter-strobe-ring">
+                <canvas id="turntable-platter-canvas" width="380" height="380" aria-label="Procedural colored vinyl platter"></canvas>
+              </div>
+              <button type="button" class="turntable-tonearm" id="btn-tonearm-toggle" title="Drop or lift tonearm stylus">
+                <span class="tonearm-pivot"></span>
+                <span class="tonearm-tube"></span>
+                <span class="tonearm-headshell"></span>
+              </button>
+            </div>
+
+            <div class="deck-dsp-column">
+              <div class="deck-meta-box">
+                <div class="deck-wax-pill" id="deck-now-variant">Ultra Clear 180g Vinyl</div>
+                <div class="deck-price-row">
+                  <span class="deck-price-main" id="deck-now-price">$0.00</span>
+                  <span class="deck-grade-badge" id="deck-now-grade">NM / NM</span>
+                </div>
+                <div class="deck-track-now" id="deck-now-track">Ready for needle drop (iTunes / Deezer 30s DSP)</div>
+              </div>
+
+              <div class="deck-controls-grid">
+                <button type="button" class="btn-action btn-neon-cyan" id="btn-deck-spin">
+                  <span>▶ Drop Needle</span>
+                </button>
+                <div class="scope-segmented" role="group" aria-label="Platter RPM speed">
+                  <button type="button" class="scope-btn active" id="btn-rpm-33" data-rpm="33">33⅓</button>
+                  <button type="button" class="scope-btn" id="btn-rpm-45" data-rpm="45">45</button>
+                </div>
+                <button type="button" class="btn-action" id="btn-crackle-mode" title="Toggle WebAudio synthesized warm vinyl crackle">
+                  <span>Crackle: OFF</span>
+                </button>
+              </div>
+
+              <div class="pitch-fader-row">
+                <label for="deck-pitch-slider">Quartz Pitch (±8%)</label>
+                <input type="range" id="deck-pitch-slider" class="price-slider" min="-8" max="8" step="0.5" value="0" />
+                <button type="button" class="btn-micro" id="btn-pitch-reset">0%</button>
+              </div>
+
+              <div class="fft-visualizer-wrap">
+                <canvas id="turntable-fft-canvas" width="520" height="86" aria-label="32-band WebAudio spectrum visualizer"></canvas>
+              </div>
+
+              <div class="deck-tracklist-wrap" id="deck-tracklist-pills"></div>
+
+              <div class="card-actions" id="deck-card-actions">
+                <a href="#" target="_blank" rel="noopener" class="btn-action btn-cart" id="deck-action-cart">1-Click Cart</a>
+                <button type="button" class="btn-action" id="deck-action-offer">Haggle</button>
+                <button type="button" class="btn-action" id="deck-action-target">Pin Target</button>
+                <button type="button" class="btn-action btn-neon-cyan" id="deck-action-inspect">Inspect</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 3: SNIPER ALPHA (BUNDLE OPTIMIZER, HAGGLE DESK & TARGET WATCH)
+         ================================================================= -->
+    <section class="view-section" id="view-alpha" aria-label="Sniper Alpha: Combined Shipping Bundles, Make-Offer Strategist &amp; Target Prices">
+      <div class="panel-card" style="margin-bottom: 18px;">
+        <div class="panel-title">
+          <div class="panel-title-left">
+            <span class="panel-kicker">ALPHA // 01 — COMBINED SHIPPING RADAR</span>
+            <h2>Multi-Grail Seller Bundle Optimizer</h2>
+          </div>
+          <div class="alpha-filter-row">
+            <button type="button" class="crate-filter-chip active" data-bundle-filter="ALL">All Multi-LP Sellers</button>
+            <button type="button" class="crate-filter-chip" data-bundle-filter="CONFIRMED">Confirmed Policies</button>
+            <button type="button" class="crate-filter-chip" data-bundle-filter="OFFERS">Has Make-Offer</button>
+          </div>
+        </div>
+        <p class="panel-subtitle">
+          Detects sellers holding 2+ active Wantlist LPs and parses flat-rate/unlimited shipping rules from seller comments. Toggle individual records inside a bundle to recalculate live per-LP landed savings.
+        </p>
+        <div class="alpha-bundles-grid" id="alpha-bundles-grid"></div>
+      </div>
+
+      <div class="section-grid-2">
+        <div class="panel-card">
+          <div class="panel-title">
+            <div class="panel-title-left">
+              <span class="panel-kicker">ALPHA // 02 — HAGGLE CALCULATOR</span>
+              <h2>Make-Offer Strategist Desk</h2>
+            </div>
+            <span class="kpi-badge badge-amber" id="alpha-haggle-count">11 Make-Offer LPs</span>
+          </div>
+          <p class="panel-subtitle">
+            Computes aggressive, recommended, and instant-close item offers using condition-calibrated benchmarks, jacket-wear notes, seller relist churn, and multi-LP bundle leverage.
+          </p>
+          <div class="alpha-haggle-list" id="alpha-haggle-grid"></div>
+        </div>
+
+        <div class="panel-card" id="alpha-targets-panel">
+          <div class="panel-title">
+            <div class="panel-title-left">
+              <span class="panel-kicker">ALPHA // 03 — SNIPE WATCHLIST &amp; BACKTEST</span>
+              <h2>Target Snipe Prices (<code>target_prices_by_release</code>)</h2>
+            </div>
+            <span class="kpi-badge badge-lime" id="alpha-targets-count">0 Pinned</span>
+          </div>
+          <p class="panel-subtitle">
+            Pin maximum shipped price thresholds per Wantlist release. Backtests immediately against your 14-day snapshot history and persists straight into <code>sniper_config.json</code>.
+          </p>
+          <div class="target-add-bar">
+            <select id="target-release-select" class="select-control" style="flex:1;min-width:180px;"></select>
+            <input type="number" id="target-price-input" class="form-input" style="width:118px;" min="5" step="1" placeholder="$ Target" />
+            <button type="button" class="btn-action btn-neon-lime btn-sm" id="btn-add-target-price">Pin Target</button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Release</th>
+                  <th>Target</th>
+                  <th>Current Floor</th>
+                  <th>14d Backtest</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-target-watchlist"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 4: RELIST FORENSICS & BOT WEATHER RADAR
          ================================================================= -->
     <section class="view-section" id="view-forensics" aria-label="Relist Forensics and Production Log Audit">
+      <div class="panel-card forensics-weather-banner" id="forensics-weather-banner">
+        <div class="weather-left">
+          <span class="panel-kicker">GRAIL WEATHER CLOCK // LIVE BOT WINDOW MONITOR</span>
+          <h2 id="weather-headline">Calculating Current Bot Burst Window...</h2>
+        </div>
+        <div class="weather-stats" id="weather-stats-chips"></div>
+      </div>
+
       <div class="section-grid-2">
         <div class="panel-card">
           <div class="panel-title">
@@ -274,7 +526,7 @@
             <span class="kpi-badge badge-amber">31.5% of Alerts</span>
           </div>
           <p class="panel-subtitle">
-            24-hour alert spectrum across 225 production notifications in <code>sniper.log</code>. Automated mega-sellers delete and re-upload identical copies at <code>01:00</code> and <code>12:00–13:59</code> with fresh Listing IDs to camp #1 on "Listed Newest".
+            24-hour alert spectrum across production notifications in <code>sniper.log</code>. Automated mega-sellers delete and re-upload identical copies at <code>01:00</code> and <code>12:00–13:59</code> with fresh Listing IDs.
           </p>
           <div class="chart-stage" id="chart-hourly-alerts"></div>
         </div>
@@ -288,22 +540,33 @@
             <span class="kpi-badge badge-crimson">288 → 576 Fixed</span>
           </div>
           <p class="panel-subtitle">
-            Daily check volume from <code>sniper.log</code>. Baseline 5-minute polling is exactly <strong>288 runs/day</strong> (dashed cyan line). On Nov 12, duplicate repetition triggers launched two offset clocks (<strong>576/day</strong>); resolved in <code>setup_task.ps1</code> + <code>SingleInstanceLock</code>.
+            Daily check volume from <code>sniper.log</code>. Baseline 5-minute polling is exactly <strong>288 runs/day</strong> (dashed cyan line). Resolved in <code>setup_task.ps1</code> + <code>SingleInstanceLock</code>.
           </p>
           <div class="chart-stage" id="chart-daily-checks"></div>
         </div>
+      </div>
+
+      <div class="panel-card" style="margin-bottom: 18px;">
+        <div class="panel-title">
+          <div class="panel-title-left">
+            <span class="panel-kicker">BLUFF DETECTOR // TRAJECTORY AUDIT</span>
+            <h2>Price Cut vs. Yo-Yo Bluff vs. Flatline Relists</h2>
+          </div>
+          <span class="kpi-badge badge-cyan" id="forensics-bluff-badge">Group Audit</span>
+        </div>
+        <div class="forensics-bluff-grid" id="forensics-bluff-grid"></div>
       </div>
 
       <div class="panel-card" style="margin-bottom: 20px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">SELLER RADAR</span>
-            <h2>Seller Volume &amp; Auto-Relist Leaderboard</h2>
+            <h2>Seller Volume, Bundle Stock &amp; Auto-Relist Leaderboard</h2>
           </div>
           <span class="kpi-badge badge-cyan" id="forensics-sellers-count">88 Sellers</span>
         </div>
         <p class="panel-subtitle">
-          All Wantlist sellers ranked by notification volume. Toggle <strong>Drop-Only</strong> (suppresses same-price relists while preserving genuine cuts) or <strong>Mute</strong> — changes persist locally and sync into <code>sniper_config.json</code>.
+          All Wantlist sellers ranked by notification volume. Toggle <strong>Drop-Only</strong> (suppresses same-price relists while preserving genuine cuts) or <strong>Mute</strong> — changes persist locally and sync straight into <code>sniper_config.json</code>.
         </p>
         <div class="table-toolbar">
           <input type="search" id="seller-leaderboard-search" class="form-input form-input-sm" placeholder="Filter all sellers by handle..." autocomplete="off" />
@@ -315,7 +578,7 @@
               <tr>
                 <th>Seller</th>
                 <th>Drops</th>
-                <th>LPs</th>
+                <th>LPs / Bundles</th>
                 <th>Auto-Relists</th>
                 <th>Min / Avg</th>
                 <th>Profile</th>
@@ -331,13 +594,10 @@
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">CHURN INDEX</span>
-            <h2>Most Relisted Wantlist Releases</h2>
+            <h2>Most Relisted Wantlist Releases &amp; Price Trajectories</h2>
           </div>
           <span class="kpi-badge badge-magenta">Top 15 Targets</span>
         </div>
-        <p class="panel-subtitle">
-          Releases generating the highest repeat volume in <code>seed_snapshot.json</code>. <em>Dayseeker – Dark Sun</em> (50x) and <em>Creature In The Black Night</em> (40x) alone drove 41.3% of historical alert noise.
-        </p>
         <div class="data-table-wrap">
           <table class="data-table" id="table-release-churn">
             <thead>
@@ -346,6 +606,7 @@
                 <th>Alerts</th>
                 <th>Sellers</th>
                 <th>Top Seller</th>
+                <th>Trajectory</th>
                 <th>Observed Range</th>
                 <th>Vault</th>
               </tr>
@@ -357,9 +618,29 @@
     </section>
 
     <!-- =================================================================
-         VIEW 3: COLLECTION VAULT CROSS-CHECK (discogs_collection BRIDGE)
+         VIEW 5: SIBLING VAULT SPLIT-SCREEN SHOWDOWN & WANTLIST PRUNER
          ================================================================= -->
-    <section class="view-section" id="view-vault" aria-label="Discogs Collection Vault Cross-Check">
+    <section class="view-section" id="view-vault" aria-label="Collection Vault Split-Screen Showdown and Live Wantlist Cross-Check">
+      <div class="panel-card" style="margin-bottom: 18px;">
+        <div class="panel-title">
+          <div class="panel-title-left">
+            <span class="panel-kicker">VARIANT HUNTER // SPLIT-SCREEN SHOWDOWN</span>
+            <h2>Your Shelf Pressing vs. Wantlist Target</h2>
+          </div>
+          <div class="vault-action-bar" style="margin-bottom:0;">
+            <button type="button" class="btn-action btn-sm btn-neon-cyan" id="btn-refresh-sibling-vault">
+              <span>Live Fetch Vault JSON</span>
+            </button>
+            <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" class="btn-action btn-sm">Open Full Vault</a>
+          </div>
+        </div>
+        <div class="vault-sync-banner" id="sibling-vault-sync-banner">
+          Loading live Collection Vault bridge from krunked-fpv.github.io/discogs_collection/data/collection.json...
+        </div>
+        <div class="showdown-tabs-rail" id="vault-showdown-tabs"></div>
+        <div class="showdown-stage" id="vault-showdown-stage"></div>
+      </div>
+
       <div class="panel-card vault-hero-card">
         <div class="panel-title">
           <div class="panel-title-left">
@@ -370,7 +651,7 @@
         </div>
 
         <p class="panel-subtitle" id="vault-explainer-copy">
-          Your static snapshot (<code>seed_snapshot.json</code>) preserves a rolling history of the last 218 Wantlist notifications, including records you later bought and added to your <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" class="inline-neon-link">159-LP Collection Vault</a>. We query your <strong>live Discogs Wantlist</strong> (<code>GET /users/krunked/wants</code>) so cleared historical records are separated from genuine active overlaps.
+          Your static snapshot (<code>seed_snapshot.json</code>) preserves rolling Wantlist notifications, including records you later bought and added to your <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" class="inline-neon-link">159-LP Collection Vault</a>. We query your <strong>live Discogs Wantlist</strong> so cleared historical records separate cleanly from genuine active overlaps.
         </p>
 
         <div class="vault-action-bar">
@@ -440,14 +721,11 @@
       <div class="panel-card">
         <div class="panel-title">
           <div class="panel-title-left">
-            <span class="panel-kicker">VARIANT HUNTER // INTENTIONAL TARGETS</span>
+            <span class="panel-kicker">VARIANT HUNTER // ALL TARGETS</span>
             <h2 id="vault-variants-heading">9 Variant Upgrade Targets (Alternate Pressings of Owned Albums)</h2>
           </div>
           <span class="kpi-badge badge-magenta">Variant Watchlist</span>
         </div>
-        <p class="panel-subtitle">
-          These are <strong>not</strong> false-positive overlaps — they are distinct colored-vinyl variants or alternate pressings of albums already on your shelf. Sniper tags these as <strong>VARIANT HUNTER</strong> in alerts so you always know which pressing you already own.
-        </p>
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
@@ -466,20 +744,69 @@
     </section>
 
     <!-- =================================================================
-         VIEW 4: SNIPER RULES & LIVE DISCOGS API v2.0 CONSOLE
+         VIEW 6: TWO-WAY GITHUB REMOTE CONTROL, DISCOGS API & RULE BUILDER
          ================================================================= -->
-    <section class="view-section" id="view-rules" aria-label="Sniper Configuration and Live Discogs API Console">
+    <section class="view-section" id="view-rules" aria-label="Two-Way GitHub Sync, Live Discogs API Console &amp; Sniper Rules">
+      <div class="panel-card" style="margin-bottom: 18px;">
+        <div class="panel-title">
+          <div class="panel-title-left">
+            <span class="panel-kicker">BREAKING THE STATIC AIRGAP // TWO-WAY REPO SYNC</span>
+            <h2>GitHub Remote Control &amp; Local Rig Heartbeat</h2>
+          </div>
+          <span class="kpi-badge badge-cyan" id="github-sync-badge">krunked-fpv/discogs_sniper</span>
+        </div>
+        <p class="panel-subtitle">
+          Pull fresh <code>seed_snapshot.json</code> &amp; <code>sniper_config.json</code> directly from GitHub without waiting for a Pages redeploy. Add an optional browser-only fine-grained GitHub PAT (stored strictly in <code>localStorage</code>) to commit rule/target changes back to <code>main</code> and dispatch Pages builds remotely.
+        </p>
+
+        <div class="vault-sync-banner" id="github-sync-status-banner">
+          Checking upstream snapshot freshness and local 5-min Task Scheduler rig heartbeat...
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="input-github-repo">GitHub Repository (owner/repo)</label>
+            <input type="text" id="input-github-repo" class="form-input" value="krunked-fpv/discogs_sniper" />
+          </div>
+          <div class="form-field">
+            <label for="input-github-pat">Fine-Grained GitHub PAT (Local Browser Only)</label>
+            <div class="password-input-wrap">
+              <input type="password" id="input-github-pat" class="form-input" placeholder="github_pat_... (Contents:RW + Actions:RW)" />
+              <button type="button" class="btn-reveal-token" id="btn-toggle-gh-pat-vis">Show</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rules-btn-row" style="margin-bottom:0;">
+          <button type="button" class="btn-action btn-neon-cyan" id="btn-pull-live-snapshot">
+            <span>Pull Live Repo Snapshot</span>
+          </button>
+          <button type="button" class="btn-action btn-neon-lime" id="btn-push-github-config">
+            <span>Commit sniper_config.json to GitHub</span>
+          </button>
+          <button type="button" class="btn-action btn-neon-amber" id="btn-trigger-pages-deploy">
+            <span>Trigger Pages Workflow</span>
+          </button>
+          <button type="button" class="btn-action" id="btn-save-github-pat">
+            <span>Save PAT Locally</span>
+          </button>
+          <button type="button" class="btn-action" id="btn-clear-github-pat">
+            <span>Forget PAT</span>
+          </button>
+        </div>
+      </div>
+
       <div class="section-grid-2">
         <div class="panel-card">
           <div class="panel-title">
             <div class="panel-title-left">
-              <span class="panel-kicker">OFFICIAL REST API v2.0</span>
-              <h2>Live Discogs API Connection &amp; Diagnostics</h2>
+              <span class="panel-kicker">OFFICIAL REST API v2.0 + TOKEN-BUCKET HYDRATOR</span>
+              <h2>Live Discogs API Connection &amp; Background Sweeper</h2>
             </div>
             <span class="kpi-badge badge-cyan" id="rules-api-badge">api.discogs.com</span>
           </div>
           <p class="panel-subtitle">
-            Browser requests use preflight-free query authentication (<code>?token=</code>) for fast live availability, price suggestions, and Wantlist syncing. Your token stays strictly inside your browser's local storage.
+            Preflight-free <code>?token=</code> requests power silent background enrichment (<code>/marketplace/price_suggestions</code>, <code>/marketplace/stats</code>, and Sold detection) cached in IndexedDB.
           </p>
 
           <div class="form-grid">
@@ -509,6 +836,13 @@
             </button>
           </div>
 
+          <div class="rules-btn-row">
+            <button type="button" class="btn-action btn-neon-lime btn-sm" id="btn-toggle-autohydrate">Auto-Hydrate: ON</button>
+            <button type="button" class="btn-action btn-sm" id="btn-sweep-unrated">Sweep Visible Unrated</button>
+            <button type="button" class="btn-action btn-sm" id="btn-clear-idb-cache">Clear IndexedDB Cache</button>
+            <span class="hydrator-metrics-readout" id="hydrator-metrics-readout">IDB: 0 cached</span>
+          </div>
+
           <div class="code-block" id="api-console-output">// Ready. Click "Save &amp; Verify Identity" or "Test Price Suggestions" to query https://api.discogs.com live.</div>
         </div>
 
@@ -521,7 +855,7 @@
             <span class="kpi-badge badge-lime">Auto-Persisted</span>
           </div>
           <p class="panel-subtitle">
-            Configure how <code>discogs_sniper.py</code> suppresses relist spam and filters Wantlist drops on your 5-minute schedule. Edits save locally in your browser and export directly to <code>sniper_config.json</code>.
+            Configure how <code>discogs_sniper.py</code> suppresses relist spam and filters Wantlist drops on your 5-minute schedule. Edits save locally and can be downloaded or committed straight to GitHub.
           </p>
 
           <div class="form-grid">
@@ -573,7 +907,19 @@
     </section>
   </main>
 
-  <!-- PRESSING QUICK-INSPECT NEON LIGHTBOX MODAL -->
+  <!-- CMD/CTRL+K TACTICAL COMMAND PALETTE -->
+  <div class="modal-backdrop" id="cmd-palette-backdrop" hidden>
+    <div class="inspect-modal cmd-palette-modal" role="dialog" aria-modal="true" aria-label="Tactical Command Palette">
+      <div class="cmd-palette-header">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="cmd-palette-input" class="cmd-palette-input" placeholder="Jump to album, seller, command, lighting mode, or view..." autocomplete="off" />
+        <kbd class="search-kbd">ESC</kbd>
+      </div>
+      <div class="cmd-palette-results" id="cmd-palette-results"></div>
+    </div>
+  </div>
+
+  <!-- PRESSING QUICK-INSPECT + HAGGLE + TRAJECTORY LIGHTBOX MODAL -->
   <div class="modal-backdrop" id="inspect-modal-backdrop" hidden>
     <div class="inspect-modal" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title">
       <button type="button" class="modal-close-btn" id="btn-close-inspect-modal" aria-label="Close pressing inspector">
@@ -583,28 +929,32 @@
     </div>
   </div>
 
-  <!-- QUICK API CONNECT MODAL -->
+  <!-- QUICK API & GITHUB SYNC CONNECT MODAL -->
   <div class="modal-backdrop" id="api-modal-backdrop" hidden>
     <div class="inspect-modal api-quick-modal" role="dialog" aria-modal="true" aria-labelledby="api-modal-heading">
       <button type="button" class="modal-close-btn" id="btn-close-api-modal" aria-label="Close API connect dialog">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-      <span class="panel-kicker">DISCOGS REST API v2.0</span>
-      <h2 id="api-modal-heading" style="margin: 4px 0 8px;">Connect Personal Access Token</h2>
-      <p class="panel-subtitle" style="margin-bottom: 16px;">
-        Unlocks live condition-graded <code>/marketplace/price_suggestions</code>, 60 req/min rate budget, and live Wantlist verification. Stored locally in your browser only.
+      <span class="panel-kicker">DISCOGS REST API v2.0 + GITHUB REMOTE</span>
+      <h2 id="api-modal-heading" style="margin: 4px 0 8px;">Connect Local Browser Credentials</h2>
+      <p class="panel-subtitle" style="margin-bottom: 14px;">
+        Tokens stay strictly in your browser <code>localStorage</code> and unlock 60 req/min Discogs API hydration plus optional GitHub config pushes.
       </p>
-      <div class="form-field" style="margin-bottom: 12px;">
+      <div class="form-field" style="margin-bottom: 10px;">
         <label for="quick-api-username">Discogs Username</label>
         <input type="text" id="quick-api-username" class="form-input" value="krunked" />
       </div>
-      <div class="form-field" style="margin-bottom: 16px;">
-        <label for="quick-api-token">Personal Access Token</label>
+      <div class="form-field" style="margin-bottom: 10px;">
+        <label for="quick-api-token">Discogs Personal Access Token</label>
         <input type="password" id="quick-api-token" class="form-input" placeholder="Paste DISCOGS_TOKEN from discogs.com/settings/developers" />
+      </div>
+      <div class="form-field" style="margin-bottom: 16px;">
+        <label for="quick-github-pat">GitHub Fine-Grained PAT (Optional)</label>
+        <input type="password" id="quick-github-pat" class="form-input" placeholder="Optional github_pat_... for committing sniper_config.json" />
       </div>
       <div class="rules-btn-row" style="margin-bottom: 0;">
         <button type="button" class="btn-action btn-neon-cyan" id="btn-quick-api-save">Verify &amp; Sync Live</button>
-        <button type="button" class="btn-action" id="btn-quick-api-open-console">Open Full API Console</button>
+        <button type="button" class="btn-action" id="btn-quick-api-open-console">Open Full Remote Console</button>
       </div>
     </div>
   </div>
@@ -612,7 +962,7 @@
   <!-- NON-BLOCKING NEON TOAST STACK -->
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
 
-  <!-- FIXED BOTTOM 30-SECOND STUDIO AUDIO PREVIEW DECK -->
+  <!-- FIXED BOTTOM WEBAUDIO MINI-TURNTABLE TRANSPORT BAR -->
   <aside class="audio-transport-bar" id="audio-transport-bar" aria-label="30-Second Studio Audio Preview Player">
     <div class="transport-inner">
       <div class="transport-track-info">
@@ -622,12 +972,13 @@
         </div>
         <div class="transport-text-wrap">
           <div class="transport-title" id="audio-player-title">Select a record to audition</div>
-          <div class="transport-sub" id="audio-player-sub">30s Studio Preview (iTunes / Deezer)</div>
+          <div class="transport-sub" id="audio-player-sub">30s Studio Preview (WebAudio DSP)</div>
         </div>
       </div>
 
       <div class="transport-controls">
         <button type="button" class="btn-action btn-neon-cyan btn-sm" id="btn-audio-play-pause">Pause</button>
+        <button type="button" class="btn-micro" id="btn-mini-rpm" title="Switch 33⅓ vs 45 RPM speed">33⅓</button>
         <div class="progress-track" id="audio-progress-track" role="slider" aria-label="Audio playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
           <div class="progress-fill" id="audio-progress-fill"></div>
           <div class="progress-thumb" id="audio-progress-thumb"></div>
@@ -636,6 +987,7 @@
       </div>
 
       <div class="transport-right-actions">
+        <button type="button" class="btn-action btn-sm" id="btn-mini-open-deck" title="Open record in 3D Crate &amp; Turntable Studio">Deck</button>
         <a href="#" target="_blank" rel="noopener" class="btn-action btn-neon-lime btn-sm" id="audio-player-cart-btn">Add to Cart</a>
         <button type="button" class="btn-action btn-sm" id="btn-audio-close" title="Close audio preview" aria-label="Close audio preview">
           <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
