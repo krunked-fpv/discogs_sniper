@@ -10,6 +10,9 @@ sniper.lock
 debug_*.png
 debug_*.html
 
+# Staged GitHub Pages artifact directory
+_site/
+
 # Python bytecode & virtual environments
 __pycache__/
 *.py[cod]

@@ -1,0 +1,405 @@
+/* =====================================================================
+   VIEW 2: 3D VINYL CRATE & DIRECT-DRIVE TURNTABLE STUDIO
+   ===================================================================== */
+.crate-studio-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+@media (max-width: 1080px) {
+  .crate-studio-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.crate-rack-panel,
+.turntable-deck-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.crate-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crate-filter-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.crate-filter-chip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid var(--border-hairline);
+  background: rgba(4, 6, 13, 0.85);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.crate-filter-chip:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.crate-filter-chip.active {
+  background: var(--neon-cyan-soft);
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+}
+
+.crate-3d-viewport {
+  position: relative;
+  height: 365px;
+  background:
+    radial-gradient(ellipse 75% 50% at 50% 75%, rgba(0, 240, 255, 0.08), transparent 72%),
+    linear-gradient(180deg, rgba(4, 6, 12, 0.94) 0%, rgba(11, 15, 25, 0.96) 100%);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  perspective: 1100px;
+  overflow: hidden;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.crate-3d-viewport:focus {
+  outline: 1px solid var(--neon-cyan);
+}
+
+.crate-3d-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.crate-sleeve-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 224px;
+  height: 244px;
+  border-radius: var(--radius-md);
+  background: #0d121f;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 22px 42px rgba(0, 0, 0, 0.85);
+  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease, border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.crate-sleeve-card.is-active {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 28px 54px rgba(0, 0, 0, 0.9), 0 0 28px -6px var(--neon-cyan-glow);
+}
+
+.crate-sleeve-card.is-foil::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(125deg, transparent 25%, rgba(0, 240, 255, 0.14) 44%, rgba(255, 31, 143, 0.16) 54%, transparent 74%);
+  pointer-events: none;
+}
+
+.crate-sleeve-art {
+  width: 100%;
+  height: 186px;
+  object-fit: cover;
+  display: block;
+}
+
+.crate-sleeve-footer {
+  flex: 1;
+  padding: 7px 10px;
+  background: rgba(5, 8, 15, 0.96);
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.crate-sleeve-title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crate-sleeve-sub {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--neon-lime);
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.crate-scrubber-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.crate-slider {
+  flex: 1;
+  min-width: 120px;
+}
+
+.crate-counter-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--neon-cyan);
+  min-width: 64px;
+  text-align: right;
+}
+
+/* Direct-Drive Quartz Turntable Chassis */
+.deck-telemetry-leds {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.led-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: rgba(4, 6, 13, 0.95);
+  border: 1px solid var(--border-hairline);
+  color: var(--neon-lime);
+}
+
+.led-chip.led-cyan {
+  color: var(--neon-cyan);
+}
+
+.turntable-chassis {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  background: rgba(4, 6, 13, 0.9);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+@media (max-width: 720px) {
+  .turntable-chassis {
+    grid-template-columns: 1fr;
+  }
+}
+
+.platter-bay {
+  position: relative;
+  width: 256px;
+  height: 256px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platter-strobe-ring {
+  width: 248px;
+  height: 248px;
+  border-radius: 50%;
+  padding: 8px;
+  background:
+    repeating-conic-gradient(rgba(255, 255, 255, 0.18) 0deg 2deg, transparent 2deg 6deg),
+    radial-gradient(circle, #0e131e 58%, #04050a 100%);
+  border: 2px solid rgba(148, 163, 184, 0.25);
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.9), 0 0 32px -12px var(--neon-cyan-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#turntable-platter-canvas {
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  display: block;
+}
+
+.turntable-tonearm {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  width: 78px;
+  height: 196px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transform-origin: 54px 22px;
+  transform: rotate(-22deg);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 4;
+}
+
+.turntable-tonearm.engaged {
+  transform: rotate(10deg);
+}
+
+.tonearm-pivot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #64748b, #1e293b 70%);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.tonearm-tube {
+  position: absolute;
+  top: 32px;
+  right: 22px;
+  width: 5px;
+  height: 132px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #94a3b8, #e2e8f0, #475569);
+  transform: rotate(8deg);
+  transform-origin: top center;
+}
+
+.tonearm-headshell {
+  position: absolute;
+  bottom: 18px;
+  left: 14px;
+  width: 14px;
+  height: 26px;
+  border-radius: 3px;
+  background: #0f172a;
+  border: 1px solid var(--neon-cyan);
+  transform: rotate(18deg);
+  box-shadow: 0 0 10px var(--neon-cyan-glow);
+}
+
+.deck-dsp-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.deck-meta-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.deck-wax-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--neon-magenta);
+  font-weight: 600;
+}
+
+.deck-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.deck-price-main {
+  font-family: var(--font-hud);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--neon-lime);
+}
+
+.deck-grade-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.deck-track-now {
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  color: var(--neon-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-controls-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.pitch-fader-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.pitch-fader-row .price-slider {
+  flex: 1;
+}
+
+.fft-visualizer-wrap {
+  background: rgba(2, 4, 9, 0.95);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+}
+
+#turntable-fft-canvas {
+  width: 100%;
+  height: 70px;
+  display: block;
+}
+
+.deck-tracklist-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.track-chip-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  border: 1px solid var(--border-hairline);
+  background: rgba(15, 21, 35, 0.85);
+  color: var(--text-secondary);
+  cursor: pointer;
+  max-width: 210px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-chip-btn.active {
+  background: var(--neon-magenta-soft);
+  color: #fff;
+  border-color: var(--neon-magenta);
+}
