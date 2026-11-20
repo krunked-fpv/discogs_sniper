@@ -1,9 +1,12 @@
-$ProjectDir = "C:\DiscogsSniper"
+$ProjectDir = "C:\discogs_sniper"
 $ScriptFile = "discogs_sniper.py"
 $IntervalSeconds = 300
 
+if (-not (Test-Path $ProjectDir)) {
+    $ProjectDir = $PSScriptRoot
+}
 Set-Location -Path $ProjectDir
-Write-Host "=== Discogs Sniper Loop Started ===" -ForegroundColor Cyan
+Write-Host "=== Discogs Sniper v2.0 Loop Started ($ProjectDir) ===" -ForegroundColor Cyan
 Write-Host "Press Ctrl + C at any time to stop.`n" -ForegroundColor Yellow
 
 try {

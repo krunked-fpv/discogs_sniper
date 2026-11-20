@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0.0",
-  "compiled_at": "2026-11-20T01:49:23",
+  "compiled_at": "2026-11-20T02:38:57",
   "snapshot_updated_at": "2026-11-20T01:49:23",
   "discogs_username": "krunked",
   "wantlist_url": "https://www.discogs.com/shop/mywants/?formatDescription=LP&formatName=Vinyl&shipsFrom=United+States&sort=listedNewest",
@@ -42,7 +42,7 @@
     "collection_vault_bridge": {
       "enabled": true,
       "suppress_exact_owned_alerts": false,
-      "local_collection_path": "C:\\DiscogsCollection\\discogs_collection\\data\\collection.json"
+      "local_collection_path": "C:\\Discogs_collection\\data\\collection.json"
     },
     "filters": {
       "min_media_condition": "VG+",

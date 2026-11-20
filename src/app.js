@@ -1056,7 +1056,7 @@
       collection_vault_bridge: {
         enabled: true,
         suppress_exact_owned_alerts: suppressOwned,
-        local_collection_path: "C:\\DiscogsCollection\\discogs_collection\\data\\collection.json",
+        local_collection_path: "C:\\Discogs_collection\\data\\collection.json",
       },
       filters: {
         min_media_condition: appState.conditionFilter === "ALL" ? "VG+" : appState.conditionFilter,
