@@ -14,8 +14,33 @@ class TestDiscogsSniperV2(unittest.TestCase):
             sniper.sanitize_token('  "Discogs token=abc123XYZ_-\x16\n" '),
             "abc123XYZ_-",
         )
+        self.assertEqual(sniper.sanitize_token("$env:DISCOGS_TOKEN"), "")
+        self.assertEqual(sniper.sanitize_token("your_discogs_personal_access_token_here"), "")
         self.assertEqual(sniper.sanitize_username("  'krunked\n' "), "krunked")
         self.assertEqual(sniper.sanitize_username(""), "krunked")
+        self.assertEqual(str(sniper.LOCAL_SNIPER_DIR), r"C:\discogs_sniper")
+        self.assertEqual(str(sniper.SIBLING_COLLECTION_DIR), r"C:\Discogs_collection")
+
+    def test_dotenv_expansion_and_materialization(self):
+        import os
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            env_p = Path(tmpdir) / ".env"
+            env_p.write_text("DISCOGS_USERNAME=krunked\nDISCOGS_TOKEN=$env:DISCOGS_TOKEN\n", encoding="utf-8")
+            old_val = os.environ.get("DISCOGS_TOKEN")
+            try:
+                os.environ["DISCOGS_TOKEN"] = "ValidTestDiscogsToken1234567890"
+                parsed = sniper.parse_dotenv_file(env_p)
+                self.assertEqual(parsed.get("DISCOGS_TOKEN"), "ValidTestDiscogsToken1234567890")
+                ok = sniper.sync_resolved_token_to_local_dotenv("ValidTestDiscogsToken1234567890", env_path=env_p, force=True)
+                self.assertTrue(ok)
+                self.assertIn("DISCOGS_TOKEN=ValidTestDiscogsToken1234567890", env_p.read_text(encoding="utf-8"))
+            finally:
+                if old_val is None:
+                    os.environ.pop("DISCOGS_TOKEN", None)
+                else:
+                    os.environ["DISCOGS_TOKEN"] = old_val
 
     def test_wax_shader_deterministic_parser(self):
         clear_wax = builder.parse_wax_shader("Stereo, Album, Limited Edition, Repress, LP, Ultra Clear")
