@@ -352,12 +352,42 @@ def resolve_runtime_credentials(
                 return reg_val, f"Windows HKCU/HKLM ({k})"
         return default, ""
 
-    if cli_token and not is_env_reference_or_placeholder(cli_token):
-        raw_token, resolved_from = cli_token, "CLI --token"
-    else:
-        raw_token, resolved_from = get_var(token_keys)
+    token = ""
+    resolved_from = ""
+    if cli_token and sanitize_token(cli_token):
+        token = sanitize_token(cli_token)
+        resolved_from = "CLI --token"
 
-    token = sanitize_token(raw_token)
+    if not token:
+        for k in token_keys:
+            env_val = os.getenv(k)
+            s_tok = sanitize_token(env_val)
+            if s_tok:
+                token = s_tok
+                resolved_from = f"process env ({k})"
+                break
+
+    if not token:
+        for candidate in reversed(get_candidate_dotenv_paths()):
+            parsed = parse_dotenv_file(candidate)
+            for k in token_keys:
+                s_tok = sanitize_token(parsed.get(k))
+                if s_tok:
+                    token = s_tok
+                    resolved_from = f"{candidate} ({k})"
+                    break
+            if token:
+                break
+
+    if not token:
+        for k in token_keys:
+            reg_val = query_windows_env_var(k)
+            s_tok = sanitize_token(reg_val)
+            if s_tok:
+                token = s_tok
+                resolved_from = f"Windows HKCU/HKLM ({k})"
+                break
+
     if token:
         sync_resolved_token_to_local_dotenv(token)
 
@@ -1724,8 +1754,10 @@ def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") ->
         for p in get_candidate_dotenv_paths():
             if p.exists():
                 parsed_p = parse_dotenv_file(p)
-                has_tok = any(k in parsed_p for k in ("DISCOGS_TOKEN", "DISCOGS_API_TOKEN", "DISCOGS_PAT"))
-                print(f"    - {p} (EXISTS, token_parsed={has_tok})")
+                found_vals = [parsed_p[k] for k in ("DISCOGS_TOKEN", "DISCOGS_API_TOKEN", "DISCOGS_PAT") if k in parsed_p]
+                raw_len = len(found_vals[0]) if found_vals else 0
+                san_len = len(sanitize_token(found_vals[0])) if found_vals else 0
+                print(f"    - {p} (EXISTS, raw_len={raw_len}, sanitized_len={san_len})")
             else:
                 print(f"    - {p} (missing)")
 
