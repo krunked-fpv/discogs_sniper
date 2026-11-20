@@ -18,9 +18,11 @@ git add -A
 git commit -m "feat: pressing-first Discogs collection vault and deterministic sync pipeline"
 git push origin main
 
-# 4. If GitHub CLI (gh) is installed, set DISCOGS_TOKEN and enable GitHub Pages
+# 4. If GitHub CLI (gh) is installed, set DISCOGS_TOKEN from environment and enable GitHub Pages
 if (Get-Command gh -ErrorAction SilentlyContinue) {
-    "HWLciALlIIgSGquWsckHVkbEXCbmXlcrULmVdogi" | gh secret set DISCOGS_TOKEN --repo "krunked-fpv/discogs_collection"
+    if ($env:DISCOGS_TOKEN) {
+        $env:DISCOGS_TOKEN | gh secret set DISCOGS_TOKEN --repo "krunked-fpv/discogs_collection"
+    }
     gh api -X POST "repos/krunked-fpv/discogs_collection/pages" -f build_type="workflow"
     gh api -X PUT "repos/krunked-fpv/discogs_collection/pages" -f build_type="workflow"
     gh workflow run "sync-and-deploy.yml" --repo "krunked-fpv/discogs_collection"

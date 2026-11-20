@@ -1,0 +1,20 @@
+# Environment & secrets (never commit tokens or app passwords)
+.env
+.env.*
+!.env.example
+
+# Persistent Playwright browser profile & runtime state
+chrome_discogs_profile/
+sniper.log
+sniper.lock
+
+# Temporary debug snapshots
+debug_*.png
+debug_*.html
+
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/

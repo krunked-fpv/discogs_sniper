@@ -27,10 +27,11 @@ $Action = New-ScheduledTaskAction `
     -Argument "`"$ScriptPath`"" `
     -WorkingDirectory $ProjectDir
 
-# 4. Define Triggers: start immediately + at Windows Logon, repeating every 5 minutes indefinitely
+# 4. Define ONE clean 5-minute repeating trigger + a single non-repeating AtLogOn bootstrap
+#    (v0.1.0-alpha attached RepetitionInterval to BOTH $RepeatTrigger and $LogonTrigger,
+#     causing two offset 5-minute schedules = 576 runs/day instead of 288 runs/day!)
 $RepeatTrigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 5)
 $LogonTrigger  = New-ScheduledTaskTrigger -AtLogOn
-$LogonTrigger.Repetition = $RepeatTrigger.Repetition
 
 # 5. Task Settings: allow on battery, don't overlap instances, timeout stuck runs after 3 mins
 $Settings = New-ScheduledTaskSettingsSet `
@@ -46,7 +47,7 @@ Register-ScheduledTask `
     -Action $Action `
     -Trigger @($LogonTrigger, $RepeatTrigger) `
     -Settings $Settings `
-    -Description "Checks Discogs Wantlist every 5 minutes in the background." `
+    -Description "Discogs Sniper v2.0: Hybrid API + GraphQL Wantlist Check every 5 minutes (288 runs/day)." `
     -Force | Out-Null
 
-Write-Host "`nScheduled Task '$TaskName' registered and active!" -ForegroundColor Green
+Write-Host "`nScheduled Task '$TaskName' v2.0 registered and active (single 5-min clock, 288 runs/day)!" -ForegroundColor Green
