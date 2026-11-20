@@ -158,18 +158,31 @@ def query_windows_env_var(var_name: str) -> str:
     return ""
 
 
+def _read_text_auto_encoding(path: Path) -> str:
+    raw = path.read_bytes()
+    if raw.startswith(b"\xff\xfe") or raw.startswith(b"\xfe\xff"):
+        return raw.decode("utf-16", errors="ignore")
+    if raw.startswith(b"\xef\xbb\xbf"):
+        return raw.decode("utf-8-sig", errors="ignore")
+    if b"\x00" in raw[:64]:
+        return raw.decode("utf-16-le", errors="ignore")
+    return raw.decode("utf-8", errors="ignore")
+
+
 def parse_dotenv_file(dotenv_path: Path) -> dict[str, str]:
-    """Parses a .env file, automatically expanding $env:VAR / ${VAR} / %VAR% references from the system environment."""
+    """Parses a .env file (UTF-8, UTF-8 BOM, or UTF-16LE), expanding $env:VAR / ${VAR} / %VAR% references."""
     values: dict[str, str] = {}
     if not dotenv_path.exists():
         return values
     try:
-        for line in dotenv_path.read_text(encoding="utf-8", errors="ignore").splitlines():
-            s = line.strip()
+        for line in _read_text_auto_encoding(dotenv_path).splitlines():
+            s = line.lstrip("\ufeff").strip()
             if not s or s.startswith("#") or "=" not in s:
                 continue
+            if s.lower().startswith("export "):
+                s = s[7:].strip()
             k, v = s.split("=", 1)
-            key = k.strip()
+            key = k.lstrip("\ufeff").strip()
             val = v.strip().strip("\"'` ")
             if val.startswith("$env:"):
                 ref_name = val[5:].strip()
@@ -278,6 +291,20 @@ def load_sniper_config() -> dict[str, Any]:
     return default_cfg
 
 
+def get_candidate_dotenv_paths() -> list[Path]:
+    return [
+        LEGACY_COLLECTION_DIR / ".env",
+        SIBLING_COLLECTION_DIR / "discogs_collection" / ".env",
+        SIBLING_COLLECTION_DIR / ".env",
+        Path(r"C:\discogs_collection\.env"),
+        LEGACY_SNIPER_DIR / ".env",
+        LOCAL_SNIPER_DIR / ".env",
+        Path.cwd() / ".env",
+        BASE_DIR / ".env",
+        BASE_DIR / ".env.local",
+    ]
+
+
 def resolve_runtime_credentials(
     cli_token: str | None = None,
     cli_username: str | None = None,
@@ -287,55 +314,66 @@ def resolve_runtime_credentials(
     Resolves Discogs API + SMTP + ntfy credentials from:
       1. CLI flags (--token, --username)
       2. Process & Windows User/Machine Environment Variables (DISCOGS_TOKEN)
-      3. C:\\discogs_sniper\\.env (BASE_DIR / .env)
-      4. Legacy C:\\DiscogsSniper\\.env
-      5. Sibling C:\\discogs_collection\\.env or C:\\DiscogsCollection\\discogs_collection\\.env
+      3. C:\\Discogs_collection\\.env (and nested/legacy variants)
+      4. C:\\discogs_sniper\\.env (BASE_DIR / .env)
+      5. Legacy C:\\DiscogsSniper\\.env
     """
     cfg = config or load_sniper_config()
     dotenv_vars: dict[str, str] = {}
-    for candidate in (
-        LEGACY_COLLECTION_DIR / ".env",
-        SIBLING_COLLECTION_DIR / ".env",
-        LEGACY_SNIPER_DIR / ".env",
-        LOCAL_SNIPER_DIR / ".env",
-        Path.cwd() / ".env",
-        BASE_DIR / ".env",
-        BASE_DIR / ".env.local",
-    ):
-        dotenv_vars.update(parse_dotenv_file(candidate))
+    token_source = ""
+    token_keys = (
+        "DISCOGS_TOKEN",
+        "DISCOGS_API_TOKEN",
+        "DISCOGS_PERSONAL_ACCESS_TOKEN",
+        "DISCOGS_ACCESS_TOKEN",
+        "DISCOGS_PAT",
+    )
 
-    def get_var(keys: tuple[str, ...], default: str = "") -> str:
+    for candidate in get_candidate_dotenv_paths():
+        parsed = parse_dotenv_file(candidate)
+        if parsed:
+            dotenv_vars.update(parsed)
+            for tk in token_keys:
+                if tk in parsed and sanitize_token(parsed[tk]):
+                    token_source = str(candidate)
+
+    def get_var(keys: tuple[str, ...], default: str = "") -> tuple[str, str]:
         for k in keys:
             env_val = os.getenv(k)
             if env_val and not is_env_reference_or_placeholder(env_val):
-                return env_val.strip()
+                return env_val.strip(), f"process env ({k})"
         for k in keys:
             file_val = dotenv_vars.get(k)
             if file_val and not is_env_reference_or_placeholder(file_val):
-                return file_val.strip()
+                return file_val.strip(), token_source or f".env ({k})"
         for k in keys:
             reg_val = query_windows_env_var(k)
             if reg_val and not is_env_reference_or_placeholder(reg_val):
-                return reg_val
-        return default
+                return reg_val, f"Windows HKCU/HKLM ({k})"
+        return default, ""
 
-    raw_token = cli_token if (cli_token and not is_env_reference_or_placeholder(cli_token)) else get_var(("DISCOGS_TOKEN", "DISCOGS_API_TOKEN"))
+    if cli_token and not is_env_reference_or_placeholder(cli_token):
+        raw_token, resolved_from = cli_token, "CLI --token"
+    else:
+        raw_token, resolved_from = get_var(token_keys)
+
     token = sanitize_token(raw_token)
     if token:
         sync_resolved_token_to_local_dotenv(token)
 
-    raw_user = cli_username or get_var(("DISCOGS_USERNAME", "DISCOGS_USER"), cfg.get("discogs_username", "krunked"))
-    username = sanitize_username(raw_user, default="krunked")
+    raw_user, _ = get_var(("DISCOGS_USERNAME", "DISCOGS_USER"), cfg.get("discogs_username", "krunked"))
+    username = sanitize_username(raw_user if not cli_username else cli_username, default="krunked")
 
     alerts_cfg = cfg.get("alerts") or {}
-    email_to = get_var(("EMAIL_ADDRESS", "SNIPER_EMAIL_TO"), alerts_cfg.get("email_to", "alexgoresch@gmail.com"))
-    email_cc = get_var(("CC_EMAIL_ADDRESS", "SNIPER_EMAIL_CC"), alerts_cfg.get("email_cc", "mleven42@gmail.com"))
-    gmail_app_password = get_var(("GMAIL_APP_PASSWORD",), "")
-    ntfy_topic = get_var(("NTFY_TOPIC",), "")
-    ntfy_base = get_var(("NTFY_BASE",), alerts_cfg.get("ntfy_base", "https://ntfy.sh"))
+    email_to, _ = get_var(("EMAIL_ADDRESS", "SNIPER_EMAIL_TO"), alerts_cfg.get("email_to", "alexgoresch@gmail.com"))
+    email_cc, _ = get_var(("CC_EMAIL_ADDRESS", "SNIPER_EMAIL_CC"), alerts_cfg.get("email_cc", "mleven42@gmail.com"))
+    gmail_app_password, _ = get_var(("GMAIL_APP_PASSWORD",), "")
+    ntfy_topic, _ = get_var(("NTFY_TOPIC",), "")
+    ntfy_base, _ = get_var(("NTFY_BASE",), alerts_cfg.get("ntfy_base", "https://ntfy.sh"))
 
     return {
         "discogs_token": token,
+        "token_source": resolved_from,
         "discogs_username": username,
         "email_to": email_to,
         "email_cc": email_cc,
@@ -1667,19 +1705,29 @@ def run_check_on_page(
 # =====================================================================
 # CLI COMMANDS: --api-check & --prune-owned
 # =====================================================================
-def run_api_diagnostics(api_client: DiscogsAPIClient) -> int:
+def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") -> int:
     print("=" * 72)
     print(f"  DISCOGS SNIPER v{SNIPER_VERSION} // OFFICIAL DISCOGS API & VAULT DIAGNOSTICS")
     print("=" * 72)
     owned_by_rid, owned_by_album, _, _ = load_vault_lookup()
     print(f"[*] Collection Vault Bridge : {len(owned_by_rid)} owned LPs ({len(owned_by_album)} distinct albums)")
     print(f"[*] Configured Username     : @{api_client.username}")
-    token_status = (
-        f"CONFIGURED ({len(api_client.token)} chars)"
-        if api_client.is_authenticated
-        else r"NOT FOUND (set DISCOGS_TOKEN in .env or HKCU\Environment)"
-    )
+    if api_client.is_authenticated:
+        src_note = f" via {token_source}" if token_source else ""
+        token_status = f"CONFIGURED ({len(api_client.token)} chars{src_note})"
+    else:
+        token_status = r"NOT FOUND (set DISCOGS_TOKEN in .env or HKCU\Environment)"
     print(f"[*] Personal Access Token   : {token_status}")
+
+    if not api_client.is_authenticated:
+        print("[*] Checked .env paths:")
+        for p in get_candidate_dotenv_paths():
+            if p.exists():
+                parsed_p = parse_dotenv_file(p)
+                has_tok = any(k in parsed_p for k in ("DISCOGS_TOKEN", "DISCOGS_API_TOKEN", "DISCOGS_PAT"))
+                print(f"    - {p} (EXISTS, token_parsed={has_tok})")
+            else:
+                print(f"    - {p} (missing)")
 
     if api_client.is_authenticated:
         ident = api_client.get_identity()
@@ -1767,7 +1815,7 @@ def main():
         return
 
     if args.api_check:
-        sys.exit(run_api_diagnostics(api_client))
+        sys.exit(run_api_diagnostics(api_client, token_source=creds.get("token_source", "")))
 
     if args.prune_owned:
         sys.exit(run_prune_owned_wantlist(api_client, dry_run=args.dry_run))
