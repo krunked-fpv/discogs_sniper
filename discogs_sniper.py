@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Discogs Sniper v2.0 — Hybrid Official Discogs REST API v2.0 + In-Origin GraphQL + Virtual DOM Sniper."""
+"""Discogs Sniper v2.1-beta — Hybrid Official Discogs REST API v2.0 + In-Origin GraphQL + Virtual DOM Sniper."""
 
 import argparse
 from datetime import datetime, timedelta
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import html
 import json
 import logging
 import os
@@ -27,7 +28,7 @@ except ImportError:
 # =====================================================================
 # CONFIGURATION & PATHS
 # =====================================================================
-SNIPER_VERSION = "2.0.0"
+SNIPER_VERSION = "2.1.0-beta"
 DISCOGS_BASE = "https://www.discogs.com"
 DISCOGS_API_BASE = "https://api.discogs.com"
 USER_AGENT = f"KrunkedDiscogsSniper/{SNIPER_VERSION} +https://github.com/krunked-fpv/discogs_sniper"
@@ -49,20 +50,31 @@ LOCK_FILE = BASE_DIR / "sniper.lock"
 DATA_DIR = BASE_DIR / "data"
 RELEASES_CACHE_FILE = DATA_DIR / "releases_cache.json"
 VAULT_CROSSREF_FILE = DATA_DIR / "vault_crossref.json"
+WANTLIST_SYNC_FILE = DATA_DIR / "wantlist_sync.json"
 SIBLING_COLLECTION_DIR = Path(r"C:\Discogs_collection")
 LEGACY_COLLECTION_DIR = Path(r"C:\DiscogsCollection\discogs_collection")
 
 MAX_HISTORY = 2000
 LOCK_STALE_SECONDS = 180
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE, encoding="utf-8"),
-        logging.StreamHandler(sys.stdout),
-    ],
-)
+def configure_logging() -> None:
+    """Initializes file + stdout logging when running as a CLI/daemon (avoiding side effects on import)."""
+    root_logger = logging.getLogger()
+    has_file_handler = any(
+        isinstance(h, logging.FileHandler) and Path(getattr(h, "baseFilename", "")) == LOG_FILE
+        for h in root_logger.handlers
+    )
+    if has_file_handler:
+        return
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+        handlers=[
+            logging.FileHandler(LOG_FILE, encoding="utf-8"),
+            logging.StreamHandler(sys.stdout),
+        ],
+        force=True,
+    )
 
 _TOKEN_PLACEHOLDERS = {
     "your_discogs_personal_access_token_here",
@@ -1021,41 +1033,77 @@ def load_seed_listings() -> dict[str, Any]:
 
 
 def build_relist_ledger(items: dict[str, Any], existing_ledger: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Maintains a rolling ledger of (release_id::seller::media_condition) -> price & alert history."""
-    ledger: dict[str, Any] = dict(existing_ledger or {})
-    for item_id, item in reversed(list(items.items())):
+    """
+    Maintains an idempotent rolling ledger of (release_id::seller::media_condition) -> price & alert history.
+    Tracks unique listing IDs per fingerprint so repeated 5-minute saves never inflate total_relists_seen.
+    """
+    ledger: dict[str, Any] = {}
+    if existing_ledger:
+        for fp, prev in existing_ledger.items():
+            if not isinstance(prev, dict):
+                continue
+            prev_copy = dict(prev)
+            prior_ids = [str(x) for x in (prev_copy.get("seen_listing_ids") or []) if x]
+            if not prior_ids and prev_copy.get("last_listing_id"):
+                prior_ids = [str(prev_copy["last_listing_id"])]
+            prev_copy["seen_listing_ids"] = list(dict.fromkeys(prior_ids))
+            ledger[fp] = prev_copy
+
+    grouped_items: dict[str, list[tuple[str, dict[str, Any]]]] = {}
+    for item_id, item in items.items():
         rel_url = item.get("release_url", "")
         m = re.search(r"/release/(\d+)", rel_url)
         rid = m.group(1) if m else "unknown"
         seller = (item.get("seller_info") or "US Seller").strip().lower()
         cond = (item.get("media_condition") or "NM").strip().upper()
         fp = f"{rid}::{seller}::{cond}"
-        price_usd = parse_usd_float(item.get("total_price")) or parse_usd_float(item.get("list_price"))
-        ts = item.get("seeded_at") or datetime.now().isoformat(timespec="seconds")
+        grouped_items.setdefault(fp, []).append((str(item_id), item))
 
-        if fp not in ledger:
-            ledger[fp] = {
-                "release_id": rid,
-                "title": item.get("title", ""),
-                "seller": item.get("seller_info", ""),
-                "media_condition": cond,
-                "last_price_usd": price_usd,
-                "lowest_price_usd": price_usd,
-                "highest_price_usd": price_usd,
-                "last_seen_at": ts,
-                "total_relists_seen": 1,
-                "last_listing_id": str(item_id),
-            }
-        else:
-            entry = ledger[fp]
-            entry["last_price_usd"] = price_usd
-            if price_usd > 0:
-                entry["lowest_price_usd"] = min(entry.get("lowest_price_usd", price_usd), price_usd)
-                entry["highest_price_usd"] = max(entry.get("highest_price_usd", price_usd), price_usd)
-            entry["last_seen_at"] = ts
-            if str(item_id) != entry.get("last_listing_id"):
-                entry["total_relists_seen"] = int(entry.get("total_relists_seen", 1)) + 1
-                entry["last_listing_id"] = str(item_id)
+    for fp, pairs in grouped_items.items():
+        # Sort chronologically by integer listing ID ascending so the newest listing is always last
+        pairs.sort(key=lambda pair: int(pair[0]) if pair[0].isdigit() else 0)
+        latest_id, latest_item = pairs[-1]
+        rid = fp.split("::", 1)[0]
+        cond = (latest_item.get("media_condition") or "NM").strip().upper()
+
+        existing = ledger.get(fp)
+        seen_ids: list[str] = list(existing.get("seen_listing_ids", [])) if existing else []
+        for item_id, _ in pairs:
+            if item_id not in seen_ids:
+                seen_ids.append(item_id)
+        # Keep unique IDs sorted ascending, capped at 500 per fingerprint
+        seen_ids = sorted(dict.fromkeys(seen_ids), key=lambda x: int(x) if x.isdigit() else 0)[-500:]
+
+        positive_prices = [
+            p
+            for _, it in pairs
+            for p in (parse_usd_float(it.get("total_price")) or parse_usd_float(it.get("list_price")),)
+            if p > 0
+        ]
+        if existing:
+            for key in ("lowest_price_usd", "highest_price_usd"):
+                val = parse_usd_float(existing.get(key))
+                if val > 0:
+                    positive_prices.append(val)
+
+        latest_price = parse_usd_float(latest_item.get("total_price")) or parse_usd_float(latest_item.get("list_price"))
+        lowest_price = min(positive_prices) if positive_prices else latest_price
+        highest_price = max(positive_prices) if positive_prices else latest_price
+        latest_ts = latest_item.get("seeded_at") or (existing or {}).get("last_seen_at") or datetime.now().isoformat(timespec="seconds")
+
+        ledger[fp] = {
+            "release_id": rid,
+            "title": latest_item.get("title") or (existing or {}).get("title", ""),
+            "seller": latest_item.get("seller_info") or (existing or {}).get("seller", ""),
+            "media_condition": cond,
+            "last_price_usd": latest_price,
+            "lowest_price_usd": lowest_price,
+            "highest_price_usd": highest_price,
+            "last_seen_at": latest_ts,
+            "total_relists_seen": len(seen_ids),
+            "last_listing_id": seen_ids[-1] if seen_ids else latest_id,
+            "seen_listing_ids": seen_ids,
+        }
     return ledger
 
 
@@ -1067,16 +1115,29 @@ def save_seed_listings(
     """
     Writes the current run's listings first (in exact 0..N top-to-bottom order),
     followed by historical listings from previous runs capped at MAX_HISTORY = 2000,
-    plus the v2.0 relist_ledger for semantic auto-relist deduplication.
+    preserving prior first-seen timestamps, api_stats, and cover art for ongoing listings,
+    plus the idempotent relist_ledger for semantic auto-relist deduplication.
     """
+    prev_map = previous_listings or {}
     merged: dict[str, Any] = {}
     for item_id, item_data in current_listings.items():
-        merged[item_id] = item_data
+        merged_entry = dict(item_data)
+        prev_entry = prev_map.get(item_id)
+        if isinstance(prev_entry, dict):
+            # Preserve first-seen timestamp and previously enriched API stats / cover image
+            if prev_entry.get("seeded_at"):
+                merged_entry["seeded_at"] = prev_entry["seeded_at"]
+            if prev_entry.get("api_stats") and not merged_entry.get("api_stats"):
+                merged_entry["api_stats"] = prev_entry["api_stats"]
+            if prev_entry.get("cover_image") and not merged_entry.get("cover_image"):
+                merged_entry["cover_image"] = prev_entry["cover_image"]
+            if prev_entry.get("seller_rating") and not merged_entry.get("seller_rating"):
+                merged_entry["seller_rating"] = prev_entry["seller_rating"]
+        merged[item_id] = merged_entry
 
-    if previous_listings:
-        for item_id, item_data in previous_listings.items():
-            if item_id not in merged:
-                merged[item_id] = item_data
+    for item_id, item_data in prev_map.items():
+        if item_id not in merged:
+            merged[item_id] = item_data
 
     keys = list(merged.keys())[:MAX_HISTORY]
     trimmed = {k: merged[k] for k in keys}
@@ -1185,8 +1246,9 @@ def evaluate_and_filter_hits(
         if dedup_enabled and prior:
             prior_low = float(prior.get("lowest_price_usd") or prior.get("last_price_usd") or total_usd)
             prior_last = float(prior.get("last_price_usd") or total_usd)
-            price_drop_usd = round(prior_last - total_usd, 2)
-            price_drop_pct = round((price_drop_usd / prior_last) * 100.0, 1) if prior_last > 0 else 0.0
+            reference_price = min(prior_last, prior_low) if prior_low > 0 else prior_last
+            price_drop_usd = round(reference_price - total_usd, 2)
+            price_drop_pct = round((price_drop_usd / reference_price) * 100.0, 1) if reference_price > 0 else 0.0
             is_significant_drop = price_drop_usd >= drop_usd_thresh or price_drop_pct >= drop_pct_thresh
 
             within_cooldown = True
@@ -1200,7 +1262,7 @@ def evaluate_and_filter_hits(
 
             if is_significant_drop:
                 hit["is_price_drop_hit"] = True
-                hit["previous_price_usd"] = prior_last
+                hit["previous_price_usd"] = reference_price
                 hit["price_drop_usd"] = price_drop_usd
                 hit["price_drop_pct"] = price_drop_pct
                 actionable.append(hit)
@@ -1209,7 +1271,7 @@ def evaluate_and_filter_hits(
             if within_cooldown or seller_low in price_drop_only_sellers:
                 hit["suppression_reason"] = (
                     f"Auto-relist by {hit.get('seller_info')} at ${total_usd:.2f} "
-                    f"(previously seen {prior.get('total_relists_seen', 1)}x at ${prior_last:.2f}, no price drop)"
+                    f"(previously seen {prior.get('total_relists_seen', 1)}x, low ${reference_price:.2f}, no new price drop)"
                 )
                 suppressed.append(hit)
                 continue
@@ -1250,7 +1312,7 @@ EXTRACT_VISIBLE_DESKTOP_ROWS_JS = r"""
         }
         if (!itemId) continue;
 
-        // 2. Title, Artist, and Variant
+        // 2. Title, Artist, and Variant (preserve self-titled albums like "The Used - The Used")
         let title = 'Unknown Title';
         const titleEl = row.querySelector('a.text-brand-textLink[href*="/item/"]') || itemLink;
         if (titleEl && titleEl.textContent.trim()) {
@@ -1263,7 +1325,14 @@ EXTRACT_VISIBLE_DESKTOP_ROWS_JS = r"""
             artist = artistEl.textContent.trim();
         }
 
-        const fullTitle = (artist && !title.toLowerCase().includes(artist.toLowerCase()))
+        const normArtist = artist.toLowerCase().replace(/\s*\(\d+\)\s*$/, '').trim();
+        const normTitle = title.toLowerCase().trim();
+        const alreadyPrefixed = normArtist && (
+            normTitle.startsWith(`${normArtist} - `) ||
+            normTitle.startsWith(`${normArtist} – `) ||
+            normTitle.startsWith(`${artist.toLowerCase()} - `)
+        );
+        const fullTitle = (artist && !alreadyPrefixed)
             ? `${artist} - ${title}`
             : title;
 
@@ -1520,10 +1589,12 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
     msg["Importance"] = "High"
     msg["Priority"] = "urgent"
 
+    esc = lambda v: html.escape(str(v or ""), quote=True)
+
     cover_html = ""
     if stats.get("cover_image"):
         cover_html = (
-            f'<img src="{stats["cover_image"]}" alt="Cover" '
+            f'<img src="{esc(stats["cover_image"])}" alt="Cover" '
             f'style="width: 88px; height: 88px; object-fit: cover; border-radius: 6px; '
             f'border: 1px solid #ddd; float: right; margin-left: 14px;" />'
         )
@@ -1536,7 +1607,7 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
         price_drop_banner = (
             f'<div style="background-color: #ecfdf5; border-left: 4px solid #10b981; padding: 10px 14px; '
             f'margin-bottom: 14px; color: #065f46; font-weight: bold;">'
-            f'PRICE DROP DETECTED: Seller lowered total shipped price from ${prev_usd:.2f} to {item["total_price"]} '
+            f'PRICE DROP DETECTED: Seller lowered total shipped price from ${prev_usd:.2f} to {esc(item["total_price"])} '
             f'(-${drop_usd:.2f} / -{drop_pct:.1f}%)'
             f"</div>"
         )
@@ -1545,23 +1616,23 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
     if stats.get("deal_verdict"):
         deal_verdict_row = f"""
             <tr style="background-color: #fffbeb;">
-                <td style="padding: 8px; border: 1px solid #ddd;"><strong>Sniper v2.0 Deal Verdict</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{stats['deal_verdict']}</strong> &nbsp;|&nbsp; {stats.get('vault_badge', '')}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>Sniper v{esc(SNIPER_VERSION)} Deal Verdict</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{esc(stats['deal_verdict'])}</strong> &nbsp;|&nbsp; {esc(stats.get('vault_badge', ''))}</td>
             </tr>
         """
 
-    sugg_label = stats.get("condition_matched_grade", item["media_condition"])
-    sugg_val = stats.get("condition_suggested_price", "N/A")
+    sugg_label = esc(stats.get("condition_matched_grade", item["media_condition"]))
+    sugg_val = esc(stats.get("condition_suggested_price", "N/A"))
     scarcity_parts = []
     if stats.get("num_for_sale") is not None:
-        scarcity_parts.append(f"{stats['num_for_sale']} currently for sale (Lowest: {stats.get('lowest_for_sale', 'N/A')})")
+        scarcity_parts.append(f"{stats['num_for_sale']} currently for sale (Lowest: {esc(stats.get('lowest_for_sale', 'N/A'))})")
     if stats.get("community_want") is not None and stats.get("community_have") is not None:
         scarcity_parts.append(f"{stats['community_want']} Want / {stats['community_have']} Have")
     scarcity_str = " &nbsp;|&nbsp; ".join(scarcity_parts) if scarcity_parts else "Live Marketplace Drop"
 
     offer_tag = " &nbsp;|&nbsp; <strong>Make Offer Enabled</strong>" if stats.get("allow_offers") else ""
-    rating_tag = f" ({stats['seller_rating']})" if stats.get("seller_rating") else ""
-    batch_ids_str = ", ".join(f"#{x}" for x in (item.get("batch_listing_ids") or [item["id"]]))
+    rating_tag = f" ({esc(stats['seller_rating'])})" if stats.get("seller_rating") else ""
+    batch_ids_str = ", ".join(f"#{esc(x)}" for x in (item.get("batch_listing_ids") or [item["id"]]))
 
     html_body = f"""
     <html>
@@ -1569,36 +1640,36 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
         {price_drop_banner}
         <div style="overflow: hidden;">
             {cover_html}
-            <h2 style="margin-bottom: 5px; margin-top: 0;">{item['title']}</h2>
+            <h2 style="margin-bottom: 5px; margin-top: 0;">{esc(item['title'])}</h2>
             <p style="margin-top: 0; color: #555;">
-                <strong>Variant:</strong> {item['variant']} &nbsp;|&nbsp; <strong>Listing ID(s):</strong> {batch_ids_str}
+                <strong>Variant:</strong> {esc(item['variant'])} &nbsp;|&nbsp; <strong>Listing ID(s):</strong> {batch_ids_str}
             </p>
         </div>
         <div style="margin: 18px 0;">
-            <a href="{item['item_url']}" style="background-color: #0066cc; color: white; padding: 12px 18px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px; display: inline-block;">
-                VIEW LISTING (#{item['id']})
+            <a href="{esc(item['item_url'])}" style="background-color: #0066cc; color: white; padding: 12px 18px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-right: 10px; display: inline-block;">
+                VIEW LISTING (#{esc(item['id'])})
             </a>
-            <a href="{item['add_to_cart_url']}" style="background-color: #28a745; color: white; padding: 12px 18px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block;">
-                1-CLICK ADD TO CART ({item['total_price']})
+            <a href="{esc(item['add_to_cart_url'])}" style="background-color: #28a745; color: white; padding: 12px 18px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block;">
+                1-CLICK ADD TO CART ({esc(item['total_price'])})
             </a>
         </div>
         <table style="border-collapse: collapse; width: 100%; max-width: 600px; margin-top: 15px;">
             {deal_verdict_row}
             <tr style="background-color: #f4f4f4;">
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>List / Total Shipped</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{item['list_price']}</strong> ({item['total_price']} total){offer_tag}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{esc(item['list_price'])}</strong> ({esc(item['total_price'])} total){offer_tag}</td>
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Discogs API Suggested ({sugg_label})</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{sugg_val}</strong> &nbsp;(Range: {stats['low']} / <strong>{stats['median']}</strong> / {stats['high']})</td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><strong>{sugg_val}</strong> &nbsp;(Range: {esc(stats['low'])} / <strong>{esc(stats['median'])}</strong> / {esc(stats['high'])})</td>
             </tr>
             <tr style="background-color: #f4f4f4;">
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Condition</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;">Media: <strong>{item['media_condition']}</strong> | Sleeve: <strong>{item['sleeve_condition']}</strong></td>
+                <td style="padding: 8px; border: 1px solid #ddd;">Media: <strong>{esc(item['media_condition'])}</strong> | Sleeve: <strong>{esc(item['sleeve_condition'])}</strong></td>
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Seller</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{item['seller_info']}{rating_tag} ({item.get('listed_age', '')})</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">{esc(item['seller_info'])}{rating_tag} ({esc(item.get('listed_age', ''))})</td>
             </tr>
             <tr style="background-color: #f4f4f4;">
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Scarcity &amp; Demand</strong></td>
@@ -1606,14 +1677,14 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
             </tr>
             <tr>
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Direct Listing URL</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;"><a href="{item['item_url']}">{item['item_url']}</a></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><a href="{esc(item['item_url'])}">{esc(item['item_url'])}</a></td>
             </tr>
             <tr style="background-color: #f4f4f4;">
                 <td style="padding: 8px; border: 1px solid #ddd;"><strong>Release Page</strong></td>
-                <td style="padding: 8px; border: 1px solid #ddd;"><a href="{item['release_url']}">{item['release_url']}</a></td>
+                <td style="padding: 8px; border: 1px solid #ddd;"><a href="{esc(item['release_url'])}">{esc(item['release_url'])}</a></td>
             </tr>
         </table>
-        <p style="font-size: 12px; color: #666; margin-top: 15px;">Seller Notes: {item['raw_description']}</p>
+        <p style="font-size: 12px; color: #666; margin-top: 15px;">Seller Notes: {esc(item['raw_description'])}</p>
     </body>
     </html>
     """
@@ -1629,7 +1700,7 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
 
 
 def trigger_dashboard_rebuild():
-    """Recompiles data/sniper_state.json and index.html after new hits."""
+    """Recompiles data/sniper_state.json and index.html after new hits or wantlist prune."""
     try:
         build_script = BASE_DIR / "scripts" / "build_dashboard.py"
         if build_script.exists():
@@ -1638,6 +1709,33 @@ def trigger_dashboard_rebuild():
             subprocess.run([sys.executable, str(build_script)], cwd=str(BASE_DIR), timeout=20, check=False)
     except Exception as e:
         logging.debug(f"Static dashboard rebuild skipped: {e}")
+
+
+def save_wantlist_sync_snapshot(
+    username: str,
+    live_want_ids: list[str],
+    owned_by_rid: dict[str, Any],
+    sync_path: Path | None = None,
+) -> Path | None:
+    """Persists verified live Discogs Wantlist release IDs so build_dashboard.py distinguishes live vs cleared overlaps."""
+    target = sync_path or WANTLIST_SYNC_FILE
+    try:
+        target.parent.mkdir(parents=True, exist_ok=True)
+        unique_wants = sorted({str(x) for x in live_want_ids if x})
+        live_overlaps = sorted([rid for rid in unique_wants if rid in owned_by_rid])
+        payload = {
+            "schema_version": SNIPER_VERSION,
+            "username": username,
+            "synced_at": datetime.now().isoformat(timespec="seconds"),
+            "total_live_wants": len(unique_wants),
+            "live_want_release_ids": unique_wants,
+            "live_exact_owned_overlaps": live_overlaps,
+        }
+        target.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        return target
+    except Exception as e:
+        logging.debug(f"Could not save wantlist sync snapshot: {e}")
+        return None
 
 
 # =====================================================================
@@ -1671,30 +1769,35 @@ def run_check_on_page(
             pass
 
     page.on("response", on_response)
-
-    logging.info("Loading Discogs Wantlist in Chrome...")
-    page.goto(wantlist_url, wait_until="domcontentloaded", timeout=35000)
-
     try:
-        page.wait_for_function(
-            """() => {
-                const root = document.querySelector('div[data-test="desktop-layout"]');
-                return root && root.querySelectorAll('div[data-index] a[href*="/item/"]').length > 0;
-            }""",
-            timeout=20000,
-        )
-        page.wait_for_timeout(800)
-    except Exception:
-        logging.warning("Timed out waiting for desktop [data-index] rows; attempting extraction anyway...")
+        logging.info("Loading Discogs Wantlist in Chrome...")
+        page.goto(wantlist_url, wait_until="domcontentloaded", timeout=35000)
 
-    ensure_sorted_newest(page)
+        try:
+            page.wait_for_function(
+                """() => {
+                    const root = document.querySelector('div[data-test="desktop-layout"]');
+                    return root && root.querySelectorAll('div[data-index] a[href*="/item/"]').length > 0;
+                }""",
+                timeout=20000,
+            )
+            page.wait_for_timeout(800)
+        except Exception:
+            logging.warning("Timed out waiting for desktop [data-index] rows; attempting extraction anyway...")
 
-    # 1. Build current seed_listings dict in exact 0..24 order (with self-healing retry if 0 rows mounted)
-    current_listings = extract_seed_listings(page, graphql_enrichment=captured_graphql)
-    if not current_listings:
-        logging.warning("First extraction pass returned 0 rows; waiting 2.5s for virtual DOM hydration retry...")
-        page.wait_for_timeout(2500)
+        ensure_sorted_newest(page)
+
+        # 1. Build current seed_listings dict in exact 0..24 order (with self-healing retry if 0 rows mounted)
         current_listings = extract_seed_listings(page, graphql_enrichment=captured_graphql)
+        if not current_listings:
+            logging.warning("First extraction pass returned 0 rows; waiting 2.5s for virtual DOM hydration retry...")
+            page.wait_for_timeout(2500)
+            current_listings = extract_seed_listings(page, graphql_enrichment=captured_graphql)
+    finally:
+        try:
+            page.remove_listener("response", on_response)
+        except Exception:
+            pass
 
     if not current_listings:
         logging.error(f"Extracted 0 listings. Page Title: '{page.title()}'")
@@ -1716,6 +1819,12 @@ def run_check_on_page(
 
     # 3. Initial Seed or Forced Reseed
     if force_reseed or not previous_listings:
+        if test_latest:
+            top_item = ordered_items[0]
+            logging.info(f"[TEST MODE] Sending test alert for #1 Top Item: {top_item['title']} [ID:{top_item['id']}]...")
+            stats = enrich_item_with_api_and_vault(api_client, context, top_item, vault_data)
+            send_alerts(top_item, stats, creds)
+
         save_seed_listings(
             current_listings,
             previous_listings if not force_reseed else None,
@@ -1723,11 +1832,6 @@ def run_check_on_page(
         )
         logging.info(f"[SEED GENERATED] Wrote {len(current_listings)} ordered items to {SEED_FILE.name}.")
 
-        if test_latest:
-            top_item = ordered_items[0]
-            logging.info(f"[TEST MODE] Sending test alert for #1 Top Item: {top_item['title']} [ID:{top_item['id']}]...")
-            stats = enrich_item_with_api_and_vault(api_client, context, top_item, vault_data)
-            send_alerts(top_item, stats, creds)
         if (config.get("alerts") or {}).get("auto_rebuild_static_dashboard", True):
             trigger_dashboard_rebuild()
         return
@@ -1754,6 +1858,14 @@ def run_check_on_page(
             )
             for item in actionable_hits:
                 stats = enrich_item_with_api_and_vault(api_client, context, item, vault_data)
+                # Persist enriched api_stats & cover_image back into current_listings so seed_snapshot.json retains them
+                for lid in item.get("batch_listing_ids") or [item["id"]]:
+                    if lid in current_listings:
+                        current_listings[lid]["api_stats"] = dict(item.get("api_stats") or {})
+                        if stats.get("cover_image") and not current_listings[lid].get("cover_image"):
+                            current_listings[lid]["cover_image"] = stats["cover_image"]
+                        if stats.get("seller_rating") and not current_listings[lid].get("seller_rating"):
+                            current_listings[lid]["seller_rating"] = stats["seller_rating"]
                 send_alerts(item, stats, creds)
         else:
             logging.info(
@@ -1806,7 +1918,11 @@ def _collect_snapshot_owned_overlaps(
     return overlaps
 
 
-def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") -> int:
+def run_api_diagnostics(
+    api_client: DiscogsAPIClient,
+    token_source: str = "",
+    persist_sync: bool = False,
+) -> int:
     print("=" * 72)
     print(f"  DISCOGS SNIPER v{SNIPER_VERSION} // OFFICIAL DISCOGS API & VAULT DIAGNOSTICS")
     print("=" * 72)
@@ -1849,6 +1965,8 @@ def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") ->
     print(f"[*] Snapshot Items Tracked  : {len(items)} listings ({len(ledger)} relist fingerprints)")
 
     if live_wants is not None:
+        if persist_sync:
+            save_wantlist_sync_snapshot(api_client.username, live_wants, owned_by_rid)
         live_want_set = set(live_wants)
         live_overlaps = sorted(
             [
@@ -1883,7 +2001,12 @@ def run_api_diagnostics(api_client: DiscogsAPIClient, token_source: str = "") ->
     return 0
 
 
-def run_prune_owned_wantlist(api_client: DiscogsAPIClient, dry_run: bool = False) -> int:
+def run_prune_owned_wantlist(
+    api_client: DiscogsAPIClient,
+    dry_run: bool = False,
+    persist_sync: bool = False,
+    rebuild_ui: bool = False,
+) -> int:
     owned_by_rid, _, _, _ = load_vault_lookup()
     items, _ = load_seed_snapshot()
     snapshot_overlaps = _collect_snapshot_owned_overlaps(items, owned_by_rid)
@@ -1905,6 +2028,10 @@ def run_prune_owned_wantlist(api_client: DiscogsAPIClient, dry_run: bool = False
                 candidates[rid] = _format_owned_release_title(rid, owned_by_rid, snapshot_overlaps)
 
         if not candidates:
+            if persist_sync:
+                save_wantlist_sync_snapshot(api_client.username, live_wants, owned_by_rid)
+            if rebuild_ui and not dry_run:
+                trigger_dashboard_rebuild()
             print(
                 f"[ok] Zero exact-owned Collection Vault pressings found on your live Discogs Wantlist "
                 f"({len(live_wants)} live wants checked)."
@@ -1944,6 +2071,10 @@ def run_prune_owned_wantlist(api_client: DiscogsAPIClient, dry_run: bool = False
     if api_client.is_authenticated and not dry_run:
         verified_wants = api_client.fetch_wantlist_ids()
         if verified_wants is not None:
+            if persist_sync:
+                save_wantlist_sync_snapshot(api_client.username, verified_wants, owned_by_rid)
+            if rebuild_ui:
+                trigger_dashboard_rebuild()
             remaining = [rid for rid in set(verified_wants) if rid in owned_by_rid]
             print(
                 f"[ok] Prune summary: {removed_cnt} removed, {already_absent_cnt} already absent, {failed_cnt} failed. "
@@ -1976,6 +2107,7 @@ def main():
     parser.add_argument("--token", type=str, default=None, help="Explicit Discogs Personal Access Token override")
     parser.add_argument("--username", type=str, default=None, help="Explicit Discogs Username override")
     args = parser.parse_args()
+    configure_logging()
 
     cleanup_legacy_files()
     config = load_sniper_config()
@@ -1987,10 +2119,14 @@ def main():
         return
 
     if args.api_check:
-        sys.exit(run_api_diagnostics(api_client, token_source=creds.get("token_source", "")))
+        sys.exit(run_api_diagnostics(api_client, token_source=creds.get("token_source", ""), persist_sync=True))
 
     if args.prune_owned:
-        sys.exit(run_prune_owned_wantlist(api_client, dry_run=args.dry_run))
+        sys.exit(run_prune_owned_wantlist(api_client, dry_run=args.dry_run, persist_sync=True, rebuild_ui=not args.dry_run))
+
+    if sync_playwright is None:
+        logging.error("Playwright is not installed. Run: pip install playwright && playwright install chromium")
+        sys.exit(1)
 
     with SingleInstanceLock(LOCK_FILE) as lock:
         if not lock.acquired:
