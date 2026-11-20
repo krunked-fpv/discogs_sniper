@@ -268,19 +268,25 @@
     <section class="view-section" id="view-vault" aria-label="Discogs Collection Vault Cross-Check">
       <div class="panel-card" style="margin-bottom: 20px;">
         <div class="panel-title">
-          <span>✅ 10 Exact Pressings Already in Your 159-LP Collection Vault (Still on Your Wantlist!)</span>
-          <span class="kpi-badge badge-crimson">False-Positive Alert Source</span>
+          <span id="vault-exact-owned-heading">✅ 10 Exact Pressings Already in Your 159-LP Collection Vault (Still on Your Wantlist!)</span>
+          <span class="kpi-badge badge-crimson" id="vault-exact-owned-badge">False-Positive Alert Source</span>
         </div>
         <p class="panel-subtitle">
-          When you buy a record on Discogs and add it to your Collection, Discogs does <strong>not</strong> automatically remove it from your Wantlist. Cross-referencing <code>seed_snapshot.json</code> against your <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" style="color: var(--accent-amber); text-decoration: underline;">Discogs Collection Vault</a> found <strong>10 exact pressings you already own</strong> that are still firing Wantlist Sniper alerts! Remove them below via the official Discogs API (<code>DELETE /users/krunked/wants/{release_id}</code>) or run <code>python discogs_sniper.py --prune-owned</code>.
+          When you buy a record on Discogs and add it to your Collection, Discogs does <strong>not</strong> automatically remove it from your Wantlist. Cross-referencing <code>seed_snapshot.json</code> against your <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" style="color: var(--accent-amber); text-decoration: underline;">Discogs Collection Vault</a> found exact pressings you already own that fired Wantlist Sniper alerts. Connect your <code>DISCOGS_TOKEN</code> to check your <strong>live Discogs Wantlist</strong> and prune any remaining overlaps via <code>DELETE /users/krunked/wants/{release_id}</code> — or run <code>python discogs_sniper.py --prune-owned</code>.
         </p>
-        <div style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+        <div style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
           <button type="button" class="btn-action btn-primary-amber" id="btn-prune-all-owned-api">
             🗑️ Prune All 10 Owned Pressings from Discogs Wantlist (API)
+          </button>
+          <button type="button" class="btn-action" id="btn-sync-live-wantlist">
+            🔄 Sync Live Wantlist (API)
           </button>
           <code style="background: var(--bg-base); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent-emerald);">
             python discogs_sniper.py --prune-owned
           </code>
+        </div>
+        <div id="vault-live-sync-status" style="margin-bottom: 14px; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-secondary);">
+          Showing static snapshot overlaps. Connect DISCOGS_TOKEN to verify live Discogs Wantlist status.
         </div>
         <div class="data-table-wrap">
           <table class="data-table">

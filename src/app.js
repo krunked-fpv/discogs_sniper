@@ -28,6 +28,7 @@
     USER: "krunked_discogs_username",
     ART_CACHE: "krunked_sniper_art_cache_v2",
     CONFIG_OVERRIDES: "krunked_sniper_config_v2",
+    PRUNED: "krunked_sniper_pruned_ids_v2",
   };
 
   function discoverStoredToken() {
@@ -60,6 +61,11 @@
     expandedHistoryIds: new Set(),
     liveApiResults: {},
     prunedReleaseIds: new Set(),
+    liveWantlistIds: null,
+    liveWantlistLoading: false,
+    liveWantlistError: "",
+    liveWantlistSyncedAt: "",
+    liveWantlistTotal: 0,
     discogsUsername: localStorage.getItem(STORAGE_KEYS.USER) || SNIPER_STATE.discogs_username || "krunked",
     discogsToken: discoverStoredToken(),
     artCache: {},
@@ -71,10 +77,39 @@
     if (cachedArt) appState.artCache = JSON.parse(cachedArt) || {};
   } catch (_) {}
 
+  try {
+    const cachedPruned = localStorage.getItem(STORAGE_KEYS.PRUNED);
+    if (cachedPruned) {
+      const parsed = JSON.parse(cachedPruned);
+      if (Array.isArray(parsed)) {
+        appState.prunedReleaseIds = new Set(parsed.map((x) => String(x)));
+      }
+    }
+  } catch (_) {}
+
   function saveArtCache() {
     try {
       localStorage.setItem(STORAGE_KEYS.ART_CACHE, JSON.stringify(appState.artCache));
     } catch (_) {}
+  }
+
+  function savePrunedReleaseIds() {
+    try {
+      localStorage.setItem(STORAGE_KEYS.PRUNED, JSON.stringify([...appState.prunedReleaseIds]));
+    } catch (_) {}
+  }
+
+  function isReleasePrunedOrAbsent(releaseId) {
+    const rid = String(releaseId);
+    if (appState.liveWantlistIds !== null) {
+      return !appState.liveWantlistIds.has(rid);
+    }
+    return appState.prunedReleaseIds.has(rid);
+  }
+
+  function getRemainingExactOwnedList() {
+    const exactList = SNIPER_STATE.vault_bridge?.exact_owned_on_wantlist || [];
+    return exactList.filter((r) => !isReleasePrunedOrAbsent(r.release_id));
   }
 
   function escapeHtml(str) {
@@ -190,8 +225,9 @@
       `recordmule accounts for ${s.recordmule_listings ?? 99}/${s.total_tracked_listings ?? 218} (${s.recordmule_share_pct ?? 45.4}%)`
     );
 
+    const remainingExactCount = getRemainingExactOwnedList().length;
     setTxt("kpi-missing-grails", s.missing_grails_releases ?? 54);
-    setTxt("kpi-owned-overlap-badge", `${s.exact_owned_releases ?? 10} Already Owned`);
+    setTxt("kpi-owned-overlap-badge", `${remainingExactCount} Already Owned`);
     setTxt(
       "kpi-vault-sub",
       `${s.missing_grails_releases ?? 54} Missing Grails • ${s.variant_upgrade_releases ?? 9} Variants • ${s.vault_total_owned_lps ?? 159} Vault LPs`
@@ -206,7 +242,7 @@
 
     setTxt("nav-count-radar", appState.dedupEnabled ? (s.unique_deduped_offerings ?? 113) : (s.total_tracked_listings ?? 218));
     setTxt("nav-count-forensics", `${s.spam_reduction_pct ?? 48}% Spam`);
-    setTxt("nav-count-vault", `${(s.exact_owned_releases ?? 10) + (s.variant_upgrade_releases ?? 9)} Overlaps`);
+    setTxt("nav-count-vault", `${remainingExactCount + (s.variant_upgrade_releases ?? 9)} Overlaps`);
     setTxt("dedup-status-chip", appState.dedupEnabled ? `ON (-${s.auto_relists_intercepted ?? 105})` : "OFF (Raw 218)");
   }
 
@@ -247,7 +283,7 @@
       if (appState.dedupEnabled && !item.is_latest_in_group) return false;
       const sellerLow = (item.seller_info || "").toLowerCase();
       if (appState.mutedSellers.has(sellerLow)) return false;
-      if (appState.prunedReleaseIds.has(item.release_id)) return false;
+      if (appState.prunedReleaseIds.has(String(item.release_id))) return false;
       if (!passesConditionGrade(item.media_condition, appState.conditionFilter)) return false;
       if (appState.maxPriceUsd < 500 && item.total_price_usd > appState.maxPriceUsd) return false;
 
@@ -918,18 +954,86 @@
   // =====================================================================
   // 9. VIEW 3: COLLECTION VAULT CROSS-CHECK & 1-CLICK WANTLIST PRUNER
   // =====================================================================
-  async function pruneReleaseFromWantlistAPI(releaseId, title) {
+  async function syncLiveWantlistFromAPI({ silent = false } = {}) {
     if (!appState.discogsToken) {
-      alert(
-        `To delete Release #${releaseId} (${title}) directly from your Discogs Wantlist in the browser, paste your DISCOGS_TOKEN in the "⚙️ API & Sniper Rules" tab first — or run:\n\npython discogs_sniper.py --prune-owned`
-      );
-      switchView("rules");
-      return false;
+      if (!silent) {
+        alert(
+          'Paste your DISCOGS_TOKEN in the "⚙️ API & Sniper Rules" tab first to sync your live Discogs Wantlist.'
+        );
+        switchView("rules");
+      }
+      return null;
     }
 
+    appState.liveWantlistLoading = true;
+    appState.liveWantlistError = "";
+    renderVaultBridgeView();
+
+    try {
+      const liveIds = new Set();
+      let page = 1;
+      let totalPages = 1;
+      while (page <= totalPages) {
+        const data = await discogsApiFetch(
+          `/users/${encodeURIComponent(appState.discogsUsername)}/wants?page=${page}&per_page=100`
+        );
+        if (!data || !Array.isArray(data.wants)) {
+          throw new Error("Unexpected response from /users/{username}/wants");
+        }
+        for (const w of data.wants) {
+          const rawId = w?.id ?? w?.basic_information?.id;
+          if (rawId != null) liveIds.add(String(rawId));
+        }
+        totalPages = Number(data.pagination?.pages || 1);
+        page += 1;
+      }
+
+      appState.liveWantlistIds = liveIds;
+      appState.liveWantlistTotal = liveIds.size;
+      appState.liveWantlistSyncedAt = new Date().toLocaleTimeString();
+
+      // Reconcile persisted prunedReleaseIds with live Discogs Wantlist truth
+      const exactList = SNIPER_STATE.vault_bridge?.exact_owned_on_wantlist || [];
+      for (const r of exactList) {
+        const rid = String(r.release_id);
+        if (liveIds.has(rid)) {
+          appState.prunedReleaseIds.delete(rid);
+        } else {
+          appState.prunedReleaseIds.add(rid);
+        }
+      }
+      savePrunedReleaseIds();
+      appState.liveWantlistLoading = false;
+      renderTopKPIs();
+      renderVaultBridgeView();
+      renderRadarGrid();
+      return liveIds;
+    } catch (err) {
+      appState.liveWantlistLoading = false;
+      appState.liveWantlistError = err.message || String(err);
+      renderVaultBridgeView();
+      if (!silent) {
+        alert(`Could not sync live Discogs Wantlist: ${appState.liveWantlistError}`);
+      }
+      return null;
+    }
+  }
+
+  async function pruneReleaseFromWantlistAPI(releaseId, title, { silent = false } = {}) {
+    if (!appState.discogsToken) {
+      if (!silent) {
+        alert(
+          `To delete Release #${releaseId} (${title}) directly from your Discogs Wantlist in the browser, paste your DISCOGS_TOKEN in the "⚙️ API & Sniper Rules" tab first — or run:\n\npython discogs_sniper.py --prune-owned`
+        );
+        switchView("rules");
+      }
+      return { ok: false, status: "unauthenticated" };
+    }
+
+    const rid = String(releaseId);
     try {
       const resp = await fetch(
-        `https://api.discogs.com/users/${encodeURIComponent(appState.discogsUsername)}/wants/${encodeURIComponent(releaseId)}`,
+        `https://api.discogs.com/users/${encodeURIComponent(appState.discogsUsername)}/wants/${encodeURIComponent(rid)}`,
         {
           method: "DELETE",
           headers: {
@@ -938,29 +1042,109 @@
           },
         }
       );
-      if (resp.status === 204 || resp.status === 200 || resp.status === 404) {
-        appState.prunedReleaseIds.add(String(releaseId));
+      if (resp.status === 204 || resp.status === 200) {
+        appState.prunedReleaseIds.add(rid);
+        if (appState.liveWantlistIds !== null) appState.liveWantlistIds.delete(rid);
+        savePrunedReleaseIds();
+        renderTopKPIs();
         renderVaultBridgeView();
         renderRadarGrid();
-        return true;
+        return { ok: true, status: "removed", httpStatus: resp.status };
+      }
+      if (resp.status === 404) {
+        appState.prunedReleaseIds.add(rid);
+        if (appState.liveWantlistIds !== null) appState.liveWantlistIds.delete(rid);
+        savePrunedReleaseIds();
+        renderTopKPIs();
+        renderVaultBridgeView();
+        renderRadarGrid();
+        return { ok: true, status: "already_absent", httpStatus: 404 };
       }
       throw new Error(`HTTP ${resp.status}`);
     } catch (err) {
-      alert(`Could not delete release #${releaseId} via Discogs API: ${err.message}`);
-      return false;
+      if (!silent) {
+        alert(`Could not delete release #${rid} via Discogs API: ${err.message}`);
+      }
+      return { ok: false, status: "error", message: err.message };
     }
   }
 
   function renderVaultBridgeView() {
     const vb = SNIPER_STATE.vault_bridge || {};
+    const s = SNIPER_STATE.summary || {};
     const exactList = vb.exact_owned_on_wantlist || [];
     const variantList = vb.variant_upgrades_on_wantlist || [];
+    const remainingList = getRemainingExactOwnedList();
+    const remainingCount = remainingList.length;
+    const vaultTotal = s.vault_total_owned_lps ?? 159;
+
+    const headingEl = document.getElementById("vault-exact-owned-heading");
+    if (headingEl) {
+      if (remainingCount === 0) {
+        headingEl.textContent = `✅ 0 Exact Owned Pressings Remaining on Your Wantlist (All ${exactList.length} Snapshot Overlaps Cleared!)`;
+      } else {
+        const noun = remainingCount === 1 ? "Pressing" : "Pressings";
+        headingEl.textContent = `✅ ${remainingCount} Exact ${noun} Already in Your ${vaultTotal}-LP Collection Vault (Still on Your Wantlist!)`;
+      }
+    }
+
+    const badgeEl = document.getElementById("vault-exact-owned-badge");
+    if (badgeEl) {
+      if (remainingCount === 0) {
+        badgeEl.className = "kpi-badge badge-emerald";
+        badgeEl.textContent = appState.liveWantlistIds !== null ? "Live Wantlist Clean" : "All Overlaps Pruned";
+      } else {
+        badgeEl.className = "kpi-badge badge-crimson";
+        badgeEl.textContent = "False-Positive Alert Source";
+      }
+    }
+
+    const pruneAllBtn = document.getElementById("btn-prune-all-owned-api");
+    if (pruneAllBtn && !pruneAllBtn.dataset.busy) {
+      if (remainingCount === 0) {
+        pruneAllBtn.disabled = true;
+        pruneAllBtn.textContent = "✓ All Exact-Owned Pressings Pruned";
+      } else {
+        pruneAllBtn.disabled = false;
+        pruneAllBtn.textContent = `🗑️ Prune All ${remainingCount} Owned Pressing${remainingCount === 1 ? "" : "s"} from Discogs Wantlist (API)`;
+      }
+    }
+
+    const syncBtn = document.getElementById("btn-sync-live-wantlist");
+    if (syncBtn) {
+      syncBtn.disabled = appState.liveWantlistLoading;
+      syncBtn.textContent = appState.liveWantlistLoading
+        ? "⏳ Syncing Live Wantlist..."
+        : "🔄 Sync Live Wantlist (API)";
+    }
+
+    const statusEl = document.getElementById("vault-live-sync-status");
+    if (statusEl) {
+      if (appState.liveWantlistLoading) {
+        statusEl.style.color = "var(--accent-amber)";
+        statusEl.textContent = `Querying GET https://api.discogs.com/users/${appState.discogsUsername}/wants ...`;
+      } else if (appState.liveWantlistError) {
+        statusEl.style.color = "var(--accent-crimson)";
+        statusEl.textContent = `Live Wantlist sync error: ${appState.liveWantlistError} (showing cached snapshot state)`;
+      } else if (appState.liveWantlistIds !== null) {
+        statusEl.style.color = remainingCount === 0 ? "var(--accent-emerald)" : "var(--accent-amber)";
+        statusEl.textContent = `Live Discogs API (@${appState.discogsUsername} @ ${appState.liveWantlistSyncedAt}): ${appState.liveWantlistTotal} live wantlist releases checked — ${remainingCount} of ${exactList.length} snapshot owned pressing(s) still on live Wantlist.`;
+      } else if (appState.discogsToken) {
+        statusEl.style.color = "var(--text-secondary)";
+        statusEl.textContent = `Token configured for @${appState.discogsUsername}. Click "Sync Live Wantlist (API)" to verify live Wantlist status.`;
+      } else {
+        statusEl.style.color = "var(--text-secondary)";
+        statusEl.textContent = `Showing static snapshot overlaps (${remainingCount}/${exactList.length}). Connect DISCOGS_TOKEN in "⚙️ API & Sniper Rules" to verify your live Discogs Wantlist.`;
+      }
+    }
 
     const exactTbody = document.getElementById("tbody-vault-exact-owned");
     if (exactTbody) {
       exactTbody.innerHTML = exactList
         .map((r) => {
-          const isPruned = appState.prunedReleaseIds.has(String(r.release_id));
+          const isPruned = isReleasePrunedOrAbsent(r.release_id);
+          const removedLabel =
+            appState.liveWantlistIds !== null ? "✓ Not on Live Wantlist" : "✓ Removed from Wantlist";
           return `
             <tr style="${isPruned ? "opacity:0.45;" : ""}">
               <td>
@@ -985,7 +1169,7 @@
                   data-prune-title="${escapeHtml(r.title)}"
                   ${isPruned ? "disabled" : ""}
                 >
-                  ${isPruned ? "✓ Removed from Wantlist" : "🗑️ Remove from Wantlist"}
+                  ${isPruned ? removedLabel : "🗑️ Remove from Wantlist"}
                 </button>
               </td>
             </tr>`;
@@ -1234,20 +1418,53 @@
       }
     });
 
-    // Prune All 10 Owned Pressings button
+    // Prune All Owned Pressings button (live-synced + rate-limited + verified)
     const pruneAllBtn = document.getElementById("btn-prune-all-owned-api");
     if (pruneAllBtn) {
       pruneAllBtn.addEventListener("click", async () => {
-        const list = SNIPER_STATE.vault_bridge?.exact_owned_on_wantlist || [];
+        const list = getRemainingExactOwnedList();
         if (!appState.discogsToken) {
           pruneReleaseFromWantlistAPI(list[0]?.release_id || "31082741", list[0]?.title || "Owned Pressing");
           return;
         }
-        for (const r of list) {
-          if (!appState.prunedReleaseIds.has(String(r.release_id))) {
-            await pruneReleaseFromWantlistAPI(r.release_id, r.title);
+        if (list.length === 0) {
+          renderVaultBridgeView();
+          return;
+        }
+
+        pruneAllBtn.dataset.busy = "1";
+        pruneAllBtn.disabled = true;
+        let removed = 0;
+        let alreadyAbsent = 0;
+        let failed = 0;
+
+        for (let i = 0; i < list.length; i += 1) {
+          const r = list[i];
+          pruneAllBtn.textContent = `⏳ Pruning ${i + 1}/${list.length} (#${r.release_id})...`;
+          const res = await pruneReleaseFromWantlistAPI(r.release_id, r.title, { silent: true });
+          if (res.status === "removed") removed += 1;
+          else if (res.status === "already_absent") alreadyAbsent += 1;
+          else failed += 1;
+          if (i + 1 < list.length) {
+            await new Promise((resolve) => setTimeout(resolve, 350));
           }
         }
+
+        delete pruneAllBtn.dataset.busy;
+        await syncLiveWantlistFromAPI({ silent: true });
+        const statusEl = document.getElementById("vault-live-sync-status");
+        if (statusEl) {
+          const remainingNow = getRemainingExactOwnedList().length;
+          statusEl.style.color = failed > 0 ? "var(--accent-crimson)" : "var(--accent-emerald)";
+          statusEl.textContent = `Prune complete: ${removed} removed, ${alreadyAbsent} already absent (404), ${failed} failed. Live Wantlist now has ${remainingNow} exact-owned overlap(s) remaining.`;
+        }
+      });
+    }
+
+    const syncLiveBtn = document.getElementById("btn-sync-live-wantlist");
+    if (syncLiveBtn) {
+      syncLiveBtn.addEventListener("click", async () => {
+        await syncLiveWantlistFromAPI({ silent: false });
       });
     }
 
@@ -1328,6 +1545,7 @@
           if (consoleOut) {
             consoleOut.textContent = `// HTTP 200 OK — Authenticated via Official Discogs API v2.0:\n${JSON.stringify(ident, null, 2)}`;
           }
+          await syncLiveWantlistFromAPI({ silent: true });
         } catch (err) {
           if (consoleOut) {
             consoleOut.textContent = `// Error verifying token against /oauth/identity: ${err.message}`;
@@ -1363,12 +1581,18 @@
     if (clearTokBtn) {
       clearTokBtn.addEventListener("click", () => {
         appState.discogsToken = "";
+        appState.liveWantlistIds = null;
+        appState.liveWantlistError = "";
+        appState.liveWantlistSyncedAt = "";
+        appState.liveWantlistTotal = 0;
         try {
           localStorage.removeItem(STORAGE_KEYS.TOKEN);
         } catch (_) {}
         const inp = document.getElementById("input-discogs-token");
         if (inp) inp.value = "";
         updateApiConnectionStatusUI();
+        renderTopKPIs();
+        renderVaultBridgeView();
         if (consoleOut) consoleOut.textContent = "// Cleared browser-stored Discogs token.";
       });
     }
@@ -1434,4 +1658,7 @@
   renderVaultBridgeView();
   updateConfigJsonPreview();
   bindEvents();
+  if (appState.discogsToken) {
+    syncLiveWantlistFromAPI({ silent: true });
+  }
 })();
