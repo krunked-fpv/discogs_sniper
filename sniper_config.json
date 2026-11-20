@@ -1,0 +1,33 @@
+{
+  "schema_version": "2.0.0",
+  "discogs_username": "krunked",
+  "wantlist_url": "https://www.discogs.com/shop/mywants/?formatDescription=LP&formatName=Vinyl&shipsFrom=United+States&sort=listedNewest",
+  "relist_deduplication": {
+    "enabled": true,
+    "cooldown_days": 7,
+    "consolidate_multi_copy_batches": true,
+    "price_drop_override_usd": 1.0,
+    "price_drop_override_pct": 3.0
+  },
+  "collection_vault_bridge": {
+    "enabled": true,
+    "suppress_exact_owned_alerts": false,
+    "local_collection_path": "C:\\DiscogsCollection\\discogs_collection\\data\\collection.json"
+  },
+  "filters": {
+    "min_media_condition": "VG+",
+    "min_sleeve_condition": "Any",
+    "max_total_price_usd": null,
+    "muted_sellers": [],
+    "price_drop_only_sellers": [
+      "recordmule"
+    ],
+    "target_prices_by_release": {}
+  },
+  "alerts": {
+    "email_to": "alexgoresch@gmail.com",
+    "email_cc": "mleven42@gmail.com",
+    "ntfy_base": "https://ntfy.sh",
+    "auto_rebuild_static_dashboard": true
+  }
+}
