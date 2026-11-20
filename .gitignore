@@ -1,7 +1,5 @@
-# Environment & secrets (never commit tokens or app passwords)
-.env
-.env.*
-!.env.example
+# Local overrides (optional untracked file; .env is tracked with $env:DISCOGS_TOKEN auto-hydration)
+.env.local
 
 # Persistent Playwright browser profile & runtime state
 chrome_discogs_profile/

@@ -1,7 +1,7 @@
 # 🎯 Discogs Sniper v2.0 — Hybrid Official Discogs API + GraphQL + Static Command Center
 
 > **Outsmart the relist bots. Snipe true Wantlist grails with condition-matched Discogs API valuation.**  
-> A hybrid Python + Official Discogs REST API v2.0 (`https://api.discogs.com`) + Playwright automation engine (`C:\DiscogsSniper`) paired with a zero-spinner **Static GitHub Pages Command Center** ([`index.html`](index.html)). Monitors your filtered Discogs Wantlist Marketplace every 5 minutes, intercepts in-origin `/graphql` (`MarketplaceSearch`) payloads alongside the virtualized desktop DOM, eliminates daily auto-relist spam (*"The `recordmule` Slayer"*), cross-references your 159-LP [Discogs Collection Vault (`krunked-fpv/discogs_collection`)](https://github.com/krunked-fpv/discogs_collection), enriches hits via the official Discogs API with **zero extra browser tabs**, and dispatches high-priority HTML alerts with **1-Click Add-to-Cart** links.
+> A hybrid Python + Official Discogs REST API v2.0 (`https://api.discogs.com`) + Playwright automation engine (`C:\discogs_sniper`) paired with a zero-spinner **Static GitHub Pages Command Center** ([`index.html`](index.html)). Monitors your filtered Discogs Wantlist Marketplace every 5 minutes, intercepts in-origin `/graphql` (`MarketplaceSearch`) payloads alongside the virtualized desktop DOM, eliminates daily auto-relist spam (*"The `recordmule` Slayer"*), cross-references your 159-LP [Discogs Collection Vault (`krunked-fpv/discogs_collection`)](https://github.com/krunked-fpv/discogs_collection), enriches hits via the official Discogs API with **zero extra browser tabs**, and dispatches high-priority HTML alerts with **1-Click Add-to-Cart** links.
 
 ![Version](https://img.shields.io/badge/version-v2.0.0--hybrid--api-f59e0b?style=for-the-badge)
 ![Discogs API](https://img.shields.io/badge/Discogs_REST_API-v2.0_Authenticated-10b981?style=for-the-badge)
@@ -18,7 +18,7 @@ When we interrogated the production data from `v0.1.0-alpha` (**17,080 log lines
 | :--- | :--- | :--- | :--- |
 | **1** | **The `recordmule` Daily Auto-Relist Spam Bomb (`48.2%` Noise)**<br/>• **99 of 218 tracked items (`45.4%`)** came from a single seller (`recordmule`).<br/>• **90 of 218 items (`41.3%`)** were just *Dayseeker – Dark Sun* (`50x`) and *Creature In The Black Night* (`40x`).<br/>• **31.5% of all alerts (`71/225`)** fired between `12:00–13:59` daily. | Mega-sellers use inventory bots that **delete and re-upload** their entire catalog daily with **new 10-digit Listing IDs** to stay `#1` on *"Listed Newest"*. `v0.1.0-alpha` only checked `item_id not in previous_listings`. | **Semantic Relist Fingerprinting (`release_id::seller::condition`):**<br/>• Collapses same-batch multi-copy drops (`3x copies`) into **1 email**.<br/>• Suppresses same-seller relists within `cooldown_days` (`7d`) at the same/higher price.<br/>• **Price-Drop Override (`📉 PRICE DROP HIT`):** Immediately alerts if the seller relists at a lower price (`-$1.00` or `-3%`)! |
 | **2** | **10 Exact Pressings (& 9 Variants) Still Firing Alerts Were Already in Your Collection Vault!**<br/>• *Silent Planet – Everything Was Sound*, *156/Silence – From A Distance*, *Protest The Hero – Kezia*, *Invent, Animate – Stillworld*, *Currents – The Way It Ends*, *Circa Survive – Juturna*, etc. | When you buy a record on Discogs and add it to your Collection, Discogs **never** auto-removes it from your Wantlist. | **Collection Vault Bridge + Official API Wantlist Pruner:**<br/>• Cross-references `krunked-fpv/discogs_collection` (`159 LPs`) to badge every hit as **`🎯 MISSING GRAIL`**, **`🌈 VARIANT HUNTER`**, or **`✅ ALREADY IN VAULT`**.<br/>• Run `python discogs_sniper.py --prune-owned` (or click **🗑️ Remove from Wantlist** in the web UI) to call `DELETE /users/krunked/wants/{release_id}`! |
-| **3** | **Zero Official Discogs API Usage + Slow Secondary Browser Tabs**<br/>• Every new hit opened a second Chromium tab (`context.new_page()`), loaded the full release HTML page, and regexed `body.innerText` for overall `Low / Median / High`. | Did not use `https://api.discogs.com` even though `DISCOGS_TOKEN` was already stored in Windows `HKCU\Environment` by `discogs_collection`. | **Official Discogs REST API v2.0 Client (`DiscogsAPIClient`):**<br/>• Auto-discovers `DISCOGS_TOKEN` from `.env`, `C:\DiscogsCollection\discogs_collection\.env`, or Windows `HKCU\Environment` Registry.<br/>• Queries `/marketplace/price_suggestions/{id}` for **condition-graded fair value** (`M`, `NM`, `VG+`), `/marketplace/stats/{id}`, `/marketplace/listings/{id}`, and `/releases/{id}` in pure JSON (**0 extra browser tabs!**). |
+| **3** | **Zero Official Discogs API Usage + Slow Secondary Browser Tabs**<br/>• Every new hit opened a second Chromium tab (`context.new_page()`), loaded the full release HTML page, and regexed `body.innerText` for overall `Low / Median / High`. | Did not use `https://api.discogs.com` even though `DISCOGS_TOKEN` was already stored in Windows `HKCU\Environment` by `discogs_collection`. | **Official Discogs REST API v2.0 Client (`DiscogsAPIClient`):**<br/>• Auto-discovers `DISCOGS_TOKEN` from `C:\discogs_sniper\.env`, Windows `HKCU\Environment` Registry, or legacy `C:\DiscogsSniper\.env`.<br/>• Queries `/marketplace/price_suggestions/{id}` for **condition-graded fair value** (`M`, `NM`, `VG+`), `/marketplace/stats/{id}`, `/marketplace/listings/{id}`, and `/releases/{id}` in pure JSON (**0 extra browser tabs!**). |
 | **4** | **Task Scheduler Double-Trigger Bug (`288 → 576 Runs/Day` on Nov 12)**<br/>• From Nov 8–11, `sniper.log` recorded exactly `288 runs/day` (every 5m).<br/>• On Nov 12, runs doubled to **`576 runs/day`** (`:X2:26` and `:X3:43`, 77s apart) with **40 hydration errors**. | `setup_task.ps1` attached `RepetitionInterval = 5m` to **both** `$RepeatTrigger` (`-At (Get-Date)`) and `$LogonTrigger` (`-AtLogOn`), launching two offset 5-minute clocks. | **Single-Clock `setup_task.ps1` + Atomic `SingleInstanceLock` (`sniper.lock`):**<br/>• `setup_task.ps1` now registers a single repeating 5-minute clock (`288 runs/day`).<br/>• `SingleInstanceLock` (`sniper.lock`) prevents overlapping processes from colliding on `chrome_discogs_profile/`. |
 
 ---
@@ -66,9 +66,9 @@ Just like [`krunked-fpv/discogs_collection`](https://github.com/krunked-fpv/disc
 
 `discogs_sniper.py` automatically discovers your `DISCOGS_TOKEN` and `DISCOGS_USERNAME` (`krunked`) from:
 1. CLI flags (`--token`, `--username`)
-2. Environment variables (`DISCOGS_TOKEN`, `DISCOGS_USERNAME`)
-3. Local `.env` (`C:\DiscogsSniper\.env`) or sibling `C:\DiscogsCollection\discogs_collection\.env`
-4. Windows User Environment Registry (`HKCU\Environment` via `winreg`, where `discogs_collection` stored it!)
+2. Process & Windows User/Machine Environment Variables (`DISCOGS_TOKEN`, `DISCOGS_USERNAME` in `HKCU\Environment`)
+3. Sibling `C:\Discogs_collection\.env` (and automatically stamps the active token into `C:\discogs_sniper\.env` on startup!)
+4. Local `.env` (`C:\discogs_sniper\.env`)
 
 | Endpoint | Method | Purpose in Discogs Sniper v2.0 |
 | :--- | :---: | :--- |
@@ -82,7 +82,7 @@ Just like [`krunked-fpv/discogs_collection`](https://github.com/krunked-fpv/disc
 
 ---
 
-## 📂 Repository Structure
+## 📂 Repository Structure (`C:\discogs_sniper`)
 
 ```text
 discogs_sniper/
@@ -105,10 +105,10 @@ discogs_sniper/
 ├── sniper_config.json                     # Declarative v2.0 relist cooldown, price-drop override & seller rules
 ├── seed_snapshot.json                     # Unified 2,000-item rolling state snapshot + relist_ledger
 ├── index.html                             # Compiled self-contained GitHub Pages Command Center
-├── setup_task.ps1                         # Windows Task Scheduler installer (single 5-min clock = 288 runs/day)
-├── run_sniper.ps1                         # Foreground PowerShell console loop
+├── setup_task.ps1                         # Windows Task Scheduler installer (C:\discogs_sniper, 288 runs/day)
+├── run_sniper.ps1                         # Foreground PowerShell console loop (C:\discogs_sniper)
 ├── requirements.txt                       # Python dependencies (playwright, requests)
-└── .env.example                           # Template for local .env configuration
+└── .env                                   # Active environment config (auto-hydrates $env:DISCOGS_TOKEN)
 ```
 
 ---
