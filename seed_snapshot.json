@@ -1,12 +1,66 @@
 {
   "schema_version": "2.1.0-beta",
-  "updated_at": "2026-11-20T00:15:07",
+  "updated_at": "2026-11-20T02:55:06",
   "live_page_count": 25,
-  "total_tracked": 218,
-  "relist_fingerprints_tracked": 113,
+  "total_tracked": 219,
+  "relist_fingerprints_tracked": 114,
   "items": {
-    "4498617398": {
+    "4499968275": {
       "rank": 1,
+      "id": "4499968275",
+      "title": "Killswitch Engage - As Daylight Dies",
+      "variant": "Stereo, Album, Limited Edition, Numbered, Reissue, LP, Red Translucent w/ Black Smoke",
+      "media_condition": "NM",
+      "sleeve_condition": "NM",
+      "list_price": "$193.99",
+      "total_price": "$200.49",
+      "seller_info": "crookedspades",
+      "listed_age": "Listed 20 minutes ago",
+      "item_url": "https://www.discogs.com/sell/item/4499968275",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4499968275",
+      "release_url": "https://www.discogs.com/release/17342563",
+      "raw_description": "Stereo, Album, Limited Edition, Numbered, Reissue, LP, Red Translucent w/ Black Smoke",
+      "seeded_at": "2026-11-20T02:40:08",
+      "cover_image": "https://i.discogs.com/hx7KZJjDBZoSWxbvG8ihHWl9yHvid4dzwXn9YtwRMjU/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE3MzQy/NTYzLTE2MTMxMjA0/MDUtMTUxOC5qcGVn.jpeg",
+      "allow_offers": true,
+      "api_stats": {
+        "low": "$197.80",
+        "median": "$154.42",
+        "high": "$226.66",
+        "condition_suggested_price": "N/A",
+        "num_for_sale": 6,
+        "lowest_for_sale": "$197.80",
+        "allow_offers": true,
+        "seller_rating": "100.0",
+        "community_have": 2713,
+        "community_want": 1202,
+        "cover_image": "https://i.discogs.com/hx7KZJjDBZoSWxbvG8ihHWl9yHvid4dzwXn9YtwRMjU/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE3MzQy/NTYzLTE2MTMxMjA0/MDUtMTUxOC5qcGVn.jpeg",
+        "vault_status": "MISSING_GRAIL",
+        "deal_verdict": "\u26a0\ufe0f PREMIUM (+30% above benchmark)"
+      },
+      "seller_rating": "100.0"
+    },
+    "4257509076": {
+      "rank": 2,
+      "id": "4257509076",
+      "title": "Bring Me The Horizon - There Is A Hell Believe Me I've Seen It. There Is A Heaven Let's Keep It A Secret.",
+      "variant": "All Media, Album, Etched, Limited Edition, Reissue, Single Sided, LP, Grey Marble [White / Black Swirl]",
+      "media_condition": "NM",
+      "sleeve_condition": "VG+",
+      "list_price": "$299.99",
+      "total_price": "$299.99",
+      "seller_info": "curefortheitch",
+      "listed_age": "Listed 1 hour ago",
+      "item_url": "https://www.discogs.com/sell/item/4257509076",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4257509076",
+      "release_url": "https://www.discogs.com/release/9719410",
+      "raw_description": "Played once, sounds good / Seam splits on the inner sleeves and minor shelf-wear on the jacket, in good condition overall - pics on request, ships in a Whiplash Mailer",
+      "seeded_at": "2026-11-20T00:10:07",
+      "cover_image": "https://i.discogs.com/lTCeKYTBFLKa6xdyGvCgUeWB7psxOerzl7Cwz_1N07A/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTk3MTk0/MTAtMTY0MzI5MTc5/Mi04NzU1LmpwZWc.jpeg",
+      "allow_offers": true
+    },
+    "4498617398": {
+      "rank": 3,
       "id": "4498617398",
       "title": "Dayseeker - Dark Sun",
       "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
@@ -15,7 +69,7 @@
       "list_price": "$30.99",
       "total_price": "$38.49",
       "seller_info": "recordmule",
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4498617398",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4498617398",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -24,7 +78,7 @@
       "cover_image": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg"
     },
     "4498617395": {
-      "rank": 2,
+      "rank": 4,
       "id": "4498617395",
       "title": "Dayseeker - Dark Sun",
       "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
@@ -33,7 +87,7 @@
       "list_price": "$30.99",
       "total_price": "$38.49",
       "seller_info": "recordmule",
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4498617395",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4498617395",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -42,7 +96,7 @@
       "cover_image": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg"
     },
     "4498617392": {
-      "rank": 3,
+      "rank": 5,
       "id": "4498617392",
       "title": "Dayseeker - Dark Sun",
       "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
@@ -51,7 +105,7 @@
       "list_price": "$30.99",
       "total_price": "$38.49",
       "seller_info": "recordmule",
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4498617392",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4498617392",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -60,7 +114,7 @@
       "cover_image": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg"
     },
     "4498554818": {
-      "rank": 4,
+      "rank": 6,
       "id": "4498554818",
       "title": "Dayseeker - Creature In The Black Night",
       "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
@@ -69,7 +123,7 @@
       "list_price": "$31.11",
       "total_price": "$38.61",
       "seller_info": "recordmule",
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4498554818",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4498554818",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -78,7 +132,7 @@
       "cover_image": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg"
     },
     "4498554815": {
-      "rank": 5,
+      "rank": 7,
       "id": "4498554815",
       "title": "Dayseeker - Creature In The Black Night",
       "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
@@ -87,7 +141,7 @@
       "list_price": "$31.11",
       "total_price": "$38.61",
       "seller_info": "recordmule",
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4498554815",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4498554815",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -96,7 +150,7 @@
       "cover_image": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg"
     },
     "4412908854": {
-      "rank": 6,
+      "rank": 8,
       "id": "4412908854",
       "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
       "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
@@ -105,7 +159,7 @@
       "list_price": "$150.00",
       "total_price": "$156.00",
       "seller_info": "wavingwithgusto",
-      "listed_age": "Listed 11 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4412908854",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4412908854",
       "release_url": "https://www.discogs.com/release/27928278",
@@ -114,7 +168,7 @@
       "cover_image": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg"
     },
     "4496205149": {
-      "rank": 7,
+      "rank": 9,
       "id": "4496205149",
       "title": "Underoath - The Changing Of Times",
       "variant": "Album, Limited Edition, Reissue, LP, Clear, 180 gram",
@@ -123,7 +177,7 @@
       "list_price": "$160.00",
       "total_price": "$171.00",
       "seller_info": "justinxshaw",
-      "listed_age": "Listed 23 hours ago",
+      "listed_age": "Listed 1 day ago",
       "item_url": "https://www.discogs.com/sell/item/4496205149",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4496205149",
       "release_url": "https://www.discogs.com/release/3935049",
@@ -133,7 +187,7 @@
       "allow_offers": true
     },
     "4496061725": {
-      "rank": 8,
+      "rank": 10,
       "id": "4496061725",
       "title": "Coheed And Cambria - Vaxis \u2013 Act I: The Unheavenly Creatures",
       "variant": "Album, Limited Edition, Single Sided, LP, Tiger's Eye",
@@ -151,7 +205,7 @@
       "cover_image": "https://i.discogs.com/Xp37Mrls584VHek4ijGLxxaWE4T1FVvpCnpvO-wm0uc/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEyNjA3/MzUwLTE2NDAzMDIy/MDYtMTUyNy5qcGVn.jpeg"
     },
     "4438624059": {
-      "rank": 9,
+      "rank": 11,
       "id": "4438624059",
       "title": "The Plot In You - The Plot In You",
       "variant": "Stereo, Album, Limited Edition, LP, Green Smoke",
@@ -169,7 +223,7 @@
       "cover_image": "https://i.discogs.com/tCRgGU3Xcd-uAOOEzqiz5vYsawqOiPO7HB8v02btyLM/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4Mjc1/MTg1LTE3ODc5MzI3/MDQtMzUxNS5qcGVn.jpeg"
     },
     "4495253831": {
-      "rank": 10,
+      "rank": 12,
       "id": "4495253831",
       "title": "Coheed And Cambria - The Afterman: Ascension",
       "variant": "CD, Stereo, Album, LP",
@@ -187,7 +241,7 @@
       "cover_image": "https://i.discogs.com/ynQCxuOECIFOvQwEDSpVGIgaeGa840DftL94V3F_1FI/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NDAz/OTctMTM0OTk0MzE2/MS01Mzk0LmpwZWc.jpeg"
     },
     "4493956016": {
-      "rank": 11,
+      "rank": 13,
       "id": "4493956016",
       "title": "Electric Callboy - Tanzneid",
       "variant": "Album, Limited Edition, LP, Hypercharged",
@@ -196,7 +250,7 @@
       "list_price": "$119.99",
       "total_price": "$126.49",
       "seller_info": "crookedspades",
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4493956016",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4493956016",
       "release_url": "https://www.discogs.com/release/38090760",
@@ -206,7 +260,7 @@
       "allow_offers": true
     },
     "4493253353": {
-      "rank": 12,
+      "rank": 14,
       "id": "4493253353",
       "title": "The Mars Volta - De-Loused In The Comatorium",
       "variant": "All Media, Album, Reissue, Remastered, LP, Gold",
@@ -224,7 +278,7 @@
       "cover_image": "https://i.discogs.com/M7Myi7O7DRRO_Yfdej78nHvjv1tPcvSHO4V7bpN_-2c/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIwNzY3/Njg0LTE2MzU0NzI1/MDEtNDQ5MS5qcGVn.jpeg"
     },
     "4492616447": {
-      "rank": 13,
+      "rank": 15,
       "id": "4492616447",
       "title": "Taylor Swift - Lover",
       "variant": "All Media, Album, LP, Pink",
@@ -243,7 +297,7 @@
       "allow_offers": true
     },
     "4492606511": {
-      "rank": 14,
+      "rank": 16,
       "id": "4492606511",
       "title": "Taylor Swift - Folklore",
       "variant": "Album, Deluxe Edition, LP, Brown Marbled \"In The Trees\"",
@@ -262,7 +316,7 @@
       "allow_offers": true
     },
     "4492583531": {
-      "rank": 15,
+      "rank": 17,
       "id": "4492583531",
       "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
       "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
@@ -280,7 +334,7 @@
       "cover_image": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg"
     },
     "3929846740": {
-      "rank": 16,
+      "rank": 18,
       "id": "3929846740",
       "title": "Minus The Bear - Farewell",
       "variant": "Limited Edition, LP, Coke Bottle Green",
@@ -299,7 +353,7 @@
       "allow_offers": true
     },
     "4498454576": {
-      "rank": 17,
+      "rank": 19,
       "id": "4498454576",
       "title": "Dayseeker - Dark Sun",
       "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
@@ -317,7 +371,7 @@
       "cover_image": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg"
     },
     "4498454573": {
-      "rank": 18,
+      "rank": 20,
       "id": "4498454573",
       "title": "Dayseeker - Creature In The Black Night",
       "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
@@ -335,7 +389,7 @@
       "cover_image": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg"
     },
     "4492241375": {
-      "rank": 19,
+      "rank": 21,
       "id": "4492241375",
       "title": "Killswitch Engage - As Daylight Dies",
       "variant": "Stereo, Album, Limited Edition, Numbered, Reissue, LP, Red Translucent w/ Black Smoke",
@@ -354,7 +408,7 @@
       "allow_offers": true
     },
     "4491301943": {
-      "rank": 20,
+      "rank": 22,
       "id": "4491301943",
       "title": "A Day To Remember - Common Courtesy",
       "variant": "Album, Limited Edition, Reissue, LP, Clear w/ Rainbow Splatter",
@@ -373,7 +427,7 @@
       "allow_offers": true
     },
     "4490722037": {
-      "rank": 21,
+      "rank": 23,
       "id": "4490722037",
       "title": "Glassjaw - Everything You Ever Wanted To Know About Silence",
       "variant": "Album, LP",
@@ -382,7 +436,7 @@
       "list_price": "$100.00",
       "total_price": "$106.00",
       "seller_info": "_maintenance",
-      "listed_age": "Listed 2 days ago",
+      "listed_age": "Listed 3 days ago",
       "item_url": "https://www.discogs.com/sell/item/4490722037",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4490722037",
       "release_url": "https://www.discogs.com/release/5347070",
@@ -391,7 +445,7 @@
       "cover_image": "https://i.discogs.com/oS3Lr2Nm8uXhCoSmFAnfLEJ3LPLQsorKjIJDijpqjDw/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTUzNDcw/NzAtMTM5NDQwMDg0/My0xMzgwLmpwZWc.jpeg"
     },
     "4319888766": {
-      "rank": 22,
+      "rank": 24,
       "id": "4319888766",
       "title": "Taylor Swift - Folklore",
       "variant": "Album, Deluxe Edition, LP, Brown Marbled \"In The Trees\"",
@@ -410,7 +464,7 @@
       "allow_offers": true
     },
     "4489879550": {
-      "rank": 23,
+      "rank": 25,
       "id": "4489879550",
       "title": "Bring Me The Horizon - There Is A Hell Believe Me I've Seen It. There Is A Heaven Let's Keep It A Secret.",
       "variant": "All Media, Album, Etched, Limited Edition, Reissue, Single Sided, LP, Tan Marble [Sandstone]",
@@ -428,7 +482,7 @@
       "cover_image": "https://i.discogs.com/Apyz9dRDj8nkT1P49wQMSNDLYCA3dYCVxQShTdLywLU/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE5NDcw/NDI0LTE2MjYxMjM3/MTAtMzMwOC5qcGVn.jpeg"
     },
     "4401791286": {
-      "rank": 24,
+      "rank": 25,
       "id": "4401791286",
       "title": "Landmvrks - Fantasy",
       "variant": "Album, Limited Edition, LP, Clear w/ Gold Swirl Colored Splatter, 180g",
@@ -444,25 +498,6 @@
       "raw_description": "Album, Limited Edition, LP, Clear w/ Gold Swirl Colored Splatter, 180g",
       "seeded_at": "2026-11-20T00:10:07",
       "cover_image": "https://i.discogs.com/ogtkw3XXgNZd58H-pWcja3zNRXx8jDfoMFFGSW0CHDE/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI0MjYw/OTQ4LTE3MDc0OTA3/MDEtOTg5Ny5qcGVn.jpeg",
-      "allow_offers": true
-    },
-    "4257509076": {
-      "rank": 25,
-      "id": "4257509076",
-      "title": "Bring Me The Horizon - There Is A Hell Believe Me I've Seen It. There Is A Heaven Let's Keep It A Secret.",
-      "variant": "All Media, Album, Etched, Limited Edition, Reissue, Single Sided, LP, Grey Marble [White / Black Swirl]",
-      "media_condition": "NM",
-      "sleeve_condition": "VG+",
-      "list_price": "$299.99",
-      "total_price": "$299.99",
-      "seller_info": "curefortheitch",
-      "listed_age": "Listed 3 days ago",
-      "item_url": "https://www.discogs.com/sell/item/4257509076",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4257509076",
-      "release_url": "https://www.discogs.com/release/9719410",
-      "raw_description": "Played once, sounds good / Seam splits on the inner sleeves and minor shelf-wear on the jacket, in good condition overall - pics on request, ships in a Whiplash Mailer",
-      "seeded_at": "2026-11-20T00:10:07",
-      "cover_image": "https://i.discogs.com/lTCeKYTBFLKa6xdyGvCgUeWB7psxOerzl7Cwz_1N07A/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTk3MTk0/MTAtMTY0MzI5MTc5/Mi04NzU1LmpwZWc.jpeg",
       "allow_offers": true
     },
     "4495223060": {
@@ -5285,7 +5320,7 @@
       "media_condition": "NM",
       "last_price_usd": 299.99,
       "lowest_price_usd": 299.99,
-      "highest_price_usd": 299.99,
+      "highest_price_usd": 1299.99,
       "last_seen_at": "2026-11-20T00:10:07",
       "total_relists_seen": 1,
       "last_listing_id": "4257509076",
@@ -5546,6 +5581,21 @@
       "last_listing_id": "4412908854",
       "seen_listing_ids": [
         "4412908854"
+      ]
+    },
+    "17342563::crookedspades::NM": {
+      "release_id": "17342563",
+      "title": "Killswitch Engage - As Daylight Dies",
+      "seller": "crookedspades",
+      "media_condition": "NM",
+      "last_price_usd": 200.49,
+      "lowest_price_usd": 200.49,
+      "highest_price_usd": 200.49,
+      "last_seen_at": "2026-11-20T02:40:08",
+      "total_relists_seen": 1,
+      "last_listing_id": "4499968275",
+      "seen_listing_ids": [
+        "4499968275"
       ]
     }
   }
