@@ -1,4 +1,4 @@
-name: Build Discogs Sniper v2.0 Command Center & Deploy to GitHub Pages
+name: Build Discogs Sniper v2.1-beta Command Center & Deploy to GitHub Pages
 
 on:
   push:
@@ -30,15 +30,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Compile Sniper v2.0 State & Static Command Center (index.html)
+      - name: Compile Sniper v2.1-beta State & Static Command Center (index.html)
         env:
           DISCOGS_USERNAME: "krunked"
           DISCOGS_TOKEN: ${{ secrets.DISCOGS_TOKEN }}
         run: |
-          python scripts/build_dashboard.py
+          python scripts/build_dashboard.py --sync-wantlist
           python scripts/build_dashboard.py --check
 
-      - name: Run Sniper v2.0 Unit & Forensic Integrity Tests
+      - name: Run Sniper v2.1-beta Unit & Forensic Integrity Tests
         run: |
           python -m unittest discover -s tests -p "test_*.py" -v
 
