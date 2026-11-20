@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discogs Sniper v2.0 — Hybrid API &amp; GraphQL Wantlist Command Center</title>
+  <meta name="description" content="Tactical Discogs Wantlist Marketplace Sniper v2.0 with Official Discogs REST API v2.0 price suggestions, semantic auto-relist deduplication, Collection Vault cross-check, and 1-Click Add to Cart." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet" />
+  <style>
+/* __INJECT_STYLES_CSS__ */
+  </style>
+</head>
+<body>
+  <!-- TOP STICKY HEADER -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div class="brand-title-wrap">
+          <h1>
+            DISCOGS SNIPER
+            <span class="version-tag">v2.0 HYBRID API</span>
+          </h1>
+          <div class="brand-subtitle" id="header-telemetry-subtitle">
+            @krunked // Official Discogs API v2.0 + In-Origin GraphQL + Vault Bridge
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" aria-label="Primary views">
+        <button type="button" class="nav-tab active" id="tab-btn-radar" data-view="radar">
+          🎯 Live Drop Radar
+          <span class="nav-tab-count" id="nav-count-radar">113</span>
+        </button>
+        <button type="button" class="nav-tab" id="tab-btn-forensics" data-view="forensics">
+          🧹 Relist Forensics
+          <span class="nav-tab-count" id="nav-count-forensics">48% Spam</span>
+        </button>
+        <button type="button" class="nav-tab" id="tab-btn-vault" data-view="vault">
+          🏛️ Vault Cross-Check
+          <span class="nav-tab-count" id="nav-count-vault">19 Overlaps</span>
+        </button>
+        <button type="button" class="nav-tab" id="tab-btn-rules" data-view="rules">
+          ⚙️ API &amp; Sniper Rules
+          <span class="nav-tab-count" id="nav-count-api">API v2</span>
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="api-status-btn" id="btn-open-api-modal" title="Configure Discogs Personal Access Token for live browser API queries">
+          <span class="status-dot" id="api-connection-dot"></span>
+          <span id="api-connection-label">Connect Discogs API</span>
+        </button>
+        <a href="https://www.discogs.com/shop/mywants/?formatDescription=LP&amp;formatName=Vinyl&amp;shipsFrom=United+States&amp;sort=listedNewest" target="_blank" rel="noopener" class="api-status-btn">
+          Discogs Wantlist ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+    <!-- TOP KPI TELEMETRY RIBBON -->
+    <section class="kpi-grid" aria-label="Sniper production telemetry">
+      <div class="kpi-card">
+        <span class="kpi-label">Unique Active Offerings</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-unique-offerings">113</span>
+          <span class="kpi-badge badge-emerald" id="kpi-raw-total-badge">from 218 raw</span>
+        </div>
+        <span class="kpi-sub" id="kpi-distinct-releases-sub">Across 73 distinct Wantlist pressings</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">Auto-Relist Spam Intercepted</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-relists-intercepted">105</span>
+          <span class="kpi-badge badge-amber" id="kpi-spam-pct-badge">-48.2% Noise</span>
+        </div>
+        <span class="kpi-sub" id="kpi-recordmule-sub">recordmule accounts for 99/218 (45.4%)</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">Collection Vault Bridge</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-missing-grails">54</span>
+          <span class="kpi-badge badge-crimson" id="kpi-owned-overlap-badge">10 Already Owned</span>
+        </div>
+        <span class="kpi-sub" id="kpi-vault-sub">54 Missing Grails • 9 Variant Upgrades • 159 Vault LPs</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">5-Min Engine Telemetry</span>
+        <div class="kpi-value-row">
+          <span class="kpi-value" id="kpi-total-checks">5,632</span>
+          <span class="kpi-badge badge-cyan" id="kpi-uptime-badge">98.8% Hydrated</span>
+        </div>
+        <span class="kpi-sub" id="kpi-alerts-sent-sub">225 Priority Alerts Sent • Dual-Trigger Fixed (288/day)</span>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 1: LIVE DROP RADAR
+         ================================================================= -->
+    <section class="view-section active" id="view-radar" aria-label="Live Wantlist Drop Radar">
+      <div class="controls-panel">
+        <div class="controls-top-row">
+          <div class="search-box-wrap">
+            <span class="search-icon">⌕</span>
+            <input
+              type="search"
+              id="radar-search-input"
+              class="search-input"
+              placeholder="Search artist, album, colored vinyl variant, seller, or 10-digit listing ID..."
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="control-group">
+            <button type="button" class="dedup-toggle-btn active" id="btn-toggle-dedup" title="Collapse duplicate daily relists from the same seller into a single card">
+              <span>🧹 Collapse Auto-Relists</span>
+              <span class="kpi-badge badge-emerald" id="dedup-status-chip">ON (-105)</span>
+            </button>
+
+            <select id="radar-condition-select" class="select-control" aria-label="Filter by minimum media condition">
+              <option value="ALL">Condition: All Grades</option>
+              <option value="M">Condition: Mint (M) Only</option>
+              <option value="NM">Condition: Near Mint (NM+)</option>
+              <option value="VG+">Condition: Very Good Plus (VG++)</option>
+            </select>
+
+            <select id="radar-sort-select" class="select-control" aria-label="Sort listings">
+              <option value="SNAPSHOT_ORDER">Sort: Newest Sniper Drops</option>
+              <option value="DEAL_SCORE">Sort: Best Deal Score (vs Suggested)</option>
+              <option value="PRICE_ASC">Sort: Lowest Total Shipped</option>
+              <option value="PRICE_DESC">Sort: Highest Value Grails</option>
+              <option value="MOST_RELISTED">Sort: Most Relisted (Spam Churn)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="filter-pills-row">
+          <div class="pill-group" role="tablist" aria-label="Category filters">
+            <button type="button" class="filter-pill active" data-filter="ALL" id="pill-filter-all">
+              All Drops <span id="pill-cnt-all">(113)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="MISSING_GRAIL" id="pill-filter-grails">
+              🎯 Missing Grails <span id="pill-cnt-grails">(54)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="STEALS" id="pill-filter-steals">
+              🔥 Below Suggested <span id="pill-cnt-steals"></span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="PRICE_DROP" id="pill-filter-pricedrop">
+              📉 Price Drops <span id="pill-cnt-pricedrop"></span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="VARIANT_UPGRADE" id="pill-filter-variants">
+              🌈 Variant Hunter <span id="pill-cnt-variants">(9)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="ALREADY_OWNED" id="pill-filter-owned">
+              ✅ Already in Vault <span id="pill-cnt-owned">(10)</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="HIDE_RECORDMULE" id="pill-filter-norecordmule">
+              🚫 Hide recordmule
+            </button>
+          </div>
+
+          <div class="price-slider-wrap">
+            <label for="radar-max-price-slider">Max Shipped: <strong id="max-price-readout">No Limit</strong></label>
+            <input type="range" id="radar-max-price-slider" class="price-slider" min="25" max="500" step="5" value="500" />
+          </div>
+        </div>
+      </div>
+
+      <div class="results-toolbar">
+        <span id="radar-showing-summary">Showing 113 unique offerings</span>
+        <span id="radar-muted-sellers-bar"></span>
+      </div>
+
+      <div class="drops-grid" id="radar-drops-grid"></div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 2: RELIST FORENSICS & SELLER RADAR
+         ================================================================= -->
+    <section class="view-section" id="view-forensics" aria-label="Relist Forensics and Production Log Audit">
+      <div class="section-grid-2">
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>1. The "recordmule" Daily Relist Loop (12:00–13:59 Local)</span>
+            <span class="kpi-badge badge-amber">31.5% of All Alerts</span>
+          </div>
+          <p class="panel-subtitle">
+            Hourly alert distribution across 225 production alerts in <code>sniper.log</code>. Notice the massive 12:00–13:59 spike where automated mega-sellers delete and re-upload identical copies of <em>Dayseeker</em> and <em>I Prevail</em> with new Listing IDs to stay #1 on "Listed Newest".
+          </p>
+          <div class="bar-chart" id="chart-hourly-alerts"></div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>2. Task Scheduler Double-Trigger Anomaly (Nov 12 Jump)</span>
+            <span class="kpi-badge badge-crimson">288 → 576 Runs/Day Fixed</span>
+          </div>
+          <p class="panel-subtitle">
+            Daily check count from <code>sniper.log</code>. A normal 5-minute schedule runs <strong>288 times/day</strong>. On Nov 12, attaching <code>RepetitionInterval</code> to both <code>$RepeatTrigger</code> and <code>$LogonTrigger</code> in <code>setup_task.ps1</code> launched two offset 5-minute clocks (77s apart = <strong>576 runs/day</strong>). Fixed in v2.0!
+          </p>
+          <div class="bar-chart" id="chart-daily-checks"></div>
+        </div>
+      </div>
+
+      <div class="section-grid-2">
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>Seller Volume &amp; Auto-Relist Leaderboard</span>
+            <span class="kpi-badge badge-cyan" id="forensics-sellers-count">46 Sellers</span>
+          </div>
+          <p class="panel-subtitle">
+            Sellers ranked by share of your 218 tracked Wantlist notifications. Click <strong>Mute Seller</strong> or <strong>Price-Drop Only</strong> to stop daily relist spam while still catching genuine price cuts.
+          </p>
+          <div class="data-table-wrap">
+            <table class="data-table" id="table-seller-leaderboard">
+              <thead>
+                <tr>
+                  <th>Seller</th>
+                  <th>Listings</th>
+                  <th>Unique LPs</th>
+                  <th>Auto-Relists</th>
+                  <th>Min / Avg</th>
+                  <th>Classification</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-seller-leaderboard"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>Most Churned Wantlist Releases</span>
+            <span class="kpi-badge badge-amber">Top Relist Targets</span>
+          </div>
+          <p class="panel-subtitle">
+            Releases generating the most repeat notifications in <code>seed_snapshot.json</code>. <em>Dayseeker - Dark Sun</em> (50x) and <em>Creature In The Black Night</em> (40x) alone accounted for 41.3% of all alerts!
+          </p>
+          <div class="data-table-wrap">
+            <table class="data-table" id="table-release-churn">
+              <thead>
+                <tr>
+                  <th>Release</th>
+                  <th>Alerts</th>
+                  <th>Sellers</th>
+                  <th>Top Seller</th>
+                  <th>Price Range</th>
+                  <th>Vault Status</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-release-churn"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 3: COLLECTION VAULT CROSS-CHECK (discogs_collection BRIDGE)
+         ================================================================= -->
+    <section class="view-section" id="view-vault" aria-label="Discogs Collection Vault Cross-Check">
+      <div class="panel-card" style="margin-bottom: 20px;">
+        <div class="panel-title">
+          <span>✅ 10 Exact Pressings Already in Your 159-LP Collection Vault (Still on Your Wantlist!)</span>
+          <span class="kpi-badge badge-crimson">False-Positive Alert Source</span>
+        </div>
+        <p class="panel-subtitle">
+          When you buy a record on Discogs and add it to your Collection, Discogs does <strong>not</strong> automatically remove it from your Wantlist. Cross-referencing <code>seed_snapshot.json</code> against your <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener" style="color: var(--accent-amber); text-decoration: underline;">Discogs Collection Vault</a> found <strong>10 exact pressings you already own</strong> that are still firing Wantlist Sniper alerts! Remove them below via the official Discogs API (<code>DELETE /users/krunked/wants/{release_id}</code>) or run <code>python discogs_sniper.py --prune-owned</code>.
+        </p>
+        <div style="margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+          <button type="button" class="btn-action btn-primary-amber" id="btn-prune-all-owned-api">
+            🗑️ Prune All 10 Owned Pressings from Discogs Wantlist (API)
+          </button>
+          <code style="background: var(--bg-base); padding: 7px 12px; border-radius: 6px; border: 1px solid var(--border-subtle); font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent-emerald);">
+            python discogs_sniper.py --prune-owned
+          </code>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Album &amp; Pressing</th>
+                <th>Release ID</th>
+                <th>In Your Vault Since</th>
+                <th>Vault Value</th>
+                <th>Sniper Hits</th>
+                <th>Lowest Sniped</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-vault-exact-owned"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>🌈 9 Variant Upgrade Candidates (You Own Another Pressing of This Album)</span>
+          <span class="kpi-badge badge-cyan">Variant Hunter Mode</span>
+        </div>
+        <p class="panel-subtitle">
+          These Wantlist drops are for different colored-vinyl variants or pressings of albums you already own in your Collection Vault. Sniper v2.0 tags these with a <strong>🌈 VARIANT HUNTER</strong> badge in alert emails so you always know what's already on your shelf.
+        </p>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Album</th>
+                <th>Wantlist Pressing Variant</th>
+                <th>Pressing Currently in Your Vault</th>
+                <th>Lowest Sniped</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-vault-variants"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================
+         VIEW 4: SNIPER RULES & LIVE DISCOGS API v2.0 CONSOLE
+         ================================================================= -->
+    <section class="view-section" id="view-rules" aria-label="Sniper Configuration and Live Discogs API Console">
+      <div class="section-grid-2">
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>⚡ Official Discogs REST API v2.0 Connection &amp; Live Tester</span>
+            <span class="kpi-badge badge-emerald" id="rules-api-badge">https://api.discogs.com</span>
+          </div>
+          <p class="panel-subtitle">
+            Your local Windows machine already has <code>DISCOGS_TOKEN</code> stored in <code>HKCU\Environment</code> (from <code>discogs_collection</code>), which <code>discogs_sniper.py</code> v2.0 auto-discovers automatically! Paste your token below to also enable live browser-side calls (<code>/marketplace/price_suggestions</code>, <code>/marketplace/stats</code>, <code>/marketplace/listings</code>, and 1-click Wantlist pruning) right from this GitHub Pages dashboard.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="input-discogs-username">Discogs Username</label>
+              <input type="text" id="input-discogs-username" class="form-input" value="krunked" />
+            </div>
+            <div class="form-field">
+              <label for="input-discogs-token">Discogs Personal Access Token (Stored Locally in Browser)</label>
+              <input type="password" id="input-discogs-token" class="form-input" placeholder="Paste DISCOGS_TOKEN from discogs.com/settings/developers..." />
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+            <button type="button" class="btn-action btn-primary-amber" id="btn-save-verify-token">
+              ⚡ Save &amp; Verify via /oauth/identity
+            </button>
+            <button type="button" class="btn-action" id="btn-test-price-suggestions">
+              📊 Test /marketplace/price_suggestions (Release #38857860)
+            </button>
+            <button type="button" class="btn-action" id="btn-clear-token">
+              Clear Browser Token
+            </button>
+          </div>
+
+          <div class="code-block" id="api-console-output">// Ready. Click "Save &amp; Verify" or "Test /marketplace/price_suggestions" to query https://api.discogs.com live.</div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-title">
+            <span>⚙️ Sniper v2.0 Rule Builder (<code>sniper_config.json</code>)</span>
+            <span class="kpi-badge badge-amber">Zero-Noise Engine</span>
+          </div>
+          <p class="panel-subtitle">
+            Customize how <code>discogs_sniper.py</code> filters and deduplicates Wantlist drops during its 5-minute background runs, then export or copy your <code>sniper_config.json</code>.
+          </p>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="cfg-cooldown-days">Auto-Relist Cooldown Window (Days)</label>
+              <input type="number" id="cfg-cooldown-days" class="form-input" value="7" min="1" max="90" />
+            </div>
+            <div class="form-field">
+              <label for="cfg-price-drop-usd">Price-Drop Override Threshold ($ USD)</label>
+              <input type="number" id="cfg-price-drop-usd" class="form-input" value="1.00" step="0.50" min="0.50" />
+            </div>
+            <div class="form-field">
+              <label for="cfg-max-price">Global Max Shipped Price Ceiling ($ USD, blank = none)</label>
+              <input type="number" id="cfg-max-price" class="form-input" placeholder="No limit" />
+            </div>
+            <div class="form-field">
+              <label for="cfg-suppress-owned">Exact Owned Collection Vault Pressings</label>
+              <select id="cfg-suppress-owned" class="form-input">
+                <option value="false">Badge as "✅ ALREADY IN VAULT" in email</option>
+                <option value="true">Suppress email completely if already owned</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="cfg-pricedrop-sellers">Price-Drop-Only Sellers (comma-separated)</label>
+              <input type="text" id="cfg-pricedrop-sellers" class="form-input" value="recordmule" />
+            </div>
+            <div class="form-field">
+              <label for="cfg-muted-sellers">Hard-Muted Sellers (comma-separated)</label>
+              <input type="text" id="cfg-muted-sellers" class="form-input" placeholder="e.g. spam_seller_1" />
+            </div>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+            <button type="button" class="btn-action btn-cart" id="btn-download-config">
+              💾 Download sniper_config.json
+            </button>
+            <button type="button" class="btn-action" id="btn-copy-config">
+              📋 Copy JSON to Clipboard
+            </button>
+          </div>
+
+          <div class="code-block" id="config-json-preview"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FIXED BOTTOM 30-SECOND STUDIO AUDIO PREVIEW DECK -->
+  <aside class="audio-transport-bar" id="audio-transport-bar" aria-label="30-Second Studio Audio Preview Player">
+    <div class="transport-inner">
+      <div class="transport-track-info">
+        <img src="" alt="Track cover" class="transport-thumb" id="audio-player-thumb" />
+        <div>
+          <div style="font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;" id="audio-player-title">Select a record to audition</div>
+          <div style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--accent-amber);" id="audio-player-sub">30s Studio Preview (iTunes / Deezer)</div>
+        </div>
+      </div>
+
+      <div class="transport-controls">
+        <button type="button" class="btn-action btn-primary-amber" id="btn-audio-play-pause">⏸ Pause</button>
+        <div class="progress-track" id="audio-progress-track">
+          <div class="progress-fill" id="audio-progress-fill"></div>
+        </div>
+        <span style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-secondary);" id="audio-time-label">0:00 / 0:30</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="#" target="_blank" rel="noopener" class="btn-action btn-cart" id="audio-player-cart-btn">🛒 1-Click Cart</a>
+        <button type="button" class="btn-action" id="btn-audio-close" title="Close audio preview">✕</button>
+      </div>
+    </div>
+    <audio id="sniper-preview-audio" preload="none"></audio>
+  </aside>
+
+  <script id="sniper-prebaked-state" type="application/json">
+__INJECT_SNIPER_STATE_JSON__
+  </script>
+  <script>
+// __INJECT_APP_JS__
+  </script>
+</body>
+</html>
