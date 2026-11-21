@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0.0",
-  "compiled_at": "2026-11-20T14:25:11",
-  "snapshot_updated_at": "2026-11-20T14:25:11",
+  "compiled_at": "2026-11-20T18:15:13",
+  "snapshot_updated_at": "2026-11-20T18:15:13",
   "discogs_username": "krunked",
   "wantlist_url": "https://www.discogs.com/shop/mywants/?formatDescription=LP&formatName=Vinyl&shipsFrom=United+States&sort=listedNewest",
   "live_wantlist_sync": {
@@ -11,17 +11,17 @@
     "live_exact_owned_overlaps": null
   },
   "summary": {
-    "total_tracked_listings": 231,
+    "total_tracked_listings": 232,
     "live_page1_count": 25,
     "distinct_releases": 76,
-    "distinct_sellers": 91,
-    "unique_deduped_offerings": 118,
+    "distinct_sellers": 92,
+    "unique_deduped_offerings": 119,
     "auto_relists_intercepted": 113,
-    "spam_reduction_pct": 48.9,
+    "spam_reduction_pct": 48.7,
     "recordmule_listings": 107,
-    "recordmule_share_pct": 46.3,
+    "recordmule_share_pct": 46.1,
     "price_drops_detected": 3,
-    "steals_and_deals_count": 24,
+    "steals_and_deals_count": 25,
     "allow_offers_count": 11,
     "seller_bundles_count": 17,
     "max_bundle_savings_usd": 22.5,
@@ -1326,7 +1326,7 @@
       "seller": "recordmule",
       "seller_url": "https://www.discogs.com/seller/recordmule/profile",
       "total_listings": 107,
-      "share_of_snapshot_pct": 46.3,
+      "share_of_snapshot_pct": 46.1,
       "unique_releases": 4,
       "auto_relists": 103,
       "relist_rate_pct": 96.3,
@@ -2411,6 +2411,23 @@
       "classification": "INDIE / COLLECTOR"
     },
     {
+      "seller": "NexusRecordsNYC",
+      "seller_url": "https://www.discogs.com/seller/NexusRecordsNYC/profile",
+      "total_listings": 1,
+      "share_of_snapshot_pct": 0.4,
+      "unique_releases": 1,
+      "auto_relists": 0,
+      "relist_rate_pct": 0.0,
+      "price_drops": 0,
+      "avg_price_usd": 146.5,
+      "min_price_usd": 146.5,
+      "top_title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
+      "top_title_count": 1,
+      "bundle_items": 1,
+      "bundle_savings_usd": 0.0,
+      "classification": "INDIE / COLLECTOR"
+    },
+    {
       "seller": "nolifeking74",
       "seller_url": "https://www.discogs.com/seller/nolifeking74/profile",
       "total_listings": 1,
@@ -2960,9 +2977,9 @@
       "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
       "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
       "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
-      "total_listings": 7,
-      "unique_sellers": 7,
-      "top_seller": "wavingwithgusto",
+      "total_listings": 8,
+      "unique_sellers": 8,
+      "top_seller": "NexusRecordsNYC",
       "top_seller_count": 1,
       "lowest_price_usd": 132.0,
       "highest_price_usd": 307.9,
@@ -2975,7 +2992,8 @@
         132.0,
         150.99,
         203.0,
-        166.5
+        166.5,
+        146.5
       ]
     },
     {
@@ -3682,6 +3700,142 @@
       "snapshot_order": 1,
       "rank": 1,
       "is_live_page1": true,
+      "id": "4503023760",
+      "release_id": "27928278",
+      "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
+      "artist": "Bone Thugs-N-Harmony",
+      "album": "E. 1999 Eternal",
+      "norm_album_key": "bone thugs - n-harmony - e. 1999 eternal",
+      "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
+      "wax_shader": {
+        "pattern": "solid",
+        "subpattern": "solid",
+        "primary": "#dc2626",
+        "secondary": "#f3f0e6",
+        "accent": "#ffffff",
+        "tertiary": "#ffffff",
+        "wax_name": "Club Edition, Remastered, Red & White",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 189686
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$140.00",
+      "total_price": "$146.50",
+      "list_price_usd": 140.0,
+      "total_price_usd": 146.5,
+      "shipping_price_usd": 6.5,
+      "seller_info": "NexusRecordsNYC",
+      "seller_rating": "99.9",
+      "allow_offers": false,
+      "listed_age": "Listed 1 minute ago",
+      "item_url": "https://www.discogs.com/sell/item/4503023760",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4503023760",
+      "release_url": "https://www.discogs.com/release/27928278",
+      "raw_description": "Brand new, unplayed copy.",
+      "clean_seller_note": "Brand new, unplayed copy.",
+      "collector_badges": [
+        {
+          "id": "UNPLAYED",
+          "label": "UNPLAYED",
+          "tone": "cyan"
+        },
+        {
+          "id": "VMP",
+          "label": "CLUB / VMP",
+          "tone": "amber"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-20T18:15:08",
+      "alerted_at": "2026-11-20T18:15:08",
+      "fingerprint": "27928278::nexusrecordsnyc::M",
+      "api_stats": {
+        "low": "$130.00",
+        "median": "$137.00",
+        "high": "$220.00",
+        "condition_suggested_price": "N/A",
+        "num_for_sale": 21,
+        "lowest_for_sale": "$130.00",
+        "allow_offers": false,
+        "seller_rating": "99.9",
+        "community_have": 5423,
+        "community_want": 1525,
+        "cover_image": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+        "vault_status": "MISSING_GRAIL",
+        "deal_verdict": "\u2705 FAIR MARKET (+7%)"
+      },
+      "relist_sequence_num": 1,
+      "relist_group_total": 1,
+      "is_auto_relist": false,
+      "is_latest_in_group": true,
+      "group_first_price_usd": 146.5,
+      "group_highest_price_usd": 146.5,
+      "group_lowest_price_usd": 146.5,
+      "is_price_drop": false,
+      "price_drop_usd": 0.0,
+      "price_drop_pct": 0.0,
+      "relist_behavior": "SINGLE_DROP",
+      "sibling_listing_ids": [
+        "4503023760"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [
+        {
+          "id": "4503023760",
+          "price_usd": 146.5,
+          "ts": "2026-11-20T18:15:08"
+        }
+      ],
+      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 132.0,
+        "observed_median_usd": 161.25,
+        "observed_high_usd": 307.9,
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1525,
+        "num_for_sale": 21
+      },
+      "deal_delta_usd": -14.75,
+      "deal_delta_pct": -9.1,
+      "deal_score": 86,
+      "deal_tier": "GREAT_DEAL",
+      "deal_tier_label": "BELOW BENCHMARK (-9%)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 1,
+      "seller_bundle_savings_usd": 0.0,
+      "offer_strategy": {
+        "aggressive_offer_usd": 119.0,
+        "recommended_offer_usd": 127.4,
+        "instant_close_offer_usd": 133.0,
+        "savings_vs_ask_usd": 12.6,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 154.75,
+        "rationales": [
+          "8-seller median $161.25 shipped"
+        ],
+        "buyer_pitch": "Hi NexusRecordsNYC, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4503023760). Would you consider an offer of $127.40 (+ shipping) for a quick payment today?"
+      }
+    },
+    {
+      "snapshot_order": 2,
+      "rank": 2,
+      "is_live_page1": true,
       "id": "4502882457",
       "release_id": "19209553",
       "title": "Thornhill - The Dark Pool",
@@ -3715,7 +3869,7 @@
       "seller_info": "TheSquatchDen",
       "seller_rating": "99.5",
       "allow_offers": false,
-      "listed_age": "Listed 2 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502882457",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502882457",
       "release_url": "https://www.discogs.com/release/19209553",
@@ -3813,8 +3967,8 @@
       }
     },
     {
-      "snapshot_order": 2,
-      "rank": 2,
+      "snapshot_order": 3,
+      "rank": 3,
       "is_live_page1": true,
       "id": "4502814381",
       "release_id": "31465817",
@@ -3849,7 +4003,7 @@
       "seller_info": "VinceronLLC",
       "seller_rating": "96.8",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 4 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502814381",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502814381",
       "release_url": "https://www.discogs.com/release/31465817",
@@ -3950,8 +4104,8 @@
       }
     },
     {
-      "snapshot_order": 3,
-      "rank": 3,
+      "snapshot_order": 4,
+      "rank": 4,
       "is_live_page1": true,
       "id": "4502766606",
       "release_id": "33122112",
@@ -3986,7 +4140,7 @@
       "seller_info": "VinceronLLC",
       "seller_rating": "96.8",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502766606",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502766606",
       "release_url": "https://www.discogs.com/release/33122112",
@@ -4081,8 +4235,8 @@
       }
     },
     {
-      "snapshot_order": 4,
-      "rank": 4,
+      "snapshot_order": 5,
+      "rank": 5,
       "is_live_page1": true,
       "id": "4502609763",
       "release_id": "38857860",
@@ -4117,7 +4271,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502609763",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502609763",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -4871,8 +5025,8 @@
       }
     },
     {
-      "snapshot_order": 5,
-      "rank": 5,
+      "snapshot_order": 6,
+      "rank": 6,
       "is_live_page1": true,
       "id": "4502609760",
       "release_id": "38857860",
@@ -4907,7 +5061,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502609760",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502609760",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -4984,8 +5138,8 @@
       }
     },
     {
-      "snapshot_order": 6,
-      "rank": 6,
+      "snapshot_order": 7,
+      "rank": 7,
       "is_live_page1": true,
       "id": "4502609757",
       "release_id": "38857860",
@@ -5020,7 +5174,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502609757",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502609757",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -5097,8 +5251,8 @@
       }
     },
     {
-      "snapshot_order": 7,
-      "rank": 7,
+      "snapshot_order": 8,
+      "rank": 8,
       "is_live_page1": true,
       "id": "4502529648",
       "release_id": "38856249",
@@ -5133,7 +5287,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502529648",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502529648",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -5718,8 +5872,8 @@
       }
     },
     {
-      "snapshot_order": 8,
-      "rank": 8,
+      "snapshot_order": 9,
+      "rank": 9,
       "is_live_page1": true,
       "id": "4502529645",
       "release_id": "38856249",
@@ -5754,7 +5908,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502529645",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502529645",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -5831,8 +5985,8 @@
       }
     },
     {
-      "snapshot_order": 9,
-      "rank": 9,
+      "snapshot_order": 10,
+      "rank": 10,
       "is_live_page1": true,
       "id": "4502499297",
       "release_id": "35138360",
@@ -5867,7 +6021,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 hour ago",
+      "listed_age": "Listed 5 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4502499297",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502499297",
       "release_url": "https://www.discogs.com/release/35138360",
@@ -6140,8 +6294,8 @@
       }
     },
     {
-      "snapshot_order": 10,
-      "rank": 10,
+      "snapshot_order": 11,
+      "rank": 11,
       "is_live_page1": true,
       "id": "4501602390",
       "release_id": "12368772",
@@ -6176,7 +6330,7 @@
       "seller_info": "Airiel",
       "seller_rating": "99.9",
       "allow_offers": false,
-      "listed_age": "Listed 3 hours ago",
+      "listed_age": "Listed 7 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4501602390",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4501602390",
       "release_url": "https://www.discogs.com/release/12368772",
@@ -6269,8 +6423,8 @@
       }
     },
     {
-      "snapshot_order": 11,
-      "rank": 11,
+      "snapshot_order": 12,
+      "rank": 12,
       "is_live_page1": true,
       "id": "4499968275",
       "release_id": "17342563",
@@ -6305,7 +6459,7 @@
       "seller_info": "crookedspades",
       "seller_rating": "100.0",
       "allow_offers": true,
-      "listed_age": "Listed 11 hours ago",
+      "listed_age": "Listed 15 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4499968275",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4499968275",
       "release_url": "https://www.discogs.com/release/17342563",
@@ -6401,8 +6555,8 @@
       }
     },
     {
-      "snapshot_order": 12,
-      "rank": 12,
+      "snapshot_order": 13,
+      "rank": 13,
       "is_live_page1": true,
       "id": "4257509076",
       "release_id": "9719410",
@@ -6437,7 +6591,7 @@
       "seller_info": "curefortheitch",
       "seller_rating": "",
       "allow_offers": true,
-      "listed_age": "Listed 13 hours ago",
+      "listed_age": "Listed 17 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4257509076",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4257509076",
       "release_url": "https://www.discogs.com/release/9719410",
@@ -6519,8 +6673,8 @@
       }
     },
     {
-      "snapshot_order": 13,
-      "rank": 13,
+      "snapshot_order": 14,
+      "rank": 14,
       "is_live_page1": true,
       "id": "4498617398",
       "release_id": "38857860",
@@ -6632,8 +6786,8 @@
       }
     },
     {
-      "snapshot_order": 14,
-      "rank": 14,
+      "snapshot_order": 15,
+      "rank": 15,
       "is_live_page1": true,
       "id": "4498617395",
       "release_id": "38857860",
@@ -6745,8 +6899,8 @@
       }
     },
     {
-      "snapshot_order": 15,
-      "rank": 15,
+      "snapshot_order": 16,
+      "rank": 16,
       "is_live_page1": true,
       "id": "4498617392",
       "release_id": "38857860",
@@ -6858,8 +7012,8 @@
       }
     },
     {
-      "snapshot_order": 16,
-      "rank": 16,
+      "snapshot_order": 17,
+      "rank": 17,
       "is_live_page1": true,
       "id": "4498554818",
       "release_id": "38856249",
@@ -6971,8 +7125,8 @@
       }
     },
     {
-      "snapshot_order": 17,
-      "rank": 17,
+      "snapshot_order": 18,
+      "rank": 18,
       "is_live_page1": true,
       "id": "4498554815",
       "release_id": "38856249",
@@ -7084,8 +7238,8 @@
       }
     },
     {
-      "snapshot_order": 18,
-      "rank": 18,
+      "snapshot_order": 19,
+      "rank": 19,
       "is_live_page1": true,
       "id": "4412908854",
       "release_id": "27928278",
@@ -7176,23 +7330,23 @@
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": -10.5,
-      "deal_delta_pct": -6.3,
+      "deal_delta_usd": -5.25,
+      "deal_delta_pct": -3.3,
       "deal_score": 86,
       "deal_tier": "GREAT_DEAL",
-      "deal_tier_label": "BELOW BENCHMARK (-6%)",
+      "deal_tier_label": "BELOW BENCHMARK (-3%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -7203,16 +7357,16 @@
         "instant_close_offer_usd": 142.5,
         "savings_vs_ask_usd": 13.5,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 160.5,
+        "fair_item_target_usd": 155.25,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
         "buyer_pitch": "Hi wavingwithgusto, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4412908854). Would you consider an offer of $136.50 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 19,
-      "rank": 19,
+      "snapshot_order": 20,
+      "rank": 20,
       "is_live_page1": true,
       "id": "4496205149",
       "release_id": "3935049",
@@ -7322,8 +7476,8 @@
       }
     },
     {
-      "snapshot_order": 20,
-      "rank": 20,
+      "snapshot_order": 21,
+      "rank": 21,
       "is_live_page1": true,
       "id": "4496061725",
       "release_id": "12607350",
@@ -7433,8 +7587,8 @@
       }
     },
     {
-      "snapshot_order": 21,
-      "rank": 21,
+      "snapshot_order": 22,
+      "rank": 22,
       "is_live_page1": true,
       "id": "4438624059",
       "release_id": "38275185",
@@ -7469,7 +7623,7 @@
       "seller_info": "blanconino09",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4438624059",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4438624059",
       "release_url": "https://www.discogs.com/release/38275185",
@@ -7548,8 +7702,8 @@
       }
     },
     {
-      "snapshot_order": 22,
-      "rank": 22,
+      "snapshot_order": 23,
+      "rank": 23,
       "is_live_page1": true,
       "id": "4495253831",
       "release_id": "3940397",
@@ -7665,8 +7819,8 @@
       }
     },
     {
-      "snapshot_order": 23,
-      "rank": 23,
+      "snapshot_order": 24,
+      "rank": 24,
       "is_live_page1": true,
       "id": "4502428038",
       "release_id": "38857860",
@@ -7778,8 +7932,8 @@
       }
     },
     {
-      "snapshot_order": 24,
-      "rank": 24,
+      "snapshot_order": 25,
+      "rank": 25,
       "is_live_page1": true,
       "id": "4502428035",
       "release_id": "38856249",
@@ -7891,9 +8045,9 @@
       }
     },
     {
-      "snapshot_order": 25,
+      "snapshot_order": 26,
       "rank": 25,
-      "is_live_page1": true,
+      "is_live_page1": false,
       "id": "4493956016",
       "release_id": "38090760",
       "title": "Electric Callboy - Tanzneid",
@@ -8002,7 +8156,7 @@
       }
     },
     {
-      "snapshot_order": 26,
+      "snapshot_order": 27,
       "rank": 25,
       "is_live_page1": false,
       "id": "4493253353",
@@ -8117,7 +8271,7 @@
       }
     },
     {
-      "snapshot_order": 27,
+      "snapshot_order": 28,
       "rank": 25,
       "is_live_page1": false,
       "id": "4492616447",
@@ -8229,7 +8383,7 @@
       }
     },
     {
-      "snapshot_order": 28,
+      "snapshot_order": 29,
       "rank": 25,
       "is_live_page1": false,
       "id": "4492606511",
@@ -8341,7 +8495,7 @@
       }
     },
     {
-      "snapshot_order": 29,
+      "snapshot_order": 30,
       "rank": 20,
       "is_live_page1": false,
       "id": "4492583531",
@@ -8428,20 +8582,20 @@
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
+      "deal_delta_usd": 5.25,
+      "deal_delta_pct": 3.3,
       "deal_score": 72,
       "deal_tier": "FAIR_MARKET",
       "deal_tier_label": "FAIR MARKET",
@@ -8450,20 +8604,20 @@
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 132.8,
-        "recommended_offer_usd": 144.0,
-        "instant_close_offer_usd": 152.0,
-        "savings_vs_ask_usd": 16.0,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 160.0,
+        "aggressive_offer_usd": 128.44,
+        "recommended_offer_usd": 139.28,
+        "instant_close_offer_usd": 147.01,
+        "savings_vs_ask_usd": 20.72,
+        "savings_pct": 13.0,
+        "fair_item_target_usd": 154.75,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
-        "buyer_pitch": "Hi lloydsrecords, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4492583531). Would you consider an offer of $144.00 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi lloydsrecords, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4492583531). Would you consider an offer of $139.28 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 30,
+      "snapshot_order": 31,
       "rank": 21,
       "is_live_page1": false,
       "id": "3929846740",
@@ -8583,7 +8737,7 @@
       }
     },
     {
-      "snapshot_order": 31,
+      "snapshot_order": 32,
       "rank": 22,
       "is_live_page1": false,
       "id": "4498454576",
@@ -8696,7 +8850,7 @@
       }
     },
     {
-      "snapshot_order": 32,
+      "snapshot_order": 33,
       "rank": 23,
       "is_live_page1": false,
       "id": "4498454573",
@@ -8809,7 +8963,7 @@
       }
     },
     {
-      "snapshot_order": 33,
+      "snapshot_order": 34,
       "rank": 24,
       "is_live_page1": false,
       "id": "4492241375",
@@ -8926,7 +9080,7 @@
       }
     },
     {
-      "snapshot_order": 34,
+      "snapshot_order": 35,
       "rank": 25,
       "is_live_page1": false,
       "id": "4491301943",
@@ -9038,7 +9192,7 @@
       }
     },
     {
-      "snapshot_order": 35,
+      "snapshot_order": 36,
       "rank": 24,
       "is_live_page1": false,
       "id": "4490722037",
@@ -9147,7 +9301,7 @@
       }
     },
     {
-      "snapshot_order": 36,
+      "snapshot_order": 37,
       "rank": 25,
       "is_live_page1": false,
       "id": "4319888766",
@@ -9264,7 +9418,7 @@
       }
     },
     {
-      "snapshot_order": 37,
+      "snapshot_order": 38,
       "rank": 25,
       "is_live_page1": false,
       "id": "4489879550",
@@ -9384,7 +9538,7 @@
       }
     },
     {
-      "snapshot_order": 38,
+      "snapshot_order": 39,
       "rank": 25,
       "is_live_page1": false,
       "id": "4401791286",
@@ -9493,7 +9647,7 @@
       }
     },
     {
-      "snapshot_order": 39,
+      "snapshot_order": 40,
       "rank": 11,
       "is_live_page1": false,
       "id": "4495223060",
@@ -9606,7 +9760,7 @@
       }
     },
     {
-      "snapshot_order": 40,
+      "snapshot_order": 41,
       "rank": 12,
       "is_live_page1": false,
       "id": "4495223057",
@@ -9719,7 +9873,7 @@
       }
     },
     {
-      "snapshot_order": 41,
+      "snapshot_order": 42,
       "rank": 13,
       "is_live_page1": false,
       "id": "4495223054",
@@ -9832,7 +9986,7 @@
       }
     },
     {
-      "snapshot_order": 42,
+      "snapshot_order": 43,
       "rank": 14,
       "is_live_page1": false,
       "id": "4495154159",
@@ -9945,7 +10099,7 @@
       }
     },
     {
-      "snapshot_order": 43,
+      "snapshot_order": 44,
       "rank": 15,
       "is_live_page1": false,
       "id": "4495154156",
@@ -10058,7 +10212,7 @@
       }
     },
     {
-      "snapshot_order": 44,
+      "snapshot_order": 45,
       "rank": 24,
       "is_live_page1": false,
       "id": "4495051877",
@@ -10171,7 +10325,7 @@
       }
     },
     {
-      "snapshot_order": 45,
+      "snapshot_order": 46,
       "rank": 25,
       "is_live_page1": false,
       "id": "4495051874",
@@ -10284,7 +10438,7 @@
       }
     },
     {
-      "snapshot_order": 46,
+      "snapshot_order": 47,
       "rank": 25,
       "is_live_page1": false,
       "id": "4384702056",
@@ -10399,7 +10553,7 @@
       }
     },
     {
-      "snapshot_order": 47,
+      "snapshot_order": 48,
       "rank": 25,
       "is_live_page1": false,
       "id": "4116817188",
@@ -10526,7 +10680,7 @@
       }
     },
     {
-      "snapshot_order": 48,
+      "snapshot_order": 49,
       "rank": 2,
       "is_live_page1": false,
       "id": "4496060084",
@@ -10644,7 +10798,7 @@
       }
     },
     {
-      "snapshot_order": 49,
+      "snapshot_order": 50,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485553277",
@@ -10759,7 +10913,7 @@
       }
     },
     {
-      "snapshot_order": 50,
+      "snapshot_order": 51,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485121604",
@@ -10870,7 +11024,7 @@
       }
     },
     {
-      "snapshot_order": 51,
+      "snapshot_order": 52,
       "rank": 13,
       "is_live_page1": false,
       "id": "4492483199",
@@ -10983,7 +11137,7 @@
       }
     },
     {
-      "snapshot_order": 52,
+      "snapshot_order": 53,
       "rank": 14,
       "is_live_page1": false,
       "id": "4492483193",
@@ -11096,7 +11250,7 @@
       }
     },
     {
-      "snapshot_order": 53,
+      "snapshot_order": 54,
       "rank": 15,
       "is_live_page1": false,
       "id": "4492399598",
@@ -11209,7 +11363,7 @@
       }
     },
     {
-      "snapshot_order": 54,
+      "snapshot_order": 55,
       "rank": 16,
       "is_live_page1": false,
       "id": "4492399595",
@@ -11322,7 +11476,7 @@
       }
     },
     {
-      "snapshot_order": 55,
+      "snapshot_order": 56,
       "rank": 14,
       "is_live_page1": false,
       "id": "4492483196",
@@ -11435,7 +11589,7 @@
       }
     },
     {
-      "snapshot_order": 56,
+      "snapshot_order": 57,
       "rank": 24,
       "is_live_page1": false,
       "id": "4492300007",
@@ -11548,7 +11702,7 @@
       }
     },
     {
-      "snapshot_order": 57,
+      "snapshot_order": 58,
       "rank": 25,
       "is_live_page1": false,
       "id": "4492300004",
@@ -11661,7 +11815,7 @@
       }
     },
     {
-      "snapshot_order": 58,
+      "snapshot_order": 59,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485101663",
@@ -11772,7 +11926,7 @@
       }
     },
     {
-      "snapshot_order": 59,
+      "snapshot_order": 60,
       "rank": 14,
       "is_live_page1": false,
       "id": "4493801354",
@@ -11925,7 +12079,7 @@
       }
     },
     {
-      "snapshot_order": 60,
+      "snapshot_order": 61,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485101234",
@@ -12036,7 +12190,7 @@
       }
     },
     {
-      "snapshot_order": 61,
+      "snapshot_order": 62,
       "rank": 13,
       "is_live_page1": false,
       "id": "4492164425",
@@ -12149,7 +12303,7 @@
       }
     },
     {
-      "snapshot_order": 62,
+      "snapshot_order": 63,
       "rank": 14,
       "is_live_page1": false,
       "id": "4489942280",
@@ -12260,7 +12414,7 @@
       }
     },
     {
-      "snapshot_order": 63,
+      "snapshot_order": 64,
       "rank": 17,
       "is_live_page1": false,
       "id": "4489738529",
@@ -12373,7 +12527,7 @@
       }
     },
     {
-      "snapshot_order": 64,
+      "snapshot_order": 65,
       "rank": 17,
       "is_live_page1": false,
       "id": "4489738535",
@@ -12486,7 +12640,7 @@
       }
     },
     {
-      "snapshot_order": 65,
+      "snapshot_order": 66,
       "rank": 18,
       "is_live_page1": false,
       "id": "4489738532",
@@ -12599,7 +12753,7 @@
       }
     },
     {
-      "snapshot_order": 66,
+      "snapshot_order": 67,
       "rank": 20,
       "is_live_page1": false,
       "id": "4489671545",
@@ -12712,7 +12866,7 @@
       }
     },
     {
-      "snapshot_order": 67,
+      "snapshot_order": 68,
       "rank": 20,
       "is_live_page1": false,
       "id": "4489671548",
@@ -12825,7 +12979,7 @@
       }
     },
     {
-      "snapshot_order": 68,
+      "snapshot_order": 69,
       "rank": 25,
       "is_live_page1": false,
       "id": "4489569611",
@@ -12938,7 +13092,7 @@
       }
     },
     {
-      "snapshot_order": 69,
+      "snapshot_order": 70,
       "rank": 23,
       "is_live_page1": false,
       "id": "4489569608",
@@ -13051,7 +13205,7 @@
       }
     },
     {
-      "snapshot_order": 70,
+      "snapshot_order": 71,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485076160",
@@ -13132,48 +13286,48 @@
           "ts": "2026-11-14T11:37:32"
         }
       ],
-      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "cover_image_url": "https://i.discogs.com/4uc7OD5N0sdmjxeUNxv1YDzVJ5SAFrrD_4rBlHHbp4E/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
       "vault_status": "MISSING_GRAIL",
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": 36.5,
-      "deal_delta_pct": 21.9,
-      "deal_score": 42,
+      "deal_delta_usd": 41.75,
+      "deal_delta_pct": 25.9,
+      "deal_score": 38,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+22%)",
+      "deal_tier_label": "PREMIUM (+26%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 131.56,
-        "recommended_offer_usd": 142.65,
-        "instant_close_offer_usd": 150.57,
-        "savings_vs_ask_usd": 52.35,
-        "savings_pct": 26.8,
-        "fair_item_target_usd": 158.5,
+        "aggressive_offer_usd": 127.2,
+        "recommended_offer_usd": 137.93,
+        "instant_close_offer_usd": 145.59,
+        "savings_vs_ask_usd": 57.07,
+        "savings_pct": 29.3,
+        "fair_item_target_usd": 153.25,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
-        "buyer_pitch": "Hi jessjessblue2, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485076160). Would you consider an offer of $142.65 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi jessjessblue2, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485076160). Would you consider an offer of $137.93 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 71,
+      "snapshot_order": 72,
       "rank": 24,
       "is_live_page1": false,
       "id": "3906788398",
@@ -13295,7 +13449,7 @@
       }
     },
     {
-      "snapshot_order": 72,
+      "snapshot_order": 73,
       "rank": 25,
       "is_live_page1": false,
       "id": "4483362674",
@@ -13423,7 +13577,7 @@
       }
     },
     {
-      "snapshot_order": 73,
+      "snapshot_order": 74,
       "rank": 25,
       "is_live_page1": false,
       "id": "1558470322",
@@ -13540,7 +13694,7 @@
       }
     },
     {
-      "snapshot_order": 74,
+      "snapshot_order": 75,
       "rank": 25,
       "is_live_page1": false,
       "id": "4483171412",
@@ -13662,7 +13816,7 @@
       }
     },
     {
-      "snapshot_order": 75,
+      "snapshot_order": 76,
       "rank": 2,
       "is_live_page1": false,
       "id": "4491243305",
@@ -13775,7 +13929,7 @@
       }
     },
     {
-      "snapshot_order": 76,
+      "snapshot_order": 77,
       "rank": 25,
       "is_live_page1": false,
       "id": "4482973118",
@@ -13884,7 +14038,7 @@
       }
     },
     {
-      "snapshot_order": 77,
+      "snapshot_order": 78,
       "rank": 25,
       "is_live_page1": false,
       "id": "4481531468",
@@ -14001,7 +14155,7 @@
       }
     },
     {
-      "snapshot_order": 78,
+      "snapshot_order": 79,
       "rank": 25,
       "is_live_page1": false,
       "id": "3872569822",
@@ -14110,7 +14264,7 @@
       }
     },
     {
-      "snapshot_order": 79,
+      "snapshot_order": 80,
       "rank": 25,
       "is_live_page1": false,
       "id": "4308476388",
@@ -14232,7 +14386,7 @@
       }
     },
     {
-      "snapshot_order": 80,
+      "snapshot_order": 81,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479451331",
@@ -14370,7 +14524,7 @@
       }
     },
     {
-      "snapshot_order": 81,
+      "snapshot_order": 82,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488396686",
@@ -14483,7 +14637,7 @@
       }
     },
     {
-      "snapshot_order": 82,
+      "snapshot_order": 83,
       "rank": 9,
       "is_live_page1": false,
       "id": "4488396683",
@@ -14596,7 +14750,7 @@
       }
     },
     {
-      "snapshot_order": 83,
+      "snapshot_order": 84,
       "rank": 10,
       "is_live_page1": false,
       "id": "4488339215",
@@ -14709,7 +14863,7 @@
       }
     },
     {
-      "snapshot_order": 84,
+      "snapshot_order": 85,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488396689",
@@ -14822,7 +14976,7 @@
       }
     },
     {
-      "snapshot_order": 85,
+      "snapshot_order": 86,
       "rank": 12,
       "is_live_page1": false,
       "id": "4488339212",
@@ -14935,7 +15089,7 @@
       }
     },
     {
-      "snapshot_order": 86,
+      "snapshot_order": 87,
       "rank": 24,
       "is_live_page1": false,
       "id": "4488238427",
@@ -15048,7 +15202,7 @@
       }
     },
     {
-      "snapshot_order": 87,
+      "snapshot_order": 88,
       "rank": 25,
       "is_live_page1": false,
       "id": "4488238424",
@@ -15161,7 +15315,7 @@
       }
     },
     {
-      "snapshot_order": 88,
+      "snapshot_order": 89,
       "rank": 25,
       "is_live_page1": false,
       "id": "4488249416",
@@ -15274,7 +15428,7 @@
       }
     },
     {
-      "snapshot_order": 89,
+      "snapshot_order": 90,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488028280",
@@ -15383,7 +15537,7 @@
       }
     },
     {
-      "snapshot_order": 90,
+      "snapshot_order": 91,
       "rank": 14,
       "is_live_page1": false,
       "id": "4485059567",
@@ -15459,29 +15613,29 @@
           "ts": "2026-11-14T10:57:32"
         }
       ],
-      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "cover_image_url": "https://i.discogs.com/4uc7OD5N0sdmjxeUNxv1YDzVJ5SAFrrD_4rBlHHbp4E/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
       "vault_status": "MISSING_GRAIL",
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": -15.51,
-      "deal_delta_pct": -9.3,
+      "deal_delta_usd": -10.26,
+      "deal_delta_pct": -6.4,
       "deal_score": 86,
       "deal_tier": "GREAT_DEAL",
-      "deal_tier_label": "BELOW BENCHMARK (-9%)",
+      "deal_tier_label": "BELOW BENCHMARK (-6%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -15492,15 +15646,15 @@
         "instant_close_offer_usd": 136.8,
         "savings_vs_ask_usd": 12.96,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 159.51,
+        "fair_item_target_usd": 154.26,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
         "buyer_pitch": "Hi Fast_n_Bulbous, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485059567). Would you consider an offer of $131.04 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 91,
+      "snapshot_order": 92,
       "rank": 10,
       "is_live_page1": false,
       "id": "4485412619",
@@ -15613,7 +15767,7 @@
       }
     },
     {
-      "snapshot_order": 92,
+      "snapshot_order": 93,
       "rank": 11,
       "is_live_page1": false,
       "id": "4485412616",
@@ -15726,7 +15880,7 @@
       }
     },
     {
-      "snapshot_order": 93,
+      "snapshot_order": 94,
       "rank": 12,
       "is_live_page1": false,
       "id": "4485412613",
@@ -15839,7 +15993,7 @@
       }
     },
     {
-      "snapshot_order": 94,
+      "snapshot_order": 95,
       "rank": 13,
       "is_live_page1": false,
       "id": "4485324410",
@@ -15952,7 +16106,7 @@
       }
     },
     {
-      "snapshot_order": 95,
+      "snapshot_order": 96,
       "rank": 14,
       "is_live_page1": false,
       "id": "4485324407",
@@ -16065,7 +16219,7 @@
       }
     },
     {
-      "snapshot_order": 96,
+      "snapshot_order": 97,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485224567",
@@ -16178,7 +16332,7 @@
       }
     },
     {
-      "snapshot_order": 97,
+      "snapshot_order": 98,
       "rank": 23,
       "is_live_page1": false,
       "id": "4485224564",
@@ -16291,7 +16445,7 @@
       }
     },
     {
-      "snapshot_order": 98,
+      "snapshot_order": 99,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479368948",
@@ -16402,7 +16556,7 @@
       }
     },
     {
-      "snapshot_order": 99,
+      "snapshot_order": 100,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479346844",
@@ -16513,7 +16667,7 @@
       }
     },
     {
-      "snapshot_order": 100,
+      "snapshot_order": 101,
       "rank": 25,
       "is_live_page1": false,
       "id": "3893994715",
@@ -16631,7 +16785,7 @@
       }
     },
     {
-      "snapshot_order": 101,
+      "snapshot_order": 102,
       "rank": 16,
       "is_live_page1": false,
       "id": "4482215072",
@@ -16744,7 +16898,7 @@
       }
     },
     {
-      "snapshot_order": 102,
+      "snapshot_order": 103,
       "rank": 16,
       "is_live_page1": false,
       "id": "4482215075",
@@ -16857,7 +17011,7 @@
       }
     },
     {
-      "snapshot_order": 103,
+      "snapshot_order": 104,
       "rank": 18,
       "is_live_page1": false,
       "id": "4482215069",
@@ -16970,7 +17124,7 @@
       }
     },
     {
-      "snapshot_order": 104,
+      "snapshot_order": 105,
       "rank": 19,
       "is_live_page1": false,
       "id": "4482029861",
@@ -17083,7 +17237,7 @@
       }
     },
     {
-      "snapshot_order": 105,
+      "snapshot_order": 106,
       "rank": 19,
       "is_live_page1": false,
       "id": "4482141788",
@@ -17196,7 +17350,7 @@
       }
     },
     {
-      "snapshot_order": 106,
+      "snapshot_order": 107,
       "rank": 20,
       "is_live_page1": false,
       "id": "4482141785",
@@ -17309,7 +17463,7 @@
       }
     },
     {
-      "snapshot_order": 107,
+      "snapshot_order": 108,
       "rank": 21,
       "is_live_page1": false,
       "id": "4482040934",
@@ -17422,7 +17576,7 @@
       }
     },
     {
-      "snapshot_order": 108,
+      "snapshot_order": 109,
       "rank": 23,
       "is_live_page1": false,
       "id": "4482029858",
@@ -17535,7 +17689,7 @@
       }
     },
     {
-      "snapshot_order": 109,
+      "snapshot_order": 110,
       "rank": 24,
       "is_live_page1": false,
       "id": "3856546486",
@@ -17611,29 +17765,29 @@
           "ts": "2026-11-11T15:53:56"
         }
       ],
-      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "cover_image_url": "https://i.discogs.com/4uc7OD5N0sdmjxeUNxv1YDzVJ5SAFrrD_4rBlHHbp4E/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
       "vault_status": "MISSING_GRAIL",
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": 141.4,
-      "deal_delta_pct": 84.9,
+      "deal_delta_usd": 146.65,
+      "deal_delta_pct": 90.9,
       "deal_score": 29,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+85%)",
+      "deal_tier_label": "PREMIUM (+91%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -17644,15 +17798,15 @@
         "instant_close_offer_usd": 173.94,
         "savings_vs_ask_usd": 125.96,
         "savings_pct": 42.0,
-        "fair_item_target_usd": 158.5,
+        "fair_item_target_usd": 153.25,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
         "buyer_pitch": "Hi WookSlayer, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#3856546486). Would you consider an offer of $173.94 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 110,
+      "snapshot_order": 111,
       "rank": 25,
       "is_live_page1": false,
       "id": "3957529936",
@@ -17763,7 +17917,7 @@
       }
     },
     {
-      "snapshot_order": 111,
+      "snapshot_order": 112,
       "rank": 25,
       "is_live_page1": false,
       "id": "2002974626",
@@ -17880,7 +18034,7 @@
       }
     },
     {
-      "snapshot_order": 112,
+      "snapshot_order": 113,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475662115",
@@ -17989,7 +18143,7 @@
       }
     },
     {
-      "snapshot_order": 113,
+      "snapshot_order": 114,
       "rank": 25,
       "is_live_page1": false,
       "id": "4474311224",
@@ -18107,7 +18261,7 @@
       }
     },
     {
-      "snapshot_order": 114,
+      "snapshot_order": 115,
       "rank": 2,
       "is_live_page1": false,
       "id": "4483360739",
@@ -18237,7 +18391,7 @@
       }
     },
     {
-      "snapshot_order": 115,
+      "snapshot_order": 116,
       "rank": 6,
       "is_live_page1": false,
       "id": "4482327815",
@@ -18361,7 +18515,7 @@
       }
     },
     {
-      "snapshot_order": 116,
+      "snapshot_order": 117,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463045460",
@@ -18476,7 +18630,7 @@
       }
     },
     {
-      "snapshot_order": 117,
+      "snapshot_order": 118,
       "rank": 25,
       "is_live_page1": false,
       "id": "4473611450",
@@ -18595,7 +18749,7 @@
       }
     },
     {
-      "snapshot_order": 118,
+      "snapshot_order": 119,
       "rank": 16,
       "is_live_page1": false,
       "id": "4479370163",
@@ -18712,7 +18866,7 @@
       }
     },
     {
-      "snapshot_order": 119,
+      "snapshot_order": 120,
       "rank": 25,
       "is_live_page1": false,
       "id": "2878849339",
@@ -18823,7 +18977,7 @@
       }
     },
     {
-      "snapshot_order": 120,
+      "snapshot_order": 121,
       "rank": 11,
       "is_live_page1": false,
       "id": "4480679414",
@@ -18936,7 +19090,7 @@
       }
     },
     {
-      "snapshot_order": 121,
+      "snapshot_order": 122,
       "rank": 12,
       "is_live_page1": false,
       "id": "4480679411",
@@ -19049,7 +19203,7 @@
       }
     },
     {
-      "snapshot_order": 122,
+      "snapshot_order": 123,
       "rank": 13,
       "is_live_page1": false,
       "id": "4480679408",
@@ -19162,7 +19316,7 @@
       }
     },
     {
-      "snapshot_order": 123,
+      "snapshot_order": 124,
       "rank": 14,
       "is_live_page1": false,
       "id": "4480606115",
@@ -19275,7 +19429,7 @@
       }
     },
     {
-      "snapshot_order": 124,
+      "snapshot_order": 125,
       "rank": 23,
       "is_live_page1": false,
       "id": "4479125750",
@@ -19388,7 +19542,7 @@
       }
     },
     {
-      "snapshot_order": 125,
+      "snapshot_order": 126,
       "rank": 24,
       "is_live_page1": false,
       "id": "4479035117",
@@ -19501,7 +19655,7 @@
       }
     },
     {
-      "snapshot_order": 126,
+      "snapshot_order": 127,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479035114",
@@ -19614,7 +19768,7 @@
       }
     },
     {
-      "snapshot_order": 127,
+      "snapshot_order": 128,
       "rank": 15,
       "is_live_page1": false,
       "id": "4480606112",
@@ -19727,7 +19881,7 @@
       }
     },
     {
-      "snapshot_order": 128,
+      "snapshot_order": 129,
       "rank": 24,
       "is_live_page1": false,
       "id": "4479125753",
@@ -19840,7 +19994,7 @@
       }
     },
     {
-      "snapshot_order": 129,
+      "snapshot_order": 130,
       "rank": 21,
       "is_live_page1": false,
       "id": "4479125747",
@@ -19953,7 +20107,7 @@
       }
     },
     {
-      "snapshot_order": 130,
+      "snapshot_order": 131,
       "rank": 24,
       "is_live_page1": false,
       "id": "4480503173",
@@ -20066,7 +20220,7 @@
       }
     },
     {
-      "snapshot_order": 131,
+      "snapshot_order": 132,
       "rank": 25,
       "is_live_page1": false,
       "id": "4480503170",
@@ -20179,7 +20333,7 @@
       }
     },
     {
-      "snapshot_order": 132,
+      "snapshot_order": 133,
       "rank": 23,
       "is_live_page1": false,
       "id": "4475667074",
@@ -20290,7 +20444,7 @@
       }
     },
     {
-      "snapshot_order": 133,
+      "snapshot_order": 134,
       "rank": 23,
       "is_live_page1": false,
       "id": "4475668247",
@@ -20413,7 +20567,7 @@
       }
     },
     {
-      "snapshot_order": 134,
+      "snapshot_order": 135,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475667776",
@@ -20524,7 +20678,7 @@
       }
     },
     {
-      "snapshot_order": 135,
+      "snapshot_order": 136,
       "rank": 6,
       "is_live_page1": false,
       "id": "4480439516",
@@ -20600,29 +20754,29 @@
           "ts": "2026-11-12T11:53:53"
         }
       ],
-      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "cover_image_url": "https://i.discogs.com/4uc7OD5N0sdmjxeUNxv1YDzVJ5SAFrrD_4rBlHHbp4E/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
       "vault_status": "MISSING_GRAIL",
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": -34.5,
-      "deal_delta_pct": -20.7,
+      "deal_delta_usd": -29.25,
+      "deal_delta_pct": -18.1,
       "deal_score": 98,
       "deal_tier": "STEAL",
-      "deal_tier_label": "STEAL (-21% vs NM)",
+      "deal_tier_label": "STEAL (-18% vs NM)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -20633,15 +20787,15 @@
         "instant_close_offer_usd": 118.75,
         "savings_vs_ask_usd": 11.25,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 159.5,
+        "fair_item_target_usd": 154.25,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
         "buyer_pitch": "Hi vcaspary1012, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4480439516). Would you consider an offer of $113.75 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 136,
+      "snapshot_order": 137,
       "rank": 23,
       "is_live_page1": false,
       "id": "4480514249",
@@ -20754,7 +20908,7 @@
       }
     },
     {
-      "snapshot_order": 137,
+      "snapshot_order": 138,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475256713",
@@ -20872,7 +21026,7 @@
       }
     },
     {
-      "snapshot_order": 138,
+      "snapshot_order": 139,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478933516",
@@ -20985,7 +21139,7 @@
       }
     },
     {
-      "snapshot_order": 139,
+      "snapshot_order": 140,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478933513",
@@ -21098,7 +21252,7 @@
       }
     },
     {
-      "snapshot_order": 140,
+      "snapshot_order": 141,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478944709",
@@ -21211,7 +21365,7 @@
       }
     },
     {
-      "snapshot_order": 141,
+      "snapshot_order": 142,
       "rank": 25,
       "is_live_page1": false,
       "id": "4452916363",
@@ -21320,7 +21474,7 @@
       }
     },
     {
-      "snapshot_order": 142,
+      "snapshot_order": 143,
       "rank": 1,
       "is_live_page1": false,
       "id": "4479446846",
@@ -21431,7 +21585,7 @@
       }
     },
     {
-      "snapshot_order": 143,
+      "snapshot_order": 144,
       "rank": 1,
       "is_live_page1": false,
       "id": "4479409265",
@@ -21549,7 +21703,7 @@
       }
     },
     {
-      "snapshot_order": 144,
+      "snapshot_order": 145,
       "rank": 24,
       "is_live_page1": false,
       "id": "4456050832",
@@ -21664,7 +21818,7 @@
       }
     },
     {
-      "snapshot_order": 145,
+      "snapshot_order": 146,
       "rank": 25,
       "is_live_page1": false,
       "id": "4471101056",
@@ -21781,7 +21935,7 @@
       }
     },
     {
-      "snapshot_order": 146,
+      "snapshot_order": 147,
       "rank": 2,
       "is_live_page1": false,
       "id": "4375278801",
@@ -21910,7 +22064,7 @@
       }
     },
     {
-      "snapshot_order": 147,
+      "snapshot_order": 148,
       "rank": 25,
       "is_live_page1": false,
       "id": "3947754763",
@@ -22021,7 +22175,7 @@
       }
     },
     {
-      "snapshot_order": 148,
+      "snapshot_order": 149,
       "rank": 25,
       "is_live_page1": false,
       "id": "4369116762",
@@ -22138,7 +22292,7 @@
       }
     },
     {
-      "snapshot_order": 149,
+      "snapshot_order": 150,
       "rank": 12,
       "is_live_page1": false,
       "id": "4475488346",
@@ -22251,7 +22405,7 @@
       }
     },
     {
-      "snapshot_order": 150,
+      "snapshot_order": 151,
       "rank": 13,
       "is_live_page1": false,
       "id": "4475488340",
@@ -22364,7 +22518,7 @@
       }
     },
     {
-      "snapshot_order": 151,
+      "snapshot_order": 152,
       "rank": 14,
       "is_live_page1": false,
       "id": "4475414213",
@@ -22477,7 +22631,7 @@
       }
     },
     {
-      "snapshot_order": 152,
+      "snapshot_order": 153,
       "rank": 15,
       "is_live_page1": false,
       "id": "4475414210",
@@ -22590,7 +22744,7 @@
       }
     },
     {
-      "snapshot_order": 153,
+      "snapshot_order": 154,
       "rank": 13,
       "is_live_page1": false,
       "id": "4475488343",
@@ -22703,7 +22857,7 @@
       }
     },
     {
-      "snapshot_order": 154,
+      "snapshot_order": 155,
       "rank": 17,
       "is_live_page1": false,
       "id": "4475338877",
@@ -22816,7 +22970,7 @@
       }
     },
     {
-      "snapshot_order": 155,
+      "snapshot_order": 156,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475311160",
@@ -22929,7 +23083,7 @@
       }
     },
     {
-      "snapshot_order": 156,
+      "snapshot_order": 157,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475311157",
@@ -23042,7 +23196,7 @@
       }
     },
     {
-      "snapshot_order": 157,
+      "snapshot_order": 158,
       "rank": 3,
       "is_live_page1": false,
       "id": "4478309981",
@@ -23195,7 +23349,7 @@
       }
     },
     {
-      "snapshot_order": 158,
+      "snapshot_order": 159,
       "rank": 3,
       "is_live_page1": false,
       "id": "4477380452",
@@ -23308,7 +23462,7 @@
       }
     },
     {
-      "snapshot_order": 159,
+      "snapshot_order": 160,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475322356",
@@ -23421,7 +23575,7 @@
       }
     },
     {
-      "snapshot_order": 160,
+      "snapshot_order": 161,
       "rank": 25,
       "is_live_page1": false,
       "id": "4196141748",
@@ -23532,7 +23686,7 @@
       }
     },
     {
-      "snapshot_order": 161,
+      "snapshot_order": 162,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476412571",
@@ -23645,7 +23799,7 @@
       }
     },
     {
-      "snapshot_order": 162,
+      "snapshot_order": 163,
       "rank": 12,
       "is_live_page1": false,
       "id": "4475319770",
@@ -23762,7 +23916,7 @@
       }
     },
     {
-      "snapshot_order": 163,
+      "snapshot_order": 164,
       "rank": 17,
       "is_live_page1": false,
       "id": "4473487364",
@@ -23871,7 +24025,7 @@
       }
     },
     {
-      "snapshot_order": 164,
+      "snapshot_order": 165,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476322346",
@@ -24037,7 +24191,7 @@
       }
     },
     {
-      "snapshot_order": 165,
+      "snapshot_order": 166,
       "rank": 2,
       "is_live_page1": false,
       "id": "4476322328",
@@ -24163,7 +24317,7 @@
       }
     },
     {
-      "snapshot_order": 166,
+      "snapshot_order": 167,
       "rank": 3,
       "is_live_page1": false,
       "id": "4476322295",
@@ -24289,7 +24443,7 @@
       }
     },
     {
-      "snapshot_order": 167,
+      "snapshot_order": 168,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476322619",
@@ -24455,7 +24609,7 @@
       }
     },
     {
-      "snapshot_order": 168,
+      "snapshot_order": 169,
       "rank": 2,
       "is_live_page1": false,
       "id": "4476322580",
@@ -24581,7 +24735,7 @@
       }
     },
     {
-      "snapshot_order": 169,
+      "snapshot_order": 170,
       "rank": 3,
       "is_live_page1": false,
       "id": "4476322556",
@@ -24707,7 +24861,7 @@
       }
     },
     {
-      "snapshot_order": 170,
+      "snapshot_order": 171,
       "rank": 24,
       "is_live_page1": false,
       "id": "4470896705",
@@ -24831,7 +24985,7 @@
       }
     },
     {
-      "snapshot_order": 171,
+      "snapshot_order": 172,
       "rank": 17,
       "is_live_page1": false,
       "id": "4476087260",
@@ -24956,7 +25110,7 @@
       }
     },
     {
-      "snapshot_order": 172,
+      "snapshot_order": 173,
       "rank": 24,
       "is_live_page1": false,
       "id": "4154282661",
@@ -25073,7 +25227,7 @@
       }
     },
     {
-      "snapshot_order": 173,
+      "snapshot_order": 174,
       "rank": 25,
       "is_live_page1": false,
       "id": "4466614913",
@@ -25184,7 +25338,7 @@
       }
     },
     {
-      "snapshot_order": 174,
+      "snapshot_order": 175,
       "rank": 25,
       "is_live_page1": false,
       "id": "3406819743",
@@ -25309,7 +25463,7 @@
       }
     },
     {
-      "snapshot_order": 175,
+      "snapshot_order": 176,
       "rank": 13,
       "is_live_page1": false,
       "id": "4472778137",
@@ -25422,7 +25576,7 @@
       }
     },
     {
-      "snapshot_order": 176,
+      "snapshot_order": 177,
       "rank": 14,
       "is_live_page1": false,
       "id": "4472778134",
@@ -25535,7 +25689,7 @@
       }
     },
     {
-      "snapshot_order": 177,
+      "snapshot_order": 178,
       "rank": 15,
       "is_live_page1": false,
       "id": "4472778131",
@@ -25648,7 +25802,7 @@
       }
     },
     {
-      "snapshot_order": 178,
+      "snapshot_order": 179,
       "rank": 16,
       "is_live_page1": false,
       "id": "4472703509",
@@ -25761,7 +25915,7 @@
       }
     },
     {
-      "snapshot_order": 179,
+      "snapshot_order": 180,
       "rank": 16,
       "is_live_page1": false,
       "id": "4472703512",
@@ -25874,7 +26028,7 @@
       }
     },
     {
-      "snapshot_order": 180,
+      "snapshot_order": 181,
       "rank": 18,
       "is_live_page1": false,
       "id": "4472628902",
@@ -25987,7 +26141,7 @@
       }
     },
     {
-      "snapshot_order": 181,
+      "snapshot_order": 182,
       "rank": 19,
       "is_live_page1": false,
       "id": "4472601797",
@@ -26100,7 +26254,7 @@
       }
     },
     {
-      "snapshot_order": 182,
+      "snapshot_order": 183,
       "rank": 20,
       "is_live_page1": false,
       "id": "4472601794",
@@ -26213,7 +26367,7 @@
       }
     },
     {
-      "snapshot_order": 183,
+      "snapshot_order": 184,
       "rank": 22,
       "is_live_page1": false,
       "id": "4472613050",
@@ -26326,7 +26480,7 @@
       }
     },
     {
-      "snapshot_order": 184,
+      "snapshot_order": 185,
       "rank": 25,
       "is_live_page1": false,
       "id": "4176743628",
@@ -26470,7 +26624,7 @@
       }
     },
     {
-      "snapshot_order": 185,
+      "snapshot_order": 186,
       "rank": 25,
       "is_live_page1": false,
       "id": "3673297912",
@@ -26579,7 +26733,7 @@
       }
     },
     {
-      "snapshot_order": 186,
+      "snapshot_order": 187,
       "rank": 1,
       "is_live_page1": false,
       "id": "4475194412",
@@ -26697,7 +26851,7 @@
       }
     },
     {
-      "snapshot_order": 187,
+      "snapshot_order": 188,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464913568",
@@ -26814,7 +26968,7 @@
       }
     },
     {
-      "snapshot_order": 188,
+      "snapshot_order": 189,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464867734",
@@ -26923,7 +27077,7 @@
       }
     },
     {
-      "snapshot_order": 189,
+      "snapshot_order": 190,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464023652",
@@ -27038,7 +27192,7 @@
       }
     },
     {
-      "snapshot_order": 190,
+      "snapshot_order": 191,
       "rank": 2,
       "is_live_page1": false,
       "id": "4473549389",
@@ -27157,7 +27311,7 @@
       }
     },
     {
-      "snapshot_order": 191,
+      "snapshot_order": 192,
       "rank": 25,
       "is_live_page1": false,
       "id": "4288771419",
@@ -27266,7 +27420,7 @@
       }
     },
     {
-      "snapshot_order": 192,
+      "snapshot_order": 193,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463821434",
@@ -27381,7 +27535,7 @@
       }
     },
     {
-      "snapshot_order": 193,
+      "snapshot_order": 194,
       "rank": 16,
       "is_live_page1": false,
       "id": "4142683482",
@@ -27499,7 +27653,7 @@
       }
     },
     {
-      "snapshot_order": 194,
+      "snapshot_order": 195,
       "rank": 1,
       "is_live_page1": false,
       "id": "4439274435",
@@ -27617,7 +27771,7 @@
       }
     },
     {
-      "snapshot_order": 195,
+      "snapshot_order": 196,
       "rank": 14,
       "is_live_page1": false,
       "id": "4470042746",
@@ -27730,7 +27884,7 @@
       }
     },
     {
-      "snapshot_order": 196,
+      "snapshot_order": 197,
       "rank": 15,
       "is_live_page1": false,
       "id": "4470042743",
@@ -27843,7 +27997,7 @@
       }
     },
     {
-      "snapshot_order": 197,
+      "snapshot_order": 198,
       "rank": 16,
       "is_live_page1": false,
       "id": "4470042740",
@@ -27956,7 +28110,7 @@
       }
     },
     {
-      "snapshot_order": 198,
+      "snapshot_order": 199,
       "rank": 17,
       "is_live_page1": false,
       "id": "4469956451",
@@ -28069,7 +28223,7 @@
       }
     },
     {
-      "snapshot_order": 199,
+      "snapshot_order": 200,
       "rank": 18,
       "is_live_page1": false,
       "id": "4469956448",
@@ -28182,7 +28336,7 @@
       }
     },
     {
-      "snapshot_order": 200,
+      "snapshot_order": 201,
       "rank": 19,
       "is_live_page1": false,
       "id": "4469882078",
@@ -28295,7 +28449,7 @@
       }
     },
     {
-      "snapshot_order": 201,
+      "snapshot_order": 202,
       "rank": 20,
       "is_live_page1": false,
       "id": "4469854475",
@@ -28408,7 +28562,7 @@
       }
     },
     {
-      "snapshot_order": 202,
+      "snapshot_order": 203,
       "rank": 21,
       "is_live_page1": false,
       "id": "4469854472",
@@ -28521,7 +28675,7 @@
       }
     },
     {
-      "snapshot_order": 203,
+      "snapshot_order": 204,
       "rank": 23,
       "is_live_page1": false,
       "id": "4469865761",
@@ -28634,7 +28788,7 @@
       }
     },
     {
-      "snapshot_order": 204,
+      "snapshot_order": 205,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463076771",
@@ -28764,7 +28918,7 @@
       }
     },
     {
-      "snapshot_order": 205,
+      "snapshot_order": 206,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463076525",
@@ -28894,7 +29048,7 @@
       }
     },
     {
-      "snapshot_order": 206,
+      "snapshot_order": 207,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463073609",
@@ -28975,48 +29129,48 @@
           "ts": "2026-11-09T03:13:48"
         }
       ],
-      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "cover_image_url": "https://i.discogs.com/4uc7OD5N0sdmjxeUNxv1YDzVJ5SAFrrD_4rBlHHbp4E/rs:fit/g:sm/q:90/h:600/w:597/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
       "vault_status": "MISSING_GRAIL",
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
         "observed_low_usd": 132.0,
-        "observed_median_usd": 166.5,
+        "observed_median_usd": 161.25,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 166.5,
-        "condition_suggested_formatted": "$166.50",
-        "benchmark_source": "Observed 7-Seller Market Median",
+        "condition_suggested_usd": 161.25,
+        "condition_suggested_formatted": "$161.25",
+        "benchmark_source": "Observed 8-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 7,
-        "distinct_sellers_tracked": 7,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
+        "release_listings_tracked": 8,
+        "distinct_sellers_tracked": 8,
+        "community_have": 5423,
+        "community_want": 1526,
+        "num_for_sale": 21
       },
-      "deal_delta_usd": 39.5,
-      "deal_delta_pct": 23.7,
-      "deal_score": 40,
+      "deal_delta_usd": 44.75,
+      "deal_delta_pct": 27.8,
+      "deal_score": 36,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+24%)",
+      "deal_tier_label": "PREMIUM (+28%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 133.22,
-        "recommended_offer_usd": 144.45,
-        "instant_close_offer_usd": 152.47,
-        "savings_vs_ask_usd": 55.55,
-        "savings_pct": 27.8,
-        "fair_item_target_usd": 160.5,
+        "aggressive_offer_usd": 128.86,
+        "recommended_offer_usd": 139.72,
+        "instant_close_offer_usd": 147.49,
+        "savings_vs_ask_usd": 60.28,
+        "savings_pct": 30.1,
+        "fair_item_target_usd": 155.25,
         "rationales": [
-          "7-seller median $166.50 shipped"
+          "8-seller median $161.25 shipped"
         ],
-        "buyer_pitch": "Hi Oldbonesrecords6, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4463073609). Would you consider an offer of $144.45 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi Oldbonesrecords6, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4463073609). Would you consider an offer of $139.72 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 207,
+      "snapshot_order": 208,
       "rank": 10,
       "is_live_page1": false,
       "id": "4381865583",
@@ -29134,7 +29288,7 @@
       }
     },
     {
-      "snapshot_order": 208,
+      "snapshot_order": 209,
       "rank": 12,
       "is_live_page1": false,
       "id": "4467788657",
@@ -29243,7 +29397,7 @@
       }
     },
     {
-      "snapshot_order": 209,
+      "snapshot_order": 210,
       "rank": 13,
       "is_live_page1": false,
       "id": "4437329889",
@@ -29373,7 +29527,7 @@
       }
     },
     {
-      "snapshot_order": 210,
+      "snapshot_order": 211,
       "rank": 15,
       "is_live_page1": false,
       "id": "4466977754",
@@ -29491,7 +29645,7 @@
       }
     },
     {
-      "snapshot_order": 211,
+      "snapshot_order": 212,
       "rank": 1,
       "is_live_page1": false,
       "id": "4470905657",
@@ -29610,7 +29764,7 @@
       }
     },
     {
-      "snapshot_order": 212,
+      "snapshot_order": 213,
       "rank": 2,
       "is_live_page1": false,
       "id": "4470904265",
@@ -29729,7 +29883,7 @@
       }
     },
     {
-      "snapshot_order": 213,
+      "snapshot_order": 214,
       "rank": 15,
       "is_live_page1": false,
       "id": "4466728355",
@@ -29842,7 +29996,7 @@
       }
     },
     {
-      "snapshot_order": 214,
+      "snapshot_order": 215,
       "rank": 22,
       "is_live_page1": false,
       "id": "4383393858",
@@ -29977,7 +30131,7 @@
       }
     },
     {
-      "snapshot_order": 215,
+      "snapshot_order": 216,
       "rank": 23,
       "is_live_page1": false,
       "id": "4463040996",
@@ -30096,7 +30250,7 @@
       }
     },
     {
-      "snapshot_order": 216,
+      "snapshot_order": 217,
       "rank": 24,
       "is_live_page1": false,
       "id": "4462189783",
@@ -30214,7 +30368,7 @@
       }
     },
     {
-      "snapshot_order": 217,
+      "snapshot_order": 218,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462189534",
@@ -30332,7 +30486,7 @@
       }
     },
     {
-      "snapshot_order": 218,
+      "snapshot_order": 219,
       "rank": 1,
       "is_live_page1": false,
       "id": "4469594051",
@@ -30456,7 +30610,7 @@
       }
     },
     {
-      "snapshot_order": 219,
+      "snapshot_order": 220,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462089781",
@@ -30575,7 +30729,7 @@
       }
     },
     {
-      "snapshot_order": 220,
+      "snapshot_order": 221,
       "rank": 11,
       "is_live_page1": false,
       "id": "4465538183",
@@ -30699,7 +30853,7 @@
       }
     },
     {
-      "snapshot_order": 221,
+      "snapshot_order": 222,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462022533",
@@ -30808,7 +30962,7 @@
       }
     },
     {
-      "snapshot_order": 222,
+      "snapshot_order": 223,
       "rank": 25,
       "is_live_page1": false,
       "id": "4466711948",
@@ -30921,7 +31075,7 @@
       }
     },
     {
-      "snapshot_order": 223,
+      "snapshot_order": 224,
       "rank": 25,
       "is_live_page1": false,
       "id": "4461009208",
@@ -31039,7 +31193,7 @@
       }
     },
     {
-      "snapshot_order": 224,
+      "snapshot_order": 225,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458734569",
@@ -31148,7 +31302,7 @@
       }
     },
     {
-      "snapshot_order": 225,
+      "snapshot_order": 226,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458713104",
@@ -31266,7 +31420,7 @@
       }
     },
     {
-      "snapshot_order": 226,
+      "snapshot_order": 227,
       "rank": 7,
       "is_live_page1": false,
       "id": "4464988445",
@@ -31395,7 +31549,7 @@
       }
     },
     {
-      "snapshot_order": 227,
+      "snapshot_order": 228,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458645574",
@@ -31519,7 +31673,7 @@
       }
     },
     {
-      "snapshot_order": 228,
+      "snapshot_order": 229,
       "rank": 7,
       "is_live_page1": false,
       "id": "4464976352",
@@ -31632,7 +31786,7 @@
       }
     },
     {
-      "snapshot_order": 229,
+      "snapshot_order": 230,
       "rank": 8,
       "is_live_page1": false,
       "id": "4464960404",
@@ -31745,7 +31899,7 @@
       }
     },
     {
-      "snapshot_order": 230,
+      "snapshot_order": 231,
       "rank": 16,
       "is_live_page1": false,
       "id": "4463058324",
@@ -31854,7 +32008,7 @@
       }
     },
     {
-      "snapshot_order": 231,
+      "snapshot_order": 232,
       "rank": 25,
       "is_live_page1": false,
       "id": "3640971906",
