@@ -504,7 +504,7 @@ def sync_live_wantlist_optional(username: str, token: str = "") -> dict[str, Any
         return None
 
 
-def refresh_log_forensics() -> dict[str, Any]:
+def refresh_log_forensics(persist: bool = True) -> dict[str, Any]:
     """Reads `data/log_forensics.json` and merges any newer entries from live `sniper.log` if present."""
     base = load_json_safe(LOG_FORENSICS_FILE, {})
     if not LOG_FILE.exists():
@@ -595,17 +595,21 @@ def refresh_log_forensics() -> dict[str, Any]:
         "alert_timestamps": alert_timestamps,
         "recent_alerts": alert_history[-100:],
     }
-    DATA_DIR.mkdir(exist_ok=True)
-    _atomic_write_text(LOG_FORENSICS_FILE, json.dumps(forensics, indent=2))
+    if persist:
+        DATA_DIR.mkdir(exist_ok=True)
+        _atomic_write_text(LOG_FORENSICS_FILE, json.dumps(forensics, indent=2))
     return forensics
 
 
-def build_sniper_state(wantlist_sync_override: dict[str, Any] | None = None) -> dict[str, Any]:
+def build_sniper_state(
+    wantlist_sync_override: dict[str, Any] | None = None,
+    persist: bool = True,
+) -> dict[str, Any]:
     """Compiles the enriched Sniper v3.0 state from snapshot, forensics, Vault crossref, and wantlist sync."""
     snap = load_json_safe(SEED_FILE, {"items": {}})
     raw_items = snap.get("items", snap) if isinstance(snap, dict) else {}
     config = load_json_safe(CONFIG_FILE, {})
-    forensics = refresh_log_forensics()
+    forensics = refresh_log_forensics(persist=persist)
     vault = load_json_safe(VAULT_CROSSREF_FILE, {})
     api_cache = load_json_safe(RELEASES_CACHE_FILE, {})
     wantlist_sync = wantlist_sync_override if wantlist_sync_override is not None else load_json_safe(WANTLIST_SYNC_FILE, {})
@@ -1011,6 +1015,8 @@ def build_sniper_state(wantlist_sync_override: dict[str, Any] | None = None) -> 
         r["target_price_usd"] = target_usd if target_usd > 0 else None
         r["is_target_hit"] = bool(target_usd > 0 and r["total_price_usd"] > 0 and r["total_price_usd"] <= target_usd)
 
+    missing_grail_releases_set -= set(exact_owned_releases_map) | set(variant_upgrade_releases_map)
+
     # 4. Seller Bundle Optimizer & Make-Offer Haggle Strategist
     deduped_rows = [r for r in parsed_rows if r["is_latest_in_group"]]
     seller_bundles, bundle_by_seller = build_seller_bundles(deduped_rows)
@@ -1178,8 +1184,9 @@ def build_sniper_state(wantlist_sync_override: dict[str, Any] | None = None) -> 
         "listings": parsed_rows,
     }
 
-    DATA_DIR.mkdir(exist_ok=True)
-    _atomic_write_text(SNIPER_STATE_FILE, json.dumps(payload, indent=2))
+    if persist:
+        DATA_DIR.mkdir(exist_ok=True)
+        _atomic_write_text(SNIPER_STATE_FILE, json.dumps(payload, indent=2))
     return payload
 
 
@@ -1307,7 +1314,7 @@ def main() -> None:
         else:
             print("[info] Live Wantlist sync unavailable/skipped; using cached snapshot state.")
 
-    state = build_sniper_state(wantlist_sync_override=wantlist_sync)
+    state = build_sniper_state(wantlist_sync_override=wantlist_sync, persist=not args.check)
     s = state["summary"]
     print(
         f"[ok] Compiled data/sniper_state.json (v{SCHEMA_VERSION}): {s['total_tracked_listings']} tracked listings -> "

@@ -60,6 +60,15 @@ class TestDiscogsSniperV2(unittest.TestCase):
         config["relist_deduplication"]["cooldown_days"] = 7
         config["relist_deduplication"]["consolidate_multi_copy_batches"] = True
         config["relist_deduplication"]["price_drop_override_usd"] = 1.0
+        config["relist_deduplication"]["price_drop_override_pct"] = 3.0
+        config["filters"] = {
+            "min_media_condition": "VG+",
+            "min_sleeve_condition": "Any",
+            "max_total_price_usd": None,
+            "muted_sellers": [],
+            "price_drop_only_sellers": ["recordmule"],
+            "target_prices_by_release": {},
+        }
 
         ledger = {
             "38857860::recordmule::M": {
@@ -151,21 +160,59 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertEqual(len(actionable_batch[0]["batch_listing_ids"]), 3)
 
     def test_compiled_sniper_state_and_html_integrity(self):
-        seed = json.loads((REPO_ROOT / "seed_snapshot.json").read_text(encoding="utf-8"))
-        expected_total = len(seed.get("items", seed))
+        import re
 
-        state = builder.build_sniper_state()
+        seed = json.loads((REPO_ROOT / "seed_snapshot.json").read_text(encoding="utf-8"))
+        raw_items = seed.get("items", seed)
+        expected_total = len(raw_items)
+
+        vault = json.loads((REPO_ROOT / "data" / "vault_crossref.json").read_text(encoding="utf-8"))
+        owned_releases = vault.get("owned_releases") or {}
+        owned_album_keys = {builder.normalize_album_key(k) for k in (vault.get("owned_albums") or {})}
+        for info in owned_releases.values():
+            ak = builder.normalize_album_key(f"{info.get('artist', '')} - {info.get('title', '')}")
+            if ak:
+                owned_album_keys.add(ak)
+
+        expected_distinct_rids: set[str] = set()
+        expected_exact_owned: set[str] = set()
+        expected_variant_upgrades: set[str] = set()
+        for item in raw_items.values():
+            m_rel = re.search(r"/release/(\d+)", item.get("release_url", ""))
+            rid = m_rel.group(1) if m_rel else "unknown"
+            expected_distinct_rids.add(rid)
+            norm_key = builder.normalize_album_key((item.get("title") or "Unknown Title").strip())
+            if rid in owned_releases:
+                expected_exact_owned.add(rid)
+            elif norm_key in owned_album_keys:
+                expected_variant_upgrades.add(rid)
+        expected_variant_upgrades -= expected_exact_owned
+        expected_missing_grails = expected_distinct_rids - expected_exact_owned - expected_variant_upgrades
+
+        state = builder.build_sniper_state(persist=False)
         summary = state["summary"]
         self.assertEqual(summary["total_tracked_listings"], expected_total)
         self.assertEqual(
             summary["unique_deduped_offerings"] + summary["auto_relists_intercepted"],
             summary["total_tracked_listings"],
         )
-        self.assertGreaterEqual(summary["auto_relists_intercepted"], 100)
-        self.assertGreaterEqual(summary["seller_bundles_count"], 10)
-        self.assertEqual(summary["exact_owned_releases"], 10)
-        self.assertEqual(summary["variant_upgrade_releases"], 9)
-        self.assertEqual(summary["missing_grails_releases"], 54)
+        self.assertEqual(summary["distinct_releases"], len(expected_distinct_rids))
+        self.assertEqual(summary["exact_owned_releases"], len(expected_exact_owned))
+        self.assertEqual(summary["variant_upgrade_releases"], len(expected_variant_upgrades))
+        self.assertEqual(summary["missing_grails_releases"], len(expected_missing_grails))
+        self.assertEqual(
+            summary["exact_owned_releases"]
+            + summary["variant_upgrade_releases"]
+            + summary["missing_grails_releases"],
+            summary["distinct_releases"],
+        )
+        self.assertEqual(len(state["vault_bridge"]["exact_owned_on_wantlist"]), summary["exact_owned_releases"])
+        self.assertEqual(
+            len(state["vault_bridge"]["variant_upgrades_on_wantlist"]),
+            summary["variant_upgrade_releases"],
+        )
+        self.assertEqual(summary["seller_bundles_count"], len(state["seller_bundles"]))
+        self.assertTrue(all(b["item_count"] >= 2 for b in state["seller_bundles"]))
 
         out_html = builder.compile_static_html(state, check_only=True)
         self.assertTrue(out_html.exists())
@@ -219,12 +266,23 @@ class TestDiscogsSniperV2(unittest.TestCase):
         from unittest.mock import patch
 
         client = sniper.DiscogsAPIClient(token="ValidTestDiscogsToken1234567890", username="krunked")
+        fixture_items = {
+            "4490000001": {
+                "title": "Currents - The Way It Ends",
+                "release_url": "https://www.discogs.com/release/31082741",
+            },
+            "4498617398": {
+                "title": "Dayseeker - Dark Sun",
+                "release_url": "https://www.discogs.com/release/38857860",
+            },
+        }
 
-        # Live wantlist has 0 owned overlaps even though seed_snapshot.json still has 10 historical ones
+        # Live wantlist has 0 owned overlaps even though snapshot fixture still has 1 historical owned item
         buf = io.StringIO()
         with (
             patch.object(client, "get_identity", return_value={"username": "krunked", "id": 32496351}),
             patch.object(client, "fetch_wantlist_ids", return_value=["99999991", "99999992"]),
+            patch.object(sniper, "load_seed_snapshot", return_value=(fixture_items, {})),
             contextlib.redirect_stdout(buf),
         ):
             rc = sniper.run_api_diagnostics(client, token_source="test")
@@ -232,7 +290,7 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertIn("Live Discogs Wantlist   : 2 releases", out)
         self.assertIn("Exact Owned Pressings Still on Live Wantlist (0 releases):", out)
-        self.assertIn("Historical Snapshot Note: 10 owned release(s) remain in seed_snapshot.json", out)
+        self.assertIn("Historical Snapshot Note: 1 owned release(s) remain in seed_snapshot.json", out)
 
     def test_prune_owned_uses_live_wantlist_as_sole_source_of_truth(self):
         import contextlib
@@ -364,6 +422,15 @@ class TestDiscogsSniperV2(unittest.TestCase):
         config["relist_deduplication"]["enabled"] = True
         config["relist_deduplication"]["cooldown_days"] = 7
         config["relist_deduplication"]["price_drop_override_usd"] = 1.0
+        config["relist_deduplication"]["price_drop_override_pct"] = 3.0
+        config["filters"] = {
+            "min_media_condition": "VG+",
+            "min_sleeve_condition": "Any",
+            "max_total_price_usd": None,
+            "muted_sellers": [],
+            "price_drop_only_sellers": ["recordmule"],
+            "target_prices_by_release": {},
+        }
 
         # Seller oscillated up to $44.49 after previously listing at $38.49
         ledger = {
@@ -472,33 +539,145 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertIn("&lt;b&gt;bad_seller&lt;/b&gt;", html_body)
 
     def test_build_sniper_state_v21_fixes_and_live_wantlist_sync(self):
+        import re
         import tempfile
         from unittest.mock import patch
 
         self.assertEqual(builder.normalize_album_key("The Way It Ends "), "the way it ends")
 
+        # Part A: Verify live snapshot structural & non-fabrication invariants without brittle item counts
+        live_seed = json.loads((REPO_ROOT / "seed_snapshot.json").read_text(encoding="utf-8"))
+        live_raw_items = live_seed.get("items", live_seed)
+        rids_with_snapshot_cover = set()
+        for it in live_raw_items.values():
+            m_rel = re.search(r"/release/(\d+)", it.get("release_url", ""))
+            cov = it.get("cover_image") or (it.get("api_stats") or {}).get("cover_image") or ""
+            if m_rel and cov:
+                rids_with_snapshot_cover.add(m_rel.group(1))
+
+        state_live = builder.build_sniper_state(persist=False)
+        self.assertEqual(state_live["schema_version"], "3.0.0")
+        live_p1 = [x for x in state_live["listings"] if x["is_live_page1"]]
+        expected_live_p1 = min(int(live_seed.get("live_page_count", 25)), len(state_live["listings"]))
+        self.assertEqual(len(live_p1), expected_live_p1)
+        for x in state_live["listings"]:
+            self.assertNotIn("Estimated Mint", x["market_stats"]["benchmark_source"])
+            if x["release_id"] in rids_with_snapshot_cover:
+                self.assertTrue(bool(x["cover_image_url"]))
+        self.assertEqual(
+            state_live["summary"]["allow_offers_count"],
+            sum(1 for x in state_live["listings"] if x["is_latest_in_group"] and x["allow_offers"]),
+        )
+        self.assertEqual(
+            state_live["summary"]["exact_owned_in_live_page1"],
+            sum(1 for r in state_live["vault_bridge"]["exact_owned_on_wantlist"] if r["in_live_page1"]),
+        )
+
+        # Part B: Deterministic fixture verifying sibling cover propagation, 3-seller median, Vault buckets & Wantlist sync
+        fixture_seed = {
+            "schema_version": "3.0.0",
+            "updated_at": "2026-11-20T12:00:00",
+            "live_page_count": 2,
+            "items": {
+                "4498617398": {
+                    "title": "Dayseeker - Dark Sun",
+                    "variant": "LP, Ultra Clear",
+                    "media_condition": "M",
+                    "sleeve_condition": "NM",
+                    "list_price": "$30.99",
+                    "total_price": "$38.49",
+                    "seller_info": "recordmule",
+                    "allow_offers": True,
+                    "release_url": "https://www.discogs.com/release/38857860",
+                },
+                "4498000003": {
+                    "title": "Dayseeker - Dark Sun",
+                    "variant": "LP, Ultra Clear",
+                    "media_condition": "M",
+                    "sleeve_condition": "NM",
+                    "list_price": "$30.00",
+                    "total_price": "$36.00",
+                    "seller_info": "IndieSellerB",
+                    "allow_offers": False,
+                    "release_url": "https://www.discogs.com/release/38857860",
+                },
+                "4498000002": {
+                    "title": "Dayseeker - Dark Sun",
+                    "variant": "LP, Ultra Clear",
+                    "media_condition": "M",
+                    "sleeve_condition": "NM",
+                    "list_price": "$36.00",
+                    "total_price": "$42.00",
+                    "seller_info": "CollectorSellerC",
+                    "allow_offers": True,
+                    "release_url": "https://www.discogs.com/release/38857860",
+                },
+                "4498000001": {
+                    "title": "Dayseeker - Dark Sun",
+                    "variant": "LP, Ultra Clear",
+                    "media_condition": "M",
+                    "sleeve_condition": "NM",
+                    "list_price": "$36.99",
+                    "total_price": "$44.49",
+                    "seller_info": "recordmule",
+                    "cover_image": "https://i.discogs.com/dayseeker-cover.jpeg",
+                    "release_url": "https://www.discogs.com/release/38857860",
+                },
+                "4497000002": {
+                    "title": "Currents - The Way It Ends",
+                    "variant": "LP, Purple Swirl",
+                    "media_condition": "NM",
+                    "sleeve_condition": "NM",
+                    "list_price": "$65.00",
+                    "total_price": "$70.00",
+                    "seller_info": "VariantShop",
+                    "release_url": "https://www.discogs.com/release/99000001",
+                },
+                "4497000001": {
+                    "title": "Currents - The Way It Ends",
+                    "variant": "LP, Black Smoke",
+                    "media_condition": "NM",
+                    "sleeve_condition": "NM",
+                    "list_price": "$55.00",
+                    "total_price": "$60.00",
+                    "seller_info": "VaultOverlapSeller",
+                    "release_url": "https://www.discogs.com/release/31082741",
+                },
+            },
+        }
+
         with tempfile.TemporaryDirectory() as tmpdir:
-            tmp_state_file = Path(tmpdir) / "sniper_state.json"
-            with patch.object(builder, "SNIPER_STATE_FILE", tmp_state_file):
+            tmp_dir = Path(tmpdir)
+            tmp_seed_file = tmp_dir / "seed_snapshot.json"
+            tmp_cache_file = tmp_dir / "releases_cache.json"
+            tmp_sync_file = tmp_dir / "wantlist_sync.json"
+            tmp_state_file = tmp_dir / "sniper_state.json"
+            tmp_seed_file.write_text(json.dumps(fixture_seed), encoding="utf-8")
+            tmp_cache_file.write_text("{}", encoding="utf-8")
+
+            with (
+                patch.object(builder, "SEED_FILE", tmp_seed_file),
+                patch.object(builder, "RELEASES_CACHE_FILE", tmp_cache_file),
+                patch.object(builder, "WANTLIST_SYNC_FILE", tmp_sync_file),
+                patch.object(builder, "SNIPER_STATE_FILE", tmp_state_file),
+            ):
                 state_default = builder.build_sniper_state()
 
-                # 1. Schema version & Live Page 1 100% cover recovery + allow_offers recovery
-                self.assertEqual(state_default["schema_version"], "3.0.0")
-                live_p1 = [x for x in state_default["listings"] if x["is_live_page1"]]
-                self.assertEqual(len(live_p1), 25)
-                self.assertEqual(sum(1 for x in live_p1 if not x["cover_image_url"]), 0)
-                self.assertGreaterEqual(state_default["summary"]["allow_offers_count"], 10)
+                # 1. Sibling cover recovery + allow_offers + exact 3-bucket Vault partition
+                dayseeker = next(x for x in state_default["listings"] if x["id"] == "4498617398")
+                self.assertEqual(dayseeker["cover_image_url"], "https://i.discogs.com/dayseeker-cover.jpeg")
+                self.assertEqual(state_default["summary"]["allow_offers_count"], 2)
+                self.assertEqual(state_default["summary"]["exact_owned_releases"], 1)
+                self.assertEqual(state_default["summary"]["variant_upgrade_releases"], 1)
+                self.assertEqual(state_default["summary"]["missing_grails_releases"], 1)
                 self.assertEqual(state_default["summary"]["exact_owned_in_live_page1"], 0)
 
-                # 2. Authentic benchmark: zero fabricated Mint +18% estimates; Dayseeker uses per-seller median ($38.49)
-                for x in state_default["listings"]:
-                    self.assertNotIn("Estimated Mint", x["market_stats"]["benchmark_source"])
-                dayseeker = next(x for x in state_default["listings"] if x["release_id"] == "38857860")
+                # 2. Per-seller deduplicated median ($36.00, $38.49, $42.00 -> $38.49; recordmule $44.49 relist ignored)
                 self.assertEqual(dayseeker["market_stats"]["distinct_sellers_tracked"], 3)
                 self.assertAlmostEqual(dayseeker["market_stats"]["observed_median_usd"], 38.49, places=2)
                 self.assertIn("3-Seller", dayseeker["market_stats"]["benchmark_source"])
 
-                # 3. Live Wantlist sync override: 0 active overlaps -> all 10 snapshot rows marked CLEARED_FROM_WANTLIST
+                # 3. Live Wantlist sync override: 0 active overlaps -> snapshot owned row marked CLEARED_FROM_WANTLIST
                 state_clean = builder.build_sniper_state(
                     wantlist_sync_override={
                         "username": "krunked",
@@ -592,7 +771,7 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertTrue(sig["has_wear_warning"])
         self.assertNotEqual(sig["clean_seller_note"], "")
 
-        # 2. Shipping policy & multi-LP bundle savings
+        # 2. Shipping policy & multi-LP bundle savings (deterministic rows + live structural invariants)
         flat_pol = builder.parse_shipping_policy(
             [7.5, 7.5, 7.5],
             ["$7.50 flat rate shipping for UNLIMITED ITEMS to the USA"],
@@ -606,12 +785,51 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertEqual(free_pol["policy_type"], "FREE_SHIPPING")
         self.assertAlmostEqual(free_pol["bundled_shipping_usd"], 0.0, places=2)
 
-        state = builder.build_sniper_state()
-        bundles_by_seller = {b["seller"]: b for b in state["seller_bundles"]}
-        self.assertIn("recordmule", bundles_by_seller)
-        self.assertGreater(bundles_by_seller["recordmule"]["shipping_saved_usd"], 10.0)
-        self.assertIn("QuickRecords", bundles_by_seller)
-        self.assertGreaterEqual(bundles_by_seller["QuickRecords"]["item_count"], 5)
+        def _make_bundle_row(idx: int, seller: str, rid: str, list_p: float, ship_p: float, note: str = "") -> dict:
+            return {
+                "snapshot_order": idx,
+                "id": str(4500000100 + idx),
+                "release_id": rid,
+                "title": f"Artist {idx} - Album {idx}",
+                "artist": f"Artist {idx}",
+                "album": f"Album {idx}",
+                "variant": "LP, Vinyl",
+                "wax_shader": {"wax_name": "LP"},
+                "media_condition": "NM",
+                "sleeve_condition": "NM",
+                "list_price_usd": list_p,
+                "shipping_price_usd": ship_p,
+                "total_price_usd": round(list_p + ship_p, 2),
+                "seller_info": seller,
+                "allow_offers": False,
+                "cover_image_url": "",
+                "add_to_cart_url": f"https://www.discogs.com/sell/cart/?add={4500000100 + idx}",
+                "item_url": f"https://www.discogs.com/sell/item/{4500000100 + idx}",
+                "raw_description": note,
+                "vault_status": "MISSING_GRAIL",
+            }
+
+        synthetic_rows = [
+            _make_bundle_row(i, "recordmule", f"100{i}", 30.0, 7.5, "$7.50 flat rate shipping for UNLIMITED ITEMS")
+            for i in range(1, 5)
+        ] + [
+            _make_bundle_row(10 + i, "QuickRecords", f"200{i}", 25.0, 6.99, "Standard Media Mail")
+            for i in range(1, 6)
+        ]
+        synth_bundles, synth_by_seller = builder.build_seller_bundles(synthetic_rows)
+        self.assertEqual(len(synth_bundles), 2)
+        self.assertAlmostEqual(synth_by_seller["recordmule"]["shipping_saved_usd"], 22.50, places=2)
+        self.assertEqual(synth_by_seller["quickrecords"]["item_count"], 5)
+        self.assertGreater(synth_by_seller["quickrecords"]["shipping_saved_usd"], 15.0)
+
+        state = builder.build_sniper_state(persist=False)
+        for b in state["seller_bundles"]:
+            self.assertGreaterEqual(b["item_count"], 2)
+            self.assertAlmostEqual(
+                b["bundled_total_usd"],
+                round(b["solo_total_usd"] - b["shipping_saved_usd"], 2),
+                places=2,
+            )
 
         # 3. Make-Offer haggle strategy bounds & wear awareness
         sample_row = {
