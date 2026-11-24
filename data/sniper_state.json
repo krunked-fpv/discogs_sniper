@@ -1,7 +1,7 @@
 {
   "schema_version": "3.0.0",
-  "compiled_at": "2026-11-23T12:15:07",
-  "snapshot_updated_at": "2026-11-23T12:15:07",
+  "compiled_at": "2026-11-23T16:00:11",
+  "snapshot_updated_at": "2026-11-23T16:00:11",
   "discogs_username": "krunked",
   "wantlist_url": "https://www.discogs.com/shop/mywants/?formatDescription=LP&formatName=Vinyl&shipsFrom=United+States&sort=listedNewest",
   "live_wantlist_sync": {
@@ -11,17 +11,17 @@
     "live_exact_owned_overlaps": null
   },
   "summary": {
-    "total_tracked_listings": 275,
+    "total_tracked_listings": 276,
     "live_page1_count": 25,
     "distinct_releases": 78,
-    "distinct_sellers": 97,
-    "unique_deduped_offerings": 127,
+    "distinct_sellers": 98,
+    "unique_deduped_offerings": 128,
     "auto_relists_intercepted": 148,
-    "spam_reduction_pct": 53.8,
+    "spam_reduction_pct": 53.6,
     "recordmule_listings": 142,
-    "recordmule_share_pct": 51.6,
+    "recordmule_share_pct": 51.4,
     "price_drops_detected": 3,
-    "steals_and_deals_count": 27,
+    "steals_and_deals_count": 28,
     "allow_offers_count": 11,
     "seller_bundles_count": 19,
     "max_bundle_savings_usd": 22.5,
@@ -1461,12 +1461,12 @@
       "seller": "recordmule",
       "seller_url": "https://www.discogs.com/seller/recordmule/profile",
       "total_listings": 142,
-      "share_of_snapshot_pct": 51.6,
+      "share_of_snapshot_pct": 51.4,
       "unique_releases": 4,
       "auto_relists": 138,
       "relist_rate_pct": 97.2,
-      "price_drops": 93,
-      "avg_price_usd": 35.9,
+      "price_drops": 94,
+      "avg_price_usd": 35.53,
       "min_price_usd": 27.49,
       "top_title": "Dayseeker - Dark Sun",
       "top_title_count": 68,
@@ -1529,7 +1529,7 @@
       "seller": "JerseyRecs",
       "seller_url": "https://www.discogs.com/seller/JerseyRecs/profile",
       "total_listings": 4,
-      "share_of_snapshot_pct": 1.5,
+      "share_of_snapshot_pct": 1.4,
       "unique_releases": 3,
       "auto_relists": 1,
       "relist_rate_pct": 25.0,
@@ -2920,6 +2920,23 @@
       "classification": "INDIE / COLLECTOR"
     },
     {
+      "seller": "touchingtowns",
+      "seller_url": "https://www.discogs.com/seller/touchingtowns/profile",
+      "total_listings": 1,
+      "share_of_snapshot_pct": 0.4,
+      "unique_releases": 1,
+      "auto_relists": 0,
+      "relist_rate_pct": 0.0,
+      "price_drops": 0,
+      "avg_price_usd": 99.99,
+      "min_price_usd": 99.99,
+      "top_title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
+      "top_title_count": 1,
+      "bundle_items": 1,
+      "bundle_savings_usd": 0.0,
+      "classification": "INDIE / COLLECTOR"
+    },
+    {
       "seller": "vcaspary1012",
       "seller_url": "https://www.discogs.com/seller/vcaspary1012/profile",
       "total_listings": 1,
@@ -3127,9 +3144,9 @@
         38.99,
         38.99,
         44.49,
-        38.99,
-        38.99,
-        38.99,
+        31.49,
+        31.49,
+        31.49,
         44.49,
         38.99,
         38.99,
@@ -3156,9 +3173,9 @@
         44.49,
         39.11,
         39.11,
-        44.49,
-        39.11,
-        39.11,
+        36.99,
+        31.61,
+        31.61,
         44.49,
         39.11,
         39.11
@@ -3187,7 +3204,7 @@
         27.49,
         35.49,
         29.9,
-        35.49,
+        27.99,
         29.9,
         35.49
       ]
@@ -3197,11 +3214,11 @@
       "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
       "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
       "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
-      "total_listings": 10,
-      "unique_sellers": 10,
-      "top_seller": "wavingwithgusto",
+      "total_listings": 11,
+      "unique_sellers": 11,
+      "top_seller": "touchingtowns",
       "top_seller_count": 1,
-      "lowest_price_usd": 116.0,
+      "lowest_price_usd": 99.99,
       "highest_price_usd": 307.9,
       "vault_status": "MISSING_GRAIL",
       "release_url": "https://www.discogs.com/release/27928278",
@@ -3215,7 +3232,8 @@
         203.0,
         166.5,
         146.5,
-        155.0
+        155.0,
+        99.99
       ]
     },
     {
@@ -3926,6 +3944,148 @@
       "snapshot_order": 1,
       "rank": 1,
       "is_live_page1": true,
+      "id": "4511634687",
+      "release_id": "27928278",
+      "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
+      "artist": "Bone Thugs-N-Harmony",
+      "album": "E. 1999 Eternal",
+      "norm_album_key": "bone thugs - n-harmony - e. 1999 eternal",
+      "variant": "Stereo, Album, Club Edition, Reissue, Remastered, LP, Red & White",
+      "wax_shader": {
+        "pattern": "solid",
+        "subpattern": "solid",
+        "primary": "#dc2626",
+        "secondary": "#f3f0e6",
+        "accent": "#ffffff",
+        "tertiary": "#ffffff",
+        "wax_name": "Club Edition, Remastered, Red & White",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 189686
+      },
+      "media_condition": "VG+",
+      "media_condition_full": "Very Good Plus (VG+)",
+      "sleeve_condition": "NM",
+      "list_price": "$94.99",
+      "total_price": "$99.99",
+      "list_price_usd": 94.99,
+      "total_price_usd": 99.99,
+      "shipping_price_usd": 5.0,
+      "seller_info": "touchingtowns",
+      "seller_rating": "99.9",
+      "allow_offers": false,
+      "listed_age": "Listed 2 minutes ago",
+      "item_url": "https://www.discogs.com/sell/item/4511634687",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511634687",
+      "release_url": "https://www.discogs.com/release/27928278",
+      "raw_description": "Just slight warping that does not affect play (plays like new). Gatefold cover very clean, w/booklet, artwork insert, OBI and stickered plastic outer sleeve.",
+      "clean_seller_note": "Just slight warping that does not affect play (plays like new). Gatefold cover very clean, w/booklet, artwork insert, OBI and stickered plastic outer sleeve.",
+      "collector_badges": [
+        {
+          "id": "HYPE_OBI",
+          "label": "HYPE / OBI",
+          "tone": "cyan"
+        },
+        {
+          "id": "VMP",
+          "label": "CLUB / VMP",
+          "tone": "amber"
+        },
+        {
+          "id": "WEAR_WARN",
+          "label": "JACKET WEAR",
+          "tone": "crimson"
+        }
+      ],
+      "has_wear_warning": true,
+      "seeded_at": "2026-11-23T16:00:07",
+      "alerted_at": "2026-11-23T16:00:07",
+      "fingerprint": "27928278::touchingtowns::VG+",
+      "api_stats": {
+        "low": "$130.00",
+        "median": "$137.50",
+        "high": "$220.00",
+        "condition_suggested_price": "N/A",
+        "num_for_sale": 19,
+        "lowest_for_sale": "$130.00",
+        "allow_offers": false,
+        "seller_rating": "99.9",
+        "community_have": 5423,
+        "community_want": 1528,
+        "cover_image": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+        "vault_status": "MISSING_GRAIL",
+        "deal_verdict": "\ud83d\udd25 GRAIL STEAL (-27% vs VG+ value)"
+      },
+      "relist_sequence_num": 1,
+      "relist_group_total": 1,
+      "is_auto_relist": false,
+      "is_latest_in_group": true,
+      "group_first_price_usd": 99.99,
+      "group_highest_price_usd": 99.99,
+      "group_lowest_price_usd": 99.99,
+      "is_price_drop": false,
+      "price_drop_usd": 0.0,
+      "price_drop_pct": 0.0,
+      "relist_behavior": "SINGLE_DROP",
+      "sibling_listing_ids": [
+        "4511634687"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [
+        {
+          "id": "4511634687",
+          "price_usd": 99.99,
+          "ts": "2026-11-23T16:00:07"
+        }
+      ],
+      "cover_image_url": "https://i.discogs.com/MOsiVn-qpcpYCx2TnlSHm3YhH9l50ewCzEPrDPBd8sA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTI3OTI4/Mjc4LTE2OTIwNDYy/MjktMTE1Mi5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
+        "observed_high_usd": 307.9,
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
+        "community_have": 5423,
+        "community_want": 1528,
+        "num_for_sale": 19
+      },
+      "deal_delta_usd": -55.01,
+      "deal_delta_pct": -35.5,
+      "deal_score": 98,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-36% vs VG+)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 1,
+      "seller_bundle_savings_usd": 0.0,
+      "offer_strategy": {
+        "aggressive_offer_usd": 80.74,
+        "recommended_offer_usd": 86.44,
+        "instant_close_offer_usd": 90.24,
+        "savings_vs_ask_usd": 8.55,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 150.0,
+        "rationales": [
+          "11-seller median $155.00 shipped",
+          "Jacket/sleeve wear noted (-7% factor)"
+        ],
+        "buyer_pitch": "Hi touchingtowns, I'm interested in your VG+/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4511634687). I saw the sleeve/jacket notes in your listing and am happy with the media grade. Would you consider an offer of $86.44 (+ shipping) for a quick payment today?"
+      }
+    },
+    {
+      "snapshot_order": 2,
+      "rank": 2,
+      "is_live_page1": true,
       "id": "4511454951",
       "release_id": "38857860",
       "title": "Dayseeker - Dark Sun",
@@ -3959,7 +4119,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 5 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511454951",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511454951",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -4089,22 +4249,22 @@
         },
         {
           "id": "4509283530",
-          "total_price": "$38.99",
-          "total_price_usd": 38.99,
+          "total_price": "$31.49",
+          "total_price_usd": 31.49,
           "alerted_at": "2026-11-22T13:55:06",
           "item_url": "https://www.discogs.com/sell/item/4509283530"
         },
         {
           "id": "4509283527",
-          "total_price": "$38.99",
-          "total_price_usd": 38.99,
+          "total_price": "$31.49",
+          "total_price_usd": 31.49,
           "alerted_at": "2026-11-22T13:55:06",
           "item_url": "https://www.discogs.com/sell/item/4509283527"
         },
         {
           "id": "4509283524",
-          "total_price": "$38.99",
-          "total_price_usd": 38.99,
+          "total_price": "$31.49",
+          "total_price_usd": 31.49,
           "alerted_at": "2026-11-22T13:55:06",
           "item_url": "https://www.discogs.com/sell/item/4509283524"
         },
@@ -4844,17 +5004,17 @@
         },
         {
           "id": "4509283524",
-          "price_usd": 38.99,
+          "price_usd": 31.49,
           "ts": "2026-11-22T13:55:06"
         },
         {
           "id": "4509283527",
-          "price_usd": 38.99,
+          "price_usd": 31.49,
           "ts": "2026-11-22T13:55:06"
         },
         {
           "id": "4509283530",
-          "price_usd": 38.99,
+          "price_usd": 31.49,
           "ts": "2026-11-22T13:55:06"
         },
         {
@@ -4921,8 +5081,8 @@
       }
     },
     {
-      "snapshot_order": 2,
-      "rank": 2,
+      "snapshot_order": 3,
+      "rank": 3,
       "is_live_page1": true,
       "id": "4511454948",
       "release_id": "38857860",
@@ -4957,7 +5117,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 5 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511454948",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511454948",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -5034,8 +5194,8 @@
       }
     },
     {
-      "snapshot_order": 3,
-      "rank": 3,
+      "snapshot_order": 4,
+      "rank": 4,
       "is_live_page1": true,
       "id": "4511454945",
       "release_id": "38857860",
@@ -5070,7 +5230,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 5 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511454945",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511454945",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -5147,8 +5307,8 @@
       }
     },
     {
-      "snapshot_order": 4,
-      "rank": 4,
+      "snapshot_order": 5,
+      "rank": 5,
       "is_live_page1": true,
       "id": "4511364444",
       "release_id": "38856249",
@@ -5183,7 +5343,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 6 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511364444",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511364444",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -5289,22 +5449,22 @@
         },
         {
           "id": "4509235269",
-          "total_price": "$39.11",
-          "total_price_usd": 39.11,
+          "total_price": "$31.61",
+          "total_price_usd": 31.61,
           "alerted_at": "2026-11-22T13:50:07",
           "item_url": "https://www.discogs.com/sell/item/4509235269"
         },
         {
           "id": "4509235266",
-          "total_price": "$39.11",
-          "total_price_usd": 39.11,
+          "total_price": "$31.61",
+          "total_price_usd": 31.61,
           "alerted_at": "2026-11-22T13:50:07",
           "item_url": "https://www.discogs.com/sell/item/4509235266"
         },
         {
           "id": "4509056475",
-          "total_price": "$44.49",
-          "total_price_usd": 44.49,
+          "total_price": "$36.99",
+          "total_price_usd": 36.99,
           "alerted_at": "2026-11-22T13:45:06",
           "item_url": "https://www.discogs.com/sell/item/4509056475"
         },
@@ -5852,17 +6012,17 @@
         },
         {
           "id": "4509056475",
-          "price_usd": 44.49,
+          "price_usd": 36.99,
           "ts": "2026-11-22T13:45:06"
         },
         {
           "id": "4509235266",
-          "price_usd": 39.11,
+          "price_usd": 31.61,
           "ts": "2026-11-22T13:50:07"
         },
         {
           "id": "4509235269",
-          "price_usd": 39.11,
+          "price_usd": 31.61,
           "ts": "2026-11-22T13:50:07"
         },
         {
@@ -5924,8 +6084,8 @@
       }
     },
     {
-      "snapshot_order": 5,
-      "rank": 5,
+      "snapshot_order": 6,
+      "rank": 6,
       "is_live_page1": true,
       "id": "4511364441",
       "release_id": "38856249",
@@ -5960,7 +6120,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 6 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511364441",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511364441",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -6037,8 +6197,8 @@
       }
     },
     {
-      "snapshot_order": 6,
-      "rank": 6,
+      "snapshot_order": 7,
+      "rank": 7,
       "is_live_page1": true,
       "id": "4511323515",
       "release_id": "35138360",
@@ -6073,7 +6233,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 8 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511323515",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511323515",
       "release_url": "https://www.discogs.com/release/35138360",
@@ -6143,8 +6303,8 @@
         },
         {
           "id": "4509187788",
-          "total_price": "$35.49",
-          "total_price_usd": 35.49,
+          "total_price": "$27.99",
+          "total_price_usd": 27.99,
           "alerted_at": "2026-11-22T13:50:07",
           "item_url": "https://www.discogs.com/sell/item/4509187788"
         },
@@ -6380,7 +6540,7 @@
         },
         {
           "id": "4509187788",
-          "price_usd": 35.49,
+          "price_usd": 27.99,
           "ts": "2026-11-22T13:50:07"
         },
         {
@@ -6437,8 +6597,8 @@
       }
     },
     {
-      "snapshot_order": 7,
-      "rank": 7,
+      "snapshot_order": 8,
+      "rank": 8,
       "is_live_page1": true,
       "id": "4511229249",
       "release_id": "35138360",
@@ -6473,7 +6633,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 10 minutes ago",
+      "listed_age": "Listed 3 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4511229249",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511229249",
       "release_url": "https://www.discogs.com/release/35138360",
@@ -6498,10 +6658,10 @@
       "group_first_price_usd": 29.9,
       "group_highest_price_usd": 35.95,
       "group_lowest_price_usd": 27.49,
-      "is_price_drop": true,
-      "price_drop_usd": 6.05,
-      "price_drop_pct": 16.8,
-      "relist_behavior": "GENUINE_CUT",
+      "is_price_drop": false,
+      "price_drop_usd": 0.0,
+      "price_drop_pct": 0.0,
+      "relist_behavior": "YOYO_BLUFF",
       "sibling_listing_ids": [
         "4511229249"
       ],
@@ -6527,7 +6687,7 @@
       },
       "deal_delta_usd": -4.67,
       "deal_delta_pct": -13.5,
-      "deal_score": 99,
+      "deal_score": 86,
       "deal_tier": "GREAT_DEAL",
       "deal_tier_label": "BELOW BENCHMARK (-14%)",
       "target_price_usd": null,
@@ -6550,8 +6710,8 @@
       }
     },
     {
-      "snapshot_order": 8,
-      "rank": 8,
+      "snapshot_order": 9,
+      "rank": 9,
       "is_live_page1": true,
       "id": "4257509076",
       "release_id": "9719410",
@@ -6586,7 +6746,7 @@
       "seller_info": "curefortheitch",
       "seller_rating": "",
       "allow_offers": true,
-      "listed_age": "Listed 10 hours ago",
+      "listed_age": "Listed 13 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4257509076",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4257509076",
       "release_url": "https://www.discogs.com/release/9719410",
@@ -6668,8 +6828,8 @@
       }
     },
     {
-      "snapshot_order": 9,
-      "rank": 9,
+      "snapshot_order": 10,
+      "rank": 10,
       "is_live_page1": true,
       "id": "4509483273",
       "release_id": "17342563",
@@ -6704,7 +6864,7 @@
       "seller_info": "jmf2018",
       "seller_rating": "100.0",
       "allow_offers": false,
-      "listed_age": "Listed 15 hours ago",
+      "listed_age": "Listed 19 hours ago",
       "item_url": "https://www.discogs.com/sell/item/4509483273",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509483273",
       "release_url": "https://www.discogs.com/release/17342563",
@@ -6799,799 +6959,8 @@
       }
     },
     {
-      "snapshot_order": 10,
-      "rank": 10,
-      "is_live_page1": true,
-      "id": "4509283530",
-      "release_id": "38857860",
-      "title": "Dayseeker - Dark Sun",
-      "artist": "Dayseeker",
-      "album": "Dark Sun",
-      "norm_album_key": "dayseeker - dark sun",
-      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
-      "wax_shader": {
-        "pattern": "translucent",
-        "subpattern": "translucent",
-        "primary": "#d8e4ec",
-        "secondary": "#9bb4c4",
-        "accent": "#00f0ff",
-        "tertiary": "#00f0ff",
-        "wax_name": "Ultra Clear",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 147020
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$31.49",
-      "total_price": "$38.99",
-      "list_price_usd": 31.49,
-      "total_price_usd": 38.99,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509283530",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283530",
-      "release_url": "https://www.discogs.com/release/38857860",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:55:06",
-      "alerted_at": "2026-11-22T13:55:06",
-      "fingerprint": "38857860::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 64,
-      "relist_group_total": 68,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 30.99,
-      "is_price_drop": true,
-      "price_drop_usd": 5.5,
-      "price_drop_pct": 12.4,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509283530"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 38.99,
-        "observed_high_usd": 41.99,
-        "condition_suggested_usd": 38.99,
-        "condition_suggested_formatted": "$38.99",
-        "benchmark_source": "Observed 3-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 70,
-        "distinct_sellers_tracked": 3,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
-      "deal_score": 88,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.83,
-        "recommended_offer_usd": 28.34,
-        "instant_close_offer_usd": 29.92,
-        "savings_vs_ask_usd": 3.15,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 31.49,
-        "rationales": [
-          "3-seller median $38.99 shipped",
-          "Relisted 68x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283530). Would you consider an offer of $28.34 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
       "snapshot_order": 11,
       "rank": 11,
-      "is_live_page1": true,
-      "id": "4509283527",
-      "release_id": "38857860",
-      "title": "Dayseeker - Dark Sun",
-      "artist": "Dayseeker",
-      "album": "Dark Sun",
-      "norm_album_key": "dayseeker - dark sun",
-      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
-      "wax_shader": {
-        "pattern": "translucent",
-        "subpattern": "translucent",
-        "primary": "#d8e4ec",
-        "secondary": "#9bb4c4",
-        "accent": "#00f0ff",
-        "tertiary": "#00f0ff",
-        "wax_name": "Ultra Clear",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 147020
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$31.49",
-      "total_price": "$38.99",
-      "list_price_usd": 31.49,
-      "total_price_usd": 38.99,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509283527",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283527",
-      "release_url": "https://www.discogs.com/release/38857860",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:55:06",
-      "alerted_at": "2026-11-22T13:55:06",
-      "fingerprint": "38857860::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 63,
-      "relist_group_total": 68,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 30.99,
-      "is_price_drop": true,
-      "price_drop_usd": 5.5,
-      "price_drop_pct": 12.4,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509283527"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 38.99,
-        "observed_high_usd": 41.99,
-        "condition_suggested_usd": 38.99,
-        "condition_suggested_formatted": "$38.99",
-        "benchmark_source": "Observed 3-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 70,
-        "distinct_sellers_tracked": 3,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
-      "deal_score": 88,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.83,
-        "recommended_offer_usd": 28.34,
-        "instant_close_offer_usd": 29.92,
-        "savings_vs_ask_usd": 3.15,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 31.49,
-        "rationales": [
-          "3-seller median $38.99 shipped",
-          "Relisted 68x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283527). Would you consider an offer of $28.34 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 12,
-      "rank": 12,
-      "is_live_page1": true,
-      "id": "4509283524",
-      "release_id": "38857860",
-      "title": "Dayseeker - Dark Sun",
-      "artist": "Dayseeker",
-      "album": "Dark Sun",
-      "norm_album_key": "dayseeker - dark sun",
-      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
-      "wax_shader": {
-        "pattern": "translucent",
-        "subpattern": "translucent",
-        "primary": "#d8e4ec",
-        "secondary": "#9bb4c4",
-        "accent": "#00f0ff",
-        "tertiary": "#00f0ff",
-        "wax_name": "Ultra Clear",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 147020
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$31.49",
-      "total_price": "$38.99",
-      "list_price_usd": 31.49,
-      "total_price_usd": 38.99,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509283524",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283524",
-      "release_url": "https://www.discogs.com/release/38857860",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:55:06",
-      "alerted_at": "2026-11-22T13:55:06",
-      "fingerprint": "38857860::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 62,
-      "relist_group_total": 68,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 30.99,
-      "is_price_drop": true,
-      "price_drop_usd": 5.5,
-      "price_drop_pct": 12.4,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509283524"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 38.99,
-        "observed_high_usd": 41.99,
-        "condition_suggested_usd": 38.99,
-        "condition_suggested_formatted": "$38.99",
-        "benchmark_source": "Observed 3-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 70,
-        "distinct_sellers_tracked": 3,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
-      "deal_score": 88,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.83,
-        "recommended_offer_usd": 28.34,
-        "instant_close_offer_usd": 29.92,
-        "savings_vs_ask_usd": 3.15,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 31.49,
-        "rationales": [
-          "3-seller median $38.99 shipped",
-          "Relisted 68x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283524). Would you consider an offer of $28.34 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 13,
-      "rank": 13,
-      "is_live_page1": true,
-      "id": "4509235269",
-      "release_id": "38856249",
-      "title": "Dayseeker - Creature In The Black Night",
-      "artist": "Dayseeker",
-      "album": "Creature In The Black Night",
-      "norm_album_key": "dayseeker - creature in the black night",
-      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
-      "wax_shader": {
-        "pattern": "solid",
-        "subpattern": "solid",
-        "primary": "#f3f0e6",
-        "secondary": "#d6d1c2",
-        "accent": "#ffffff",
-        "tertiary": "#ffffff",
-        "wax_name": "Pearl Flip/ Horizon",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 109471
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$31.61",
-      "total_price": "$39.11",
-      "list_price_usd": 31.61,
-      "total_price_usd": 39.11,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509235269",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509235269",
-      "release_url": "https://www.discogs.com/release/38856249",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:50:07",
-      "alerted_at": "2026-11-22T13:50:07",
-      "fingerprint": "38856249::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 48,
-      "relist_group_total": 51,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 31.11,
-      "is_price_drop": true,
-      "price_drop_usd": 5.38,
-      "price_drop_pct": 12.1,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509235269"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 39.11,
-        "observed_high_usd": 42.0,
-        "condition_suggested_usd": 39.11,
-        "condition_suggested_formatted": "$39.11",
-        "benchmark_source": "Observed 5-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 55,
-        "distinct_sellers_tracked": 5,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
-      "deal_score": 88,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.92,
-        "recommended_offer_usd": 28.45,
-        "instant_close_offer_usd": 30.03,
-        "savings_vs_ask_usd": 3.16,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 31.61,
-        "rationales": [
-          "5-seller median $39.11 shipped",
-          "Relisted 51x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509235269). Would you consider an offer of $28.45 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 14,
-      "rank": 14,
-      "is_live_page1": true,
-      "id": "4509235266",
-      "release_id": "38856249",
-      "title": "Dayseeker - Creature In The Black Night",
-      "artist": "Dayseeker",
-      "album": "Creature In The Black Night",
-      "norm_album_key": "dayseeker - creature in the black night",
-      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
-      "wax_shader": {
-        "pattern": "solid",
-        "subpattern": "solid",
-        "primary": "#f3f0e6",
-        "secondary": "#d6d1c2",
-        "accent": "#ffffff",
-        "tertiary": "#ffffff",
-        "wax_name": "Pearl Flip/ Horizon",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 109471
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$31.61",
-      "total_price": "$39.11",
-      "list_price_usd": 31.61,
-      "total_price_usd": 39.11,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509235266",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509235266",
-      "release_url": "https://www.discogs.com/release/38856249",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:50:07",
-      "alerted_at": "2026-11-22T13:50:07",
-      "fingerprint": "38856249::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 47,
-      "relist_group_total": 51,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 31.11,
-      "is_price_drop": true,
-      "price_drop_usd": 5.38,
-      "price_drop_pct": 12.1,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509235266"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 39.11,
-        "observed_high_usd": 42.0,
-        "condition_suggested_usd": 39.11,
-        "condition_suggested_formatted": "$39.11",
-        "benchmark_source": "Observed 5-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 55,
-        "distinct_sellers_tracked": 5,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.0,
-      "deal_delta_pct": 0.0,
-      "deal_score": 88,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.92,
-        "recommended_offer_usd": 28.45,
-        "instant_close_offer_usd": 30.03,
-        "savings_vs_ask_usd": 3.16,
-        "savings_pct": 10.0,
-        "fair_item_target_usd": 31.61,
-        "rationales": [
-          "5-seller median $39.11 shipped",
-          "Relisted 51x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509235266). Would you consider an offer of $28.45 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 15,
-      "rank": 15,
-      "is_live_page1": true,
-      "id": "4509187788",
-      "release_id": "35138360",
-      "title": "I Prevail - Violent Nature",
-      "artist": "I Prevail",
-      "album": "Violent Nature",
-      "norm_album_key": "i prevail - violent nature",
-      "variant": "Album, Special Edition, LP, Clear Smoke",
-      "wax_shader": {
-        "pattern": "smoke",
-        "subpattern": "smoke",
-        "primary": "#d8e4ec",
-        "secondary": "#374151",
-        "accent": "#9ca3af",
-        "tertiary": "#9ca3af",
-        "wax_name": "Special Edition, Clear Smoke",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 71642
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$27.99",
-      "total_price": "$35.49",
-      "list_price_usd": 27.99,
-      "total_price_usd": 35.49,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509187788",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509187788",
-      "release_url": "https://www.discogs.com/release/35138360",
-      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(2)",
-      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(2)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:50:07",
-      "alerted_at": "2026-11-22T13:50:07",
-      "fingerprint": "35138360::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 20,
-      "relist_group_total": 22,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 29.9,
-      "group_highest_price_usd": 35.95,
-      "group_lowest_price_usd": 27.49,
-      "is_price_drop": false,
-      "price_drop_usd": 0.0,
-      "price_drop_pct": 0.0,
-      "relist_behavior": "YOYO_BLUFF",
-      "sibling_listing_ids": [
-        "4509187788"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/tL2ULK_H3JpTYv1FLi3S7I3neavmMZePtkaOHvkA5XM/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM1MTM4/MzYwLTE3NTgyMzc2/NjctMjEwMC5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 33.95,
-        "observed_median_usd": 34.57,
-        "observed_high_usd": 37.79,
-        "condition_suggested_usd": 34.57,
-        "condition_suggested_formatted": "$34.57",
-        "benchmark_source": "Observed 5-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 28,
-        "distinct_sellers_tracked": 5,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 0.92,
-      "deal_delta_pct": 2.7,
-      "deal_score": 72,
-      "deal_tier": "FAIR_MARKET",
-      "deal_tier_label": "FAIR MARKET",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 21.34,
-        "recommended_offer_usd": 24.36,
-        "instant_close_offer_usd": 25.72,
-        "savings_vs_ask_usd": 3.63,
-        "savings_pct": 13.0,
-        "fair_item_target_usd": 27.07,
-        "rationales": [
-          "5-seller median $34.57 shipped",
-          "Relisted 22x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of I Prevail - Violent Nature (#4509187788). Would you consider an offer of $24.36 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 16,
-      "rank": 16,
-      "is_live_page1": true,
-      "id": "4509067461",
-      "release_id": "35138360",
-      "title": "I Prevail - Violent Nature",
-      "artist": "I Prevail",
-      "album": "Violent Nature",
-      "norm_album_key": "i prevail - violent nature",
-      "variant": "Album, Special Edition, LP, Clear Smoke",
-      "wax_shader": {
-        "pattern": "smoke",
-        "subpattern": "smoke",
-        "primary": "#d8e4ec",
-        "secondary": "#374151",
-        "accent": "#9ca3af",
-        "tertiary": "#9ca3af",
-        "wax_name": "Special Edition, Clear Smoke",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 71642
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$22.40",
-      "total_price": "$29.90",
-      "list_price_usd": 22.4,
-      "total_price_usd": 29.9,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509067461",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509067461",
-      "release_url": "https://www.discogs.com/release/35138360",
-      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(d)",
-      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(d)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:45:06",
-      "alerted_at": "2026-11-22T13:45:06",
-      "fingerprint": "35138360::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 19,
-      "relist_group_total": 22,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 29.9,
-      "group_highest_price_usd": 35.95,
-      "group_lowest_price_usd": 27.49,
-      "is_price_drop": true,
-      "price_drop_usd": 6.05,
-      "price_drop_pct": 16.8,
-      "relist_behavior": "GENUINE_CUT",
-      "sibling_listing_ids": [
-        "4509067461"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/tL2ULK_H3JpTYv1FLi3S7I3neavmMZePtkaOHvkA5XM/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM1MTM4/MzYwLTE3NTgyMzc2/NjctMjEwMC5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 33.95,
-        "observed_median_usd": 34.57,
-        "observed_high_usd": 37.79,
-        "condition_suggested_usd": 34.57,
-        "condition_suggested_formatted": "$34.57",
-        "benchmark_source": "Observed 5-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 28,
-        "distinct_sellers_tracked": 5,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": -4.67,
-      "deal_delta_pct": -13.5,
-      "deal_score": 99,
-      "deal_tier": "GREAT_DEAL",
-      "deal_tier_label": "BELOW BENCHMARK (-14%)",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 19.04,
-        "recommended_offer_usd": 20.38,
-        "instant_close_offer_usd": 21.28,
-        "savings_vs_ask_usd": 2.02,
-        "savings_pct": 9.0,
-        "fair_item_target_usd": 27.07,
-        "rationales": [
-          "5-seller median $34.57 shipped",
-          "Relisted 22x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of I Prevail - Violent Nature (#4509067461). Would you consider an offer of $20.38 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 17,
-      "rank": 17,
       "is_live_page1": true,
       "id": "4508971698",
       "release_id": "10333787",
@@ -7626,7 +6995,7 @@
       "seller_info": "JointCustodyDC",
       "seller_rating": "99.9",
       "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
+      "listed_age": "Listed 1 day ago",
       "item_url": "https://www.discogs.com/sell/item/4508971698",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4508971698",
       "release_url": "https://www.discogs.com/release/10333787",
@@ -7713,234 +7082,8 @@
       }
     },
     {
-      "snapshot_order": 18,
-      "rank": 18,
-      "is_live_page1": true,
-      "id": "4509056478",
-      "release_id": "38857860",
-      "title": "Dayseeker - Dark Sun",
-      "artist": "Dayseeker",
-      "album": "Dark Sun",
-      "norm_album_key": "dayseeker - dark sun",
-      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
-      "wax_shader": {
-        "pattern": "translucent",
-        "subpattern": "translucent",
-        "primary": "#d8e4ec",
-        "secondary": "#9bb4c4",
-        "accent": "#00f0ff",
-        "tertiary": "#00f0ff",
-        "wax_name": "Ultra Clear",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 147020
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$36.99",
-      "total_price": "$44.49",
-      "list_price_usd": 36.99,
-      "total_price_usd": 44.49,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509056478",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509056478",
-      "release_url": "https://www.discogs.com/release/38857860",
-      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
-      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:45:06",
-      "alerted_at": "2026-11-22T13:45:06",
-      "fingerprint": "38857860::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 61,
-      "relist_group_total": 68,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 30.99,
-      "is_price_drop": false,
-      "price_drop_usd": 0.0,
-      "price_drop_pct": 0.0,
-      "relist_behavior": "YOYO_BLUFF",
-      "sibling_listing_ids": [
-        "4509056478"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 38.99,
-        "observed_high_usd": 41.99,
-        "condition_suggested_usd": 38.99,
-        "condition_suggested_formatted": "$38.99",
-        "benchmark_source": "Observed 3-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 70,
-        "distinct_sellers_tracked": 3,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 5.5,
-      "deal_delta_pct": 14.1,
-      "deal_score": 49,
-      "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+14%)",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.83,
-        "recommended_offer_usd": 28.34,
-        "instant_close_offer_usd": 29.92,
-        "savings_vs_ask_usd": 8.65,
-        "savings_pct": 23.4,
-        "fair_item_target_usd": 31.49,
-        "rationales": [
-          "3-seller median $38.99 shipped",
-          "Relisted 68x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509056478). Would you consider an offer of $28.34 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 19,
-      "rank": 19,
-      "is_live_page1": true,
-      "id": "4509056475",
-      "release_id": "38856249",
-      "title": "Dayseeker - Creature In The Black Night",
-      "artist": "Dayseeker",
-      "album": "Creature In The Black Night",
-      "norm_album_key": "dayseeker - creature in the black night",
-      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
-      "wax_shader": {
-        "pattern": "solid",
-        "subpattern": "solid",
-        "primary": "#f3f0e6",
-        "secondary": "#d6d1c2",
-        "accent": "#ffffff",
-        "tertiary": "#ffffff",
-        "wax_name": "Pearl Flip/ Horizon",
-        "is_etched": false,
-        "is_foil_sleeve": false,
-        "is_numbered": false,
-        "is_180g": false,
-        "rpm": 33,
-        "seed": 109471
-      },
-      "media_condition": "M",
-      "media_condition_full": "Mint (M)",
-      "sleeve_condition": "NM",
-      "list_price": "$36.99",
-      "total_price": "$44.49",
-      "list_price_usd": 36.99,
-      "total_price_usd": 44.49,
-      "shipping_price_usd": 7.5,
-      "seller_info": "recordmule",
-      "seller_rating": "",
-      "allow_offers": false,
-      "listed_age": "Listed 22 hours ago",
-      "item_url": "https://www.discogs.com/sell/item/4509056475",
-      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509056475",
-      "release_url": "https://www.discogs.com/release/38856249",
-      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
-      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
-      "collector_badges": [
-        {
-          "id": "SEALED",
-          "label": "SEALED",
-          "tone": "lime"
-        }
-      ],
-      "has_wear_warning": false,
-      "seeded_at": "2026-11-22T13:45:06",
-      "alerted_at": "2026-11-22T13:45:06",
-      "fingerprint": "38856249::recordmule::M",
-      "api_stats": {},
-      "relist_sequence_num": 46,
-      "relist_group_total": 51,
-      "is_auto_relist": true,
-      "is_latest_in_group": false,
-      "group_first_price_usd": 44.49,
-      "group_highest_price_usd": 44.49,
-      "group_lowest_price_usd": 31.11,
-      "is_price_drop": false,
-      "price_drop_usd": 0.0,
-      "price_drop_pct": 0.0,
-      "relist_behavior": "YOYO_BLUFF",
-      "sibling_listing_ids": [
-        "4509056475"
-      ],
-      "sibling_history": [],
-      "price_trajectory": [],
-      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
-      "vault_status": "MISSING_GRAIL",
-      "vault_status_label": "MISSING GRAIL",
-      "vault_owned_detail": null,
-      "market_stats": {
-        "observed_low_usd": 35.95,
-        "observed_median_usd": 39.11,
-        "observed_high_usd": 42.0,
-        "condition_suggested_usd": 39.11,
-        "condition_suggested_formatted": "$39.11",
-        "benchmark_source": "Observed 5-Seller Market Median",
-        "benchmark_verified": false,
-        "release_listings_tracked": 55,
-        "distinct_sellers_tracked": 5,
-        "community_have": null,
-        "community_want": null,
-        "num_for_sale": null
-      },
-      "deal_delta_usd": 5.38,
-      "deal_delta_pct": 13.8,
-      "deal_score": 50,
-      "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+14%)",
-      "target_price_usd": null,
-      "is_target_hit": false,
-      "seller_bundle_count": 4,
-      "seller_bundle_savings_usd": 22.5,
-      "offer_strategy": {
-        "aggressive_offer_usd": 24.92,
-        "recommended_offer_usd": 28.45,
-        "instant_close_offer_usd": 30.03,
-        "savings_vs_ask_usd": 8.54,
-        "savings_pct": 23.1,
-        "fair_item_target_usd": 31.61,
-        "rationales": [
-          "5-seller median $39.11 shipped",
-          "Relisted 51x (-5% churn leverage)",
-          "Seller holds 4 Wantlist LPs (bundle leverage)"
-        ],
-        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509056475). Would you consider an offer of $28.45 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
-      }
-    },
-    {
-      "snapshot_order": 20,
-      "rank": 20,
+      "snapshot_order": 12,
+      "rank": 12,
       "is_live_page1": true,
       "id": "4492241375",
       "release_id": "17342563",
@@ -8056,8 +7199,8 @@
       }
     },
     {
-      "snapshot_order": 21,
-      "rank": 21,
+      "snapshot_order": 13,
+      "rank": 13,
       "is_live_page1": true,
       "id": "4506519627",
       "release_id": "31263586",
@@ -8092,7 +7235,7 @@
       "seller_info": "zarnold_palmer",
       "seller_rating": "100.0",
       "allow_offers": false,
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4506519627",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4506519627",
       "release_url": "https://www.discogs.com/release/31263586",
@@ -8193,8 +7336,8 @@
       }
     },
     {
-      "snapshot_order": 22,
-      "rank": 22,
+      "snapshot_order": 14,
+      "rank": 14,
       "is_live_page1": true,
       "id": "4448137920",
       "release_id": "31920148",
@@ -8229,7 +7372,7 @@
       "seller_info": "zarnold_palmer",
       "seller_rating": "100.0",
       "allow_offers": false,
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4448137920",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4448137920",
       "release_url": "https://www.discogs.com/release/31920148",
@@ -8324,8 +7467,8 @@
       }
     },
     {
-      "snapshot_order": 23,
-      "rank": 23,
+      "snapshot_order": 15,
+      "rank": 15,
       "is_live_page1": true,
       "id": "4511218212",
       "release_id": "38857860",
@@ -8360,7 +7503,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4511218212",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511218212",
       "release_url": "https://www.discogs.com/release/38857860",
@@ -8437,8 +7580,8 @@
       }
     },
     {
-      "snapshot_order": 24,
-      "rank": 24,
+      "snapshot_order": 16,
+      "rank": 16,
       "is_live_page1": true,
       "id": "4511218209",
       "release_id": "38856249",
@@ -8473,7 +7616,7 @@
       "seller_info": "recordmule",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 1 day ago",
+      "listed_age": "Listed 2 days ago",
       "item_url": "https://www.discogs.com/sell/item/4511218209",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4511218209",
       "release_url": "https://www.discogs.com/release/38856249",
@@ -8550,8 +7693,8 @@
       }
     },
     {
-      "snapshot_order": 25,
-      "rank": 25,
+      "snapshot_order": 17,
+      "rank": 17,
       "is_live_page1": true,
       "id": "4505454741",
       "release_id": "9719410",
@@ -8682,9 +7825,9 @@
       }
     },
     {
-      "snapshot_order": 26,
-      "rank": 23,
-      "is_live_page1": false,
+      "snapshot_order": 18,
+      "rank": 18,
+      "is_live_page1": true,
       "id": "4505223408",
       "release_id": "14401235",
       "title": "Taylor Swift - Lover",
@@ -8807,9 +7950,9 @@
       }
     },
     {
-      "snapshot_order": 27,
-      "rank": 24,
-      "is_live_page1": false,
+      "snapshot_order": 19,
+      "rank": 19,
+      "is_live_page1": true,
       "id": "4502814381",
       "release_id": "31465817",
       "title": "Taking Back Sunday - Where You Want To Be",
@@ -8843,7 +7986,7 @@
       "seller_info": "VinceronLLC",
       "seller_rating": "96.8",
       "allow_offers": false,
-      "listed_age": "Listed 2 days ago",
+      "listed_age": "Listed 3 days ago",
       "item_url": "https://www.discogs.com/sell/item/4502814381",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502814381",
       "release_url": "https://www.discogs.com/release/31465817",
@@ -8944,9 +8087,9 @@
       }
     },
     {
-      "snapshot_order": 28,
-      "rank": 25,
-      "is_live_page1": false,
+      "snapshot_order": 20,
+      "rank": 20,
+      "is_live_page1": true,
       "id": "4502766606",
       "release_id": "33122112",
       "title": "The Used - The Used",
@@ -8980,7 +8123,7 @@
       "seller_info": "VinceronLLC",
       "seller_rating": "96.8",
       "allow_offers": false,
-      "listed_age": "Listed 2 days ago",
+      "listed_age": "Listed 3 days ago",
       "item_url": "https://www.discogs.com/sell/item/4502766606",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4502766606",
       "release_url": "https://www.discogs.com/release/33122112",
@@ -9075,9 +8218,9 @@
       }
     },
     {
-      "snapshot_order": 29,
-      "rank": 23,
-      "is_live_page1": false,
+      "snapshot_order": 21,
+      "rank": 21,
+      "is_live_page1": true,
       "id": "4501602390",
       "release_id": "12368772",
       "title": "Emery - The Weak's End",
@@ -9206,9 +8349,9 @@
       }
     },
     {
-      "snapshot_order": 30,
-      "rank": 24,
-      "is_live_page1": false,
+      "snapshot_order": 22,
+      "rank": 22,
+      "is_live_page1": true,
       "id": "4499968275",
       "release_id": "17342563",
       "title": "Killswitch Engage - As Daylight Dies",
@@ -9338,9 +8481,9 @@
       }
     },
     {
-      "snapshot_order": 31,
-      "rank": 25,
-      "is_live_page1": false,
+      "snapshot_order": 23,
+      "rank": 23,
+      "is_live_page1": true,
       "id": "4412908854",
       "release_id": "27928278",
       "title": "Bone Thugs-N-Harmony - E. 1999 Eternal",
@@ -9374,7 +8517,7 @@
       "seller_info": "wavingwithgusto",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 3 days ago",
+      "listed_age": "Listed 4 days ago",
       "item_url": "https://www.discogs.com/sell/item/4412908854",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4412908854",
       "release_url": "https://www.discogs.com/release/27928278",
@@ -9429,21 +8572,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": 0.5,
-      "deal_delta_pct": 0.3,
+      "deal_delta_usd": 1.0,
+      "deal_delta_pct": 0.6,
       "deal_score": 72,
       "deal_tier": "FAIR_MARKET",
       "deal_tier_label": "FAIR MARKET",
@@ -9452,22 +8595,22 @@
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 124.08,
-        "recommended_offer_usd": 134.55,
-        "instant_close_offer_usd": 142.03,
-        "savings_vs_ask_usd": 15.45,
-        "savings_pct": 10.3,
-        "fair_item_target_usd": 149.5,
+        "aggressive_offer_usd": 123.67,
+        "recommended_offer_usd": 134.1,
+        "instant_close_offer_usd": 141.55,
+        "savings_vs_ask_usd": 15.9,
+        "savings_pct": 10.6,
+        "fair_item_target_usd": 149.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
-        "buyer_pitch": "Hi wavingwithgusto, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4412908854). Would you consider an offer of $134.55 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi wavingwithgusto, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4412908854). Would you consider an offer of $134.10 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 32,
-      "rank": 23,
-      "is_live_page1": false,
+      "snapshot_order": 24,
+      "rank": 24,
+      "is_live_page1": true,
       "id": "4496205149",
       "release_id": "3935049",
       "title": "Underoath - The Changing Of Times",
@@ -9576,9 +8719,9 @@
       }
     },
     {
-      "snapshot_order": 33,
-      "rank": 24,
-      "is_live_page1": false,
+      "snapshot_order": 25,
+      "rank": 25,
+      "is_live_page1": true,
       "id": "4496061725",
       "release_id": "12607350",
       "title": "Coheed And Cambria - Vaxis \u2013 Act I: The Unheavenly Creatures",
@@ -9687,7 +8830,7 @@
       }
     },
     {
-      "snapshot_order": 34,
+      "snapshot_order": 26,
       "rank": 25,
       "is_live_page1": false,
       "id": "4438624059",
@@ -9723,7 +8866,7 @@
       "seller_info": "blanconino09",
       "seller_rating": "",
       "allow_offers": false,
-      "listed_age": "Listed 4 days ago",
+      "listed_age": "Listed 5 days ago",
       "item_url": "https://www.discogs.com/sell/item/4438624059",
       "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4438624059",
       "release_url": "https://www.discogs.com/release/38275185",
@@ -9802,7 +8945,1024 @@
       }
     },
     {
+      "snapshot_order": 27,
+      "rank": 10,
+      "is_live_page1": false,
+      "id": "4509283530",
+      "release_id": "38857860",
+      "title": "Dayseeker - Dark Sun",
+      "artist": "Dayseeker",
+      "album": "Dark Sun",
+      "norm_album_key": "dayseeker - dark sun",
+      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
+      "wax_shader": {
+        "pattern": "translucent",
+        "subpattern": "translucent",
+        "primary": "#d8e4ec",
+        "secondary": "#9bb4c4",
+        "accent": "#00f0ff",
+        "tertiary": "#00f0ff",
+        "wax_name": "Ultra Clear",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 147020
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$31.49",
+      "total_price": "$31.49",
+      "list_price_usd": 31.49,
+      "total_price_usd": 31.49,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509283530",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283530",
+      "release_url": "https://www.discogs.com/release/38857860",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:55:06",
+      "alerted_at": "2026-11-22T13:55:06",
+      "fingerprint": "38857860::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 64,
+      "relist_group_total": 68,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 30.99,
+      "is_price_drop": true,
+      "price_drop_usd": 13.0,
+      "price_drop_pct": 29.2,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509283530"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 38.99,
+        "observed_high_usd": 41.99,
+        "condition_suggested_usd": 38.99,
+        "condition_suggested_formatted": "$38.99",
+        "benchmark_source": "Observed 3-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 70,
+        "distinct_sellers_tracked": 3,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -7.5,
+      "deal_delta_pct": -19.2,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 26.77,
+        "recommended_offer_usd": 28.66,
+        "instant_close_offer_usd": 29.92,
+        "savings_vs_ask_usd": 2.83,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 38.99,
+        "rationales": [
+          "3-seller median $38.99 shipped",
+          "Relisted 68x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283530). Would you consider an offer of $28.66 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 28,
+      "rank": 11,
+      "is_live_page1": false,
+      "id": "4509283527",
+      "release_id": "38857860",
+      "title": "Dayseeker - Dark Sun",
+      "artist": "Dayseeker",
+      "album": "Dark Sun",
+      "norm_album_key": "dayseeker - dark sun",
+      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
+      "wax_shader": {
+        "pattern": "translucent",
+        "subpattern": "translucent",
+        "primary": "#d8e4ec",
+        "secondary": "#9bb4c4",
+        "accent": "#00f0ff",
+        "tertiary": "#00f0ff",
+        "wax_name": "Ultra Clear",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 147020
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$31.49",
+      "total_price": "$31.49",
+      "list_price_usd": 31.49,
+      "total_price_usd": 31.49,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509283527",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283527",
+      "release_url": "https://www.discogs.com/release/38857860",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:55:06",
+      "alerted_at": "2026-11-22T13:55:06",
+      "fingerprint": "38857860::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 63,
+      "relist_group_total": 68,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 30.99,
+      "is_price_drop": true,
+      "price_drop_usd": 13.0,
+      "price_drop_pct": 29.2,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509283527"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 38.99,
+        "observed_high_usd": 41.99,
+        "condition_suggested_usd": 38.99,
+        "condition_suggested_formatted": "$38.99",
+        "benchmark_source": "Observed 3-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 70,
+        "distinct_sellers_tracked": 3,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -7.5,
+      "deal_delta_pct": -19.2,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 26.77,
+        "recommended_offer_usd": 28.66,
+        "instant_close_offer_usd": 29.92,
+        "savings_vs_ask_usd": 2.83,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 38.99,
+        "rationales": [
+          "3-seller median $38.99 shipped",
+          "Relisted 68x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283527). Would you consider an offer of $28.66 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 29,
+      "rank": 12,
+      "is_live_page1": false,
+      "id": "4509283524",
+      "release_id": "38857860",
+      "title": "Dayseeker - Dark Sun",
+      "artist": "Dayseeker",
+      "album": "Dark Sun",
+      "norm_album_key": "dayseeker - dark sun",
+      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
+      "wax_shader": {
+        "pattern": "translucent",
+        "subpattern": "translucent",
+        "primary": "#d8e4ec",
+        "secondary": "#9bb4c4",
+        "accent": "#00f0ff",
+        "tertiary": "#00f0ff",
+        "wax_name": "Ultra Clear",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 147020
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$31.49",
+      "total_price": "$31.49",
+      "list_price_usd": 31.49,
+      "total_price_usd": 31.49,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509283524",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509283524",
+      "release_url": "https://www.discogs.com/release/38857860",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(4)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:55:06",
+      "alerted_at": "2026-11-22T13:55:06",
+      "fingerprint": "38857860::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 62,
+      "relist_group_total": 68,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 30.99,
+      "is_price_drop": true,
+      "price_drop_usd": 13.0,
+      "price_drop_pct": 29.2,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509283524"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 38.99,
+        "observed_high_usd": 41.99,
+        "condition_suggested_usd": 38.99,
+        "condition_suggested_formatted": "$38.99",
+        "benchmark_source": "Observed 3-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 70,
+        "distinct_sellers_tracked": 3,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -7.5,
+      "deal_delta_pct": -19.2,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 26.77,
+        "recommended_offer_usd": 28.66,
+        "instant_close_offer_usd": 29.92,
+        "savings_vs_ask_usd": 2.83,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 38.99,
+        "rationales": [
+          "3-seller median $38.99 shipped",
+          "Relisted 68x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509283524). Would you consider an offer of $28.66 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 30,
+      "rank": 13,
+      "is_live_page1": false,
+      "id": "4509235269",
+      "release_id": "38856249",
+      "title": "Dayseeker - Creature In The Black Night",
+      "artist": "Dayseeker",
+      "album": "Creature In The Black Night",
+      "norm_album_key": "dayseeker - creature in the black night",
+      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
+      "wax_shader": {
+        "pattern": "solid",
+        "subpattern": "solid",
+        "primary": "#f3f0e6",
+        "secondary": "#d6d1c2",
+        "accent": "#ffffff",
+        "tertiary": "#ffffff",
+        "wax_name": "Pearl Flip/ Horizon",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 109471
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$31.61",
+      "total_price": "$31.61",
+      "list_price_usd": 31.61,
+      "total_price_usd": 31.61,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509235269",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509235269",
+      "release_url": "https://www.discogs.com/release/38856249",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:50:07",
+      "alerted_at": "2026-11-22T13:50:07",
+      "fingerprint": "38856249::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 48,
+      "relist_group_total": 51,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 31.11,
+      "is_price_drop": true,
+      "price_drop_usd": 12.88,
+      "price_drop_pct": 29.0,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509235269"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 39.11,
+        "observed_high_usd": 42.0,
+        "condition_suggested_usd": 39.11,
+        "condition_suggested_formatted": "$39.11",
+        "benchmark_source": "Observed 5-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 55,
+        "distinct_sellers_tracked": 5,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -7.5,
+      "deal_delta_pct": -19.2,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 26.87,
+        "recommended_offer_usd": 28.77,
+        "instant_close_offer_usd": 30.03,
+        "savings_vs_ask_usd": 2.84,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 39.11,
+        "rationales": [
+          "5-seller median $39.11 shipped",
+          "Relisted 51x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509235269). Would you consider an offer of $28.77 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 31,
+      "rank": 14,
+      "is_live_page1": false,
+      "id": "4509235266",
+      "release_id": "38856249",
+      "title": "Dayseeker - Creature In The Black Night",
+      "artist": "Dayseeker",
+      "album": "Creature In The Black Night",
+      "norm_album_key": "dayseeker - creature in the black night",
+      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
+      "wax_shader": {
+        "pattern": "solid",
+        "subpattern": "solid",
+        "primary": "#f3f0e6",
+        "secondary": "#d6d1c2",
+        "accent": "#ffffff",
+        "tertiary": "#ffffff",
+        "wax_name": "Pearl Flip/ Horizon",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 109471
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$31.61",
+      "total_price": "$31.61",
+      "list_price_usd": 31.61,
+      "total_price_usd": 31.61,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509235266",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509235266",
+      "release_url": "https://www.discogs.com/release/38856249",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(3)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:50:07",
+      "alerted_at": "2026-11-22T13:50:07",
+      "fingerprint": "38856249::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 47,
+      "relist_group_total": 51,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 31.11,
+      "is_price_drop": true,
+      "price_drop_usd": 12.88,
+      "price_drop_pct": 29.0,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509235266"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 39.11,
+        "observed_high_usd": 42.0,
+        "condition_suggested_usd": 39.11,
+        "condition_suggested_formatted": "$39.11",
+        "benchmark_source": "Observed 5-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 55,
+        "distinct_sellers_tracked": 5,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -7.5,
+      "deal_delta_pct": -19.2,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 26.87,
+        "recommended_offer_usd": 28.77,
+        "instant_close_offer_usd": 30.03,
+        "savings_vs_ask_usd": 2.84,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 39.11,
+        "rationales": [
+          "5-seller median $39.11 shipped",
+          "Relisted 51x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509235266). Would you consider an offer of $28.77 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 32,
+      "rank": 15,
+      "is_live_page1": false,
+      "id": "4509187788",
+      "release_id": "35138360",
+      "title": "I Prevail - Violent Nature",
+      "artist": "I Prevail",
+      "album": "Violent Nature",
+      "norm_album_key": "i prevail - violent nature",
+      "variant": "Album, Special Edition, LP, Clear Smoke",
+      "wax_shader": {
+        "pattern": "smoke",
+        "subpattern": "smoke",
+        "primary": "#d8e4ec",
+        "secondary": "#374151",
+        "accent": "#9ca3af",
+        "tertiary": "#9ca3af",
+        "wax_name": "Special Edition, Clear Smoke",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 71642
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$27.99",
+      "total_price": "$27.99",
+      "list_price_usd": 27.99,
+      "total_price_usd": 27.99,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 22 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509187788",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509187788",
+      "release_url": "https://www.discogs.com/release/35138360",
+      "raw_description": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(2)",
+      "clean_seller_note": "Brand new in the original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(2)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:50:07",
+      "alerted_at": "2026-11-22T13:50:07",
+      "fingerprint": "35138360::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 20,
+      "relist_group_total": 22,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 29.9,
+      "group_highest_price_usd": 35.95,
+      "group_lowest_price_usd": 27.49,
+      "is_price_drop": true,
+      "price_drop_usd": 7.96,
+      "price_drop_pct": 22.1,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509187788"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/tL2ULK_H3JpTYv1FLi3S7I3neavmMZePtkaOHvkA5XM/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM1MTM4/MzYwLTE3NTgyMzc2/NjctMjEwMC5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 33.95,
+        "observed_median_usd": 34.57,
+        "observed_high_usd": 37.79,
+        "condition_suggested_usd": 34.57,
+        "condition_suggested_formatted": "$34.57",
+        "benchmark_source": "Observed 5-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 28,
+        "distinct_sellers_tracked": 5,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -6.58,
+      "deal_delta_pct": -19.0,
+      "deal_score": 99,
+      "deal_tier": "STEAL",
+      "deal_tier_label": "STEAL (-19% vs M)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 23.79,
+        "recommended_offer_usd": 25.47,
+        "instant_close_offer_usd": 26.59,
+        "savings_vs_ask_usd": 2.52,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 34.57,
+        "rationales": [
+          "5-seller median $34.57 shipped",
+          "Relisted 22x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of I Prevail - Violent Nature (#4509187788). Would you consider an offer of $25.47 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 33,
+      "rank": 17,
+      "is_live_page1": false,
+      "id": "4509056475",
+      "release_id": "38856249",
+      "title": "Dayseeker - Creature In The Black Night",
+      "artist": "Dayseeker",
+      "album": "Creature In The Black Night",
+      "norm_album_key": "dayseeker - creature in the black night",
+      "variant": "Stereo, Limited Edition, LP, Pearl Flip/ Horizon",
+      "wax_shader": {
+        "pattern": "solid",
+        "subpattern": "solid",
+        "primary": "#f3f0e6",
+        "secondary": "#d6d1c2",
+        "accent": "#ffffff",
+        "tertiary": "#ffffff",
+        "wax_name": "Pearl Flip/ Horizon",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 109471
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$36.99",
+      "total_price": "$36.99",
+      "list_price_usd": 36.99,
+      "total_price_usd": 36.99,
+      "shipping_price_usd": 0.0,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 23 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509056475",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509056475",
+      "release_url": "https://www.discogs.com/release/38856249",
+      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
+      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:45:06",
+      "alerted_at": "2026-11-22T13:45:06",
+      "fingerprint": "38856249::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 46,
+      "relist_group_total": 51,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 31.11,
+      "is_price_drop": true,
+      "price_drop_usd": 7.5,
+      "price_drop_pct": 16.9,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509056475"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/THclvWNdwoVfs6S_zQXHDet7sN3ZycSImIPOODrdbOA/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU2/MjQ5LTE3OTQyNjMy/MjQtNTQxNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 39.11,
+        "observed_high_usd": 42.0,
+        "condition_suggested_usd": 39.11,
+        "condition_suggested_formatted": "$39.11",
+        "benchmark_source": "Observed 5-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 55,
+        "distinct_sellers_tracked": 5,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -2.12,
+      "deal_delta_pct": -5.4,
+      "deal_score": 99,
+      "deal_tier": "GREAT_DEAL",
+      "deal_tier_label": "BELOW BENCHMARK (-5%)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 30.84,
+        "recommended_offer_usd": 33.66,
+        "instant_close_offer_usd": 35.14,
+        "savings_vs_ask_usd": 3.33,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 39.11,
+        "rationales": [
+          "5-seller median $39.11 shipped",
+          "Relisted 51x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Creature In The Black Night (#4509056475). Would you consider an offer of $33.66 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 34,
+      "rank": 16,
+      "is_live_page1": false,
+      "id": "4509067461",
+      "release_id": "35138360",
+      "title": "I Prevail - Violent Nature",
+      "artist": "I Prevail",
+      "album": "Violent Nature",
+      "norm_album_key": "i prevail - violent nature",
+      "variant": "Album, Special Edition, LP, Clear Smoke",
+      "wax_shader": {
+        "pattern": "smoke",
+        "subpattern": "smoke",
+        "primary": "#d8e4ec",
+        "secondary": "#374151",
+        "accent": "#9ca3af",
+        "tertiary": "#9ca3af",
+        "wax_name": "Special Edition, Clear Smoke",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 71642
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$22.40",
+      "total_price": "$29.90",
+      "list_price_usd": 22.4,
+      "total_price_usd": 29.9,
+      "shipping_price_usd": 7.5,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 23 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509067461",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509067461",
+      "release_url": "https://www.discogs.com/release/35138360",
+      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(d)",
+      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(d)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:45:06",
+      "alerted_at": "2026-11-22T13:45:06",
+      "fingerprint": "35138360::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 19,
+      "relist_group_total": 22,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 29.9,
+      "group_highest_price_usd": 35.95,
+      "group_lowest_price_usd": 27.49,
+      "is_price_drop": true,
+      "price_drop_usd": 6.05,
+      "price_drop_pct": 16.8,
+      "relist_behavior": "GENUINE_CUT",
+      "sibling_listing_ids": [
+        "4509067461"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/tL2ULK_H3JpTYv1FLi3S7I3neavmMZePtkaOHvkA5XM/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM1MTM4/MzYwLTE3NTgyMzc2/NjctMjEwMC5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 33.95,
+        "observed_median_usd": 34.57,
+        "observed_high_usd": 37.79,
+        "condition_suggested_usd": 34.57,
+        "condition_suggested_formatted": "$34.57",
+        "benchmark_source": "Observed 5-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 28,
+        "distinct_sellers_tracked": 5,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": -4.67,
+      "deal_delta_pct": -13.5,
+      "deal_score": 99,
+      "deal_tier": "GREAT_DEAL",
+      "deal_tier_label": "BELOW BENCHMARK (-14%)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 19.04,
+        "recommended_offer_usd": 20.38,
+        "instant_close_offer_usd": 21.28,
+        "savings_vs_ask_usd": 2.02,
+        "savings_pct": 9.0,
+        "fair_item_target_usd": 27.07,
+        "rationales": [
+          "5-seller median $34.57 shipped",
+          "Relisted 22x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of I Prevail - Violent Nature (#4509067461). Would you consider an offer of $20.38 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
       "snapshot_order": 35,
+      "rank": 18,
+      "is_live_page1": false,
+      "id": "4509056478",
+      "release_id": "38857860",
+      "title": "Dayseeker - Dark Sun",
+      "artist": "Dayseeker",
+      "album": "Dark Sun",
+      "norm_album_key": "dayseeker - dark sun",
+      "variant": "Stereo, Album, Limited Edition, Repress, LP, Ultra Clear",
+      "wax_shader": {
+        "pattern": "translucent",
+        "subpattern": "translucent",
+        "primary": "#d8e4ec",
+        "secondary": "#9bb4c4",
+        "accent": "#00f0ff",
+        "tertiary": "#00f0ff",
+        "wax_name": "Ultra Clear",
+        "is_etched": false,
+        "is_foil_sleeve": false,
+        "is_numbered": false,
+        "is_180g": false,
+        "rpm": 33,
+        "seed": 147020
+      },
+      "media_condition": "M",
+      "media_condition_full": "Mint (M)",
+      "sleeve_condition": "NM",
+      "list_price": "$36.99",
+      "total_price": "$44.49",
+      "list_price_usd": 36.99,
+      "total_price_usd": 44.49,
+      "shipping_price_usd": 7.5,
+      "seller_info": "recordmule",
+      "seller_rating": "",
+      "allow_offers": false,
+      "listed_age": "Listed 23 hours ago",
+      "item_url": "https://www.discogs.com/sell/item/4509056478",
+      "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=4509056478",
+      "release_url": "https://www.discogs.com/release/38857860",
+      "raw_description": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
+      "clean_seller_note": "New in original factory packaging. $7.50 flat rate shipping for UNLIMITED ITEMS to the USA. Packed with care in a sturdy mailer by the Record Mule Team.(a)",
+      "collector_badges": [
+        {
+          "id": "SEALED",
+          "label": "SEALED",
+          "tone": "lime"
+        }
+      ],
+      "has_wear_warning": false,
+      "seeded_at": "2026-11-22T13:45:06",
+      "alerted_at": "2026-11-22T13:45:06",
+      "fingerprint": "38857860::recordmule::M",
+      "api_stats": {},
+      "relist_sequence_num": 61,
+      "relist_group_total": 68,
+      "is_auto_relist": true,
+      "is_latest_in_group": false,
+      "group_first_price_usd": 44.49,
+      "group_highest_price_usd": 44.49,
+      "group_lowest_price_usd": 30.99,
+      "is_price_drop": false,
+      "price_drop_usd": 0.0,
+      "price_drop_pct": 0.0,
+      "relist_behavior": "YOYO_BLUFF",
+      "sibling_listing_ids": [
+        "4509056478"
+      ],
+      "sibling_history": [],
+      "price_trajectory": [],
+      "cover_image_url": "https://i.discogs.com/_Rp5_97pK7eZpCYM77SO6Jnnrlukr1cf4kx_Tph-n8U/rs:fit/g:sm/q:40/h:300/w:300/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM4ODU3/ODYwLTE3OTMxNDYz/MjUtODEyNy5qcGVn.jpeg",
+      "vault_status": "MISSING_GRAIL",
+      "vault_status_label": "MISSING GRAIL",
+      "vault_owned_detail": null,
+      "market_stats": {
+        "observed_low_usd": 35.95,
+        "observed_median_usd": 38.99,
+        "observed_high_usd": 41.99,
+        "condition_suggested_usd": 38.99,
+        "condition_suggested_formatted": "$38.99",
+        "benchmark_source": "Observed 3-Seller Market Median",
+        "benchmark_verified": false,
+        "release_listings_tracked": 70,
+        "distinct_sellers_tracked": 3,
+        "community_have": null,
+        "community_want": null,
+        "num_for_sale": null
+      },
+      "deal_delta_usd": 5.5,
+      "deal_delta_pct": 14.1,
+      "deal_score": 49,
+      "deal_tier": "ABOVE_MARKET",
+      "deal_tier_label": "PREMIUM (+14%)",
+      "target_price_usd": null,
+      "is_target_hit": false,
+      "seller_bundle_count": 4,
+      "seller_bundle_savings_usd": 22.5,
+      "offer_strategy": {
+        "aggressive_offer_usd": 24.83,
+        "recommended_offer_usd": 28.34,
+        "instant_close_offer_usd": 29.92,
+        "savings_vs_ask_usd": 8.65,
+        "savings_pct": 23.4,
+        "fair_item_target_usd": 31.49,
+        "rationales": [
+          "3-seller median $38.99 shipped",
+          "Relisted 68x (-5% churn leverage)",
+          "Seller holds 4 Wantlist LPs (bundle leverage)"
+        ],
+        "buyer_pitch": "Hi recordmule, I'm interested in your M/NM copy of Dayseeker - Dark Sun (#4509056478). Would you consider an offer of $28.34 (+ shipping) for a quick payment today? I also spotted 3 other LP(s) in your shop on my Wantlist if you combine shipping!"
+      }
+    },
+    {
+      "snapshot_order": 36,
       "rank": 25,
       "is_live_page1": false,
       "id": "4495253831",
@@ -9919,7 +10079,7 @@
       }
     },
     {
-      "snapshot_order": 36,
+      "snapshot_order": 37,
       "rank": 14,
       "is_live_page1": false,
       "id": "4506237000",
@@ -10032,7 +10192,7 @@
       }
     },
     {
-      "snapshot_order": 37,
+      "snapshot_order": 38,
       "rank": 15,
       "is_live_page1": false,
       "id": "4506236997",
@@ -10145,7 +10305,7 @@
       }
     },
     {
-      "snapshot_order": 38,
+      "snapshot_order": 39,
       "rank": 16,
       "is_live_page1": false,
       "id": "4506236994",
@@ -10258,7 +10418,7 @@
       }
     },
     {
-      "snapshot_order": 39,
+      "snapshot_order": 40,
       "rank": 17,
       "is_live_page1": false,
       "id": "4506128085",
@@ -10371,7 +10531,7 @@
       }
     },
     {
-      "snapshot_order": 40,
+      "snapshot_order": 41,
       "rank": 18,
       "is_live_page1": false,
       "id": "4506128082",
@@ -10484,7 +10644,7 @@
       }
     },
     {
-      "snapshot_order": 41,
+      "snapshot_order": 42,
       "rank": 19,
       "is_live_page1": false,
       "id": "4506092037",
@@ -10597,7 +10757,7 @@
       }
     },
     {
-      "snapshot_order": 42,
+      "snapshot_order": 43,
       "rank": 20,
       "is_live_page1": false,
       "id": "4505995791",
@@ -10710,7 +10870,7 @@
       }
     },
     {
-      "snapshot_order": 43,
+      "snapshot_order": 44,
       "rank": 21,
       "is_live_page1": false,
       "id": "4505984772",
@@ -10823,7 +10983,7 @@
       }
     },
     {
-      "snapshot_order": 44,
+      "snapshot_order": 45,
       "rank": 22,
       "is_live_page1": false,
       "id": "4505984769",
@@ -10936,7 +11096,7 @@
       }
     },
     {
-      "snapshot_order": 45,
+      "snapshot_order": 46,
       "rank": 2,
       "is_live_page1": false,
       "id": "4508950002",
@@ -11049,7 +11209,7 @@
       }
     },
     {
-      "snapshot_order": 46,
+      "snapshot_order": 47,
       "rank": 3,
       "is_live_page1": false,
       "id": "4508949999",
@@ -11162,7 +11322,7 @@
       }
     },
     {
-      "snapshot_order": 47,
+      "snapshot_order": 48,
       "rank": 4,
       "is_live_page1": false,
       "id": "4508949996",
@@ -11275,7 +11435,7 @@
       }
     },
     {
-      "snapshot_order": 48,
+      "snapshot_order": 49,
       "rank": 5,
       "is_live_page1": false,
       "id": "4508842500",
@@ -11388,7 +11548,7 @@
       }
     },
     {
-      "snapshot_order": 49,
+      "snapshot_order": 50,
       "rank": 6,
       "is_live_page1": false,
       "id": "4508842497",
@@ -11501,7 +11661,7 @@
       }
     },
     {
-      "snapshot_order": 50,
+      "snapshot_order": 51,
       "rank": 7,
       "is_live_page1": false,
       "id": "4508794620",
@@ -11614,7 +11774,7 @@
       }
     },
     {
-      "snapshot_order": 51,
+      "snapshot_order": 52,
       "rank": 24,
       "is_live_page1": false,
       "id": "4508703966",
@@ -11727,7 +11887,7 @@
       }
     },
     {
-      "snapshot_order": 52,
+      "snapshot_order": 53,
       "rank": 24,
       "is_live_page1": false,
       "id": "4508703969",
@@ -11840,7 +12000,7 @@
       }
     },
     {
-      "snapshot_order": 53,
+      "snapshot_order": 54,
       "rank": 25,
       "is_live_page1": false,
       "id": "4493956016",
@@ -11951,7 +12111,7 @@
       }
     },
     {
-      "snapshot_order": 54,
+      "snapshot_order": 55,
       "rank": 1,
       "is_live_page1": false,
       "id": "4490722037",
@@ -12060,7 +12220,7 @@
       }
     },
     {
-      "snapshot_order": 55,
+      "snapshot_order": 56,
       "rank": 4,
       "is_live_page1": false,
       "id": "4448132697",
@@ -12155,21 +12315,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": -39.5,
-      "deal_delta_pct": -25.4,
+      "deal_delta_usd": -39.0,
+      "deal_delta_pct": -25.2,
       "deal_score": 98,
       "deal_tier": "STEAL",
       "deal_tier_label": "STEAL (-25% vs NM)",
@@ -12183,16 +12343,16 @@
         "instant_close_offer_usd": 104.5,
         "savings_vs_ask_usd": 9.9,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 149.5,
+        "fair_item_target_usd": 149.0,
         "rationales": [
-          "10-seller median $155.50 shipped",
+          "11-seller median $155.00 shipped",
           "Seller holds 3 Wantlist LPs (bundle leverage)"
         ],
         "buyer_pitch": "Hi zarnold_palmer, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4448132697). Would you consider an offer of $100.10 (+ shipping) for a quick payment today? I also spotted 2 other LP(s) in your shop on my Wantlist if you combine shipping!"
       }
     },
     {
-      "snapshot_order": 56,
+      "snapshot_order": 57,
       "rank": 3,
       "is_live_page1": false,
       "id": "4506515058",
@@ -12297,21 +12457,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": -0.5,
-      "deal_delta_pct": -0.3,
+      "deal_delta_usd": 0.0,
+      "deal_delta_pct": 0.0,
       "deal_score": 72,
       "deal_tier": "FAIR_MARKET",
       "deal_tier_label": "FAIR MARKET",
@@ -12320,20 +12480,20 @@
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 124.91,
-        "recommended_offer_usd": 135.45,
+        "aggressive_offer_usd": 124.5,
+        "recommended_offer_usd": 135.0,
         "instant_close_offer_usd": 142.5,
-        "savings_vs_ask_usd": 14.55,
-        "savings_pct": 9.7,
-        "fair_item_target_usd": 150.5,
+        "savings_vs_ask_usd": 15.0,
+        "savings_pct": 10.0,
+        "fair_item_target_usd": 150.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
-        "buyer_pitch": "Hi drhoracegreen, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4506515058). Would you consider an offer of $135.45 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi drhoracegreen, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4506515058). Would you consider an offer of $135.00 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 57,
+      "snapshot_order": 58,
       "rank": 23,
       "is_live_page1": false,
       "id": "4493253353",
@@ -12448,7 +12608,7 @@
       }
     },
     {
-      "snapshot_order": 58,
+      "snapshot_order": 59,
       "rank": 24,
       "is_live_page1": false,
       "id": "4492616447",
@@ -12560,7 +12720,7 @@
       }
     },
     {
-      "snapshot_order": 59,
+      "snapshot_order": 60,
       "rank": 25,
       "is_live_page1": false,
       "id": "4492606511",
@@ -12672,7 +12832,7 @@
       }
     },
     {
-      "snapshot_order": 60,
+      "snapshot_order": 61,
       "rank": 14,
       "is_live_page1": false,
       "id": "4502609757",
@@ -12785,7 +12945,7 @@
       }
     },
     {
-      "snapshot_order": 61,
+      "snapshot_order": 62,
       "rank": 15,
       "is_live_page1": false,
       "id": "4502529645",
@@ -12898,7 +13058,7 @@
       }
     },
     {
-      "snapshot_order": 62,
+      "snapshot_order": 63,
       "rank": 19,
       "is_live_page1": false,
       "id": "4498617398",
@@ -13011,7 +13171,7 @@
       }
     },
     {
-      "snapshot_order": 63,
+      "snapshot_order": 64,
       "rank": 20,
       "is_live_page1": false,
       "id": "4498617392",
@@ -13124,7 +13284,7 @@
       }
     },
     {
-      "snapshot_order": 64,
+      "snapshot_order": 65,
       "rank": 14,
       "is_live_page1": false,
       "id": "4502609763",
@@ -13237,7 +13397,7 @@
       }
     },
     {
-      "snapshot_order": 65,
+      "snapshot_order": 66,
       "rank": 15,
       "is_live_page1": false,
       "id": "4502609760",
@@ -13350,7 +13510,7 @@
       }
     },
     {
-      "snapshot_order": 66,
+      "snapshot_order": 67,
       "rank": 17,
       "is_live_page1": false,
       "id": "4502529648",
@@ -13463,7 +13623,7 @@
       }
     },
     {
-      "snapshot_order": 67,
+      "snapshot_order": 68,
       "rank": 23,
       "is_live_page1": false,
       "id": "4498617395",
@@ -13576,7 +13736,7 @@
       }
     },
     {
-      "snapshot_order": 68,
+      "snapshot_order": 69,
       "rank": 25,
       "is_live_page1": false,
       "id": "4498554818",
@@ -13689,7 +13849,7 @@
       }
     },
     {
-      "snapshot_order": 69,
+      "snapshot_order": 70,
       "rank": 19,
       "is_live_page1": false,
       "id": "4502499297",
@@ -13802,7 +13962,7 @@
       }
     },
     {
-      "snapshot_order": 70,
+      "snapshot_order": 71,
       "rank": 24,
       "is_live_page1": false,
       "id": "4498554815",
@@ -13915,7 +14075,7 @@
       }
     },
     {
-      "snapshot_order": 71,
+      "snapshot_order": 72,
       "rank": 24,
       "is_live_page1": false,
       "id": "4502428038",
@@ -14028,7 +14188,7 @@
       }
     },
     {
-      "snapshot_order": 72,
+      "snapshot_order": 73,
       "rank": 25,
       "is_live_page1": false,
       "id": "4502428035",
@@ -14141,7 +14301,7 @@
       }
     },
     {
-      "snapshot_order": 73,
+      "snapshot_order": 74,
       "rank": 1,
       "is_live_page1": false,
       "id": "4502882457",
@@ -14275,7 +14435,7 @@
       }
     },
     {
-      "snapshot_order": 74,
+      "snapshot_order": 75,
       "rank": 1,
       "is_live_page1": false,
       "id": "4503023760",
@@ -14375,21 +14535,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1525,
         "num_for_sale": 21
       },
-      "deal_delta_usd": -9.0,
-      "deal_delta_pct": -5.8,
+      "deal_delta_usd": -8.5,
+      "deal_delta_pct": -5.5,
       "deal_score": 86,
       "deal_tier": "GREAT_DEAL",
       "deal_tier_label": "BELOW BENCHMARK (-6%)",
@@ -14403,15 +14563,15 @@
         "instant_close_offer_usd": 133.0,
         "savings_vs_ask_usd": 12.6,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 149.0,
+        "fair_item_target_usd": 148.5,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
         "buyer_pitch": "Hi NexusRecordsNYC, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4503023760). Would you consider an offer of $127.40 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 75,
+      "snapshot_order": 76,
       "rank": 20,
       "is_live_page1": false,
       "id": "4492583531",
@@ -14497,21 +14657,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": 11.0,
-      "deal_delta_pct": 7.1,
+      "deal_delta_usd": 11.5,
+      "deal_delta_pct": 7.4,
       "deal_score": 72,
       "deal_tier": "FAIR_MARKET",
       "deal_tier_label": "FAIR MARKET",
@@ -14520,20 +14680,20 @@
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 123.67,
-        "recommended_offer_usd": 134.1,
-        "instant_close_offer_usd": 141.55,
-        "savings_vs_ask_usd": 25.9,
-        "savings_pct": 16.2,
-        "fair_item_target_usd": 149.0,
+        "aggressive_offer_usd": 123.25,
+        "recommended_offer_usd": 133.65,
+        "instant_close_offer_usd": 141.07,
+        "savings_vs_ask_usd": 26.35,
+        "savings_pct": 16.5,
+        "fair_item_target_usd": 148.5,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
-        "buyer_pitch": "Hi lloydsrecords, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4492583531). Would you consider an offer of $134.10 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi lloydsrecords, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4492583531). Would you consider an offer of $133.65 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 76,
+      "snapshot_order": 77,
       "rank": 21,
       "is_live_page1": false,
       "id": "3929846740",
@@ -14653,7 +14813,7 @@
       }
     },
     {
-      "snapshot_order": 77,
+      "snapshot_order": 78,
       "rank": 22,
       "is_live_page1": false,
       "id": "4498454576",
@@ -14766,7 +14926,7 @@
       }
     },
     {
-      "snapshot_order": 78,
+      "snapshot_order": 79,
       "rank": 23,
       "is_live_page1": false,
       "id": "4498454573",
@@ -14879,7 +15039,7 @@
       }
     },
     {
-      "snapshot_order": 79,
+      "snapshot_order": 80,
       "rank": 25,
       "is_live_page1": false,
       "id": "4491301943",
@@ -14991,7 +15151,7 @@
       }
     },
     {
-      "snapshot_order": 80,
+      "snapshot_order": 81,
       "rank": 25,
       "is_live_page1": false,
       "id": "4319888766",
@@ -15108,7 +15268,7 @@
       }
     },
     {
-      "snapshot_order": 81,
+      "snapshot_order": 82,
       "rank": 25,
       "is_live_page1": false,
       "id": "4489879550",
@@ -15228,7 +15388,7 @@
       }
     },
     {
-      "snapshot_order": 82,
+      "snapshot_order": 83,
       "rank": 25,
       "is_live_page1": false,
       "id": "4401791286",
@@ -15337,7 +15497,7 @@
       }
     },
     {
-      "snapshot_order": 83,
+      "snapshot_order": 84,
       "rank": 11,
       "is_live_page1": false,
       "id": "4495223060",
@@ -15450,7 +15610,7 @@
       }
     },
     {
-      "snapshot_order": 84,
+      "snapshot_order": 85,
       "rank": 12,
       "is_live_page1": false,
       "id": "4495223057",
@@ -15563,7 +15723,7 @@
       }
     },
     {
-      "snapshot_order": 85,
+      "snapshot_order": 86,
       "rank": 13,
       "is_live_page1": false,
       "id": "4495223054",
@@ -15676,7 +15836,7 @@
       }
     },
     {
-      "snapshot_order": 86,
+      "snapshot_order": 87,
       "rank": 14,
       "is_live_page1": false,
       "id": "4495154159",
@@ -15789,7 +15949,7 @@
       }
     },
     {
-      "snapshot_order": 87,
+      "snapshot_order": 88,
       "rank": 15,
       "is_live_page1": false,
       "id": "4495154156",
@@ -15902,7 +16062,7 @@
       }
     },
     {
-      "snapshot_order": 88,
+      "snapshot_order": 89,
       "rank": 24,
       "is_live_page1": false,
       "id": "4495051877",
@@ -16015,7 +16175,7 @@
       }
     },
     {
-      "snapshot_order": 89,
+      "snapshot_order": 90,
       "rank": 25,
       "is_live_page1": false,
       "id": "4495051874",
@@ -16128,7 +16288,7 @@
       }
     },
     {
-      "snapshot_order": 90,
+      "snapshot_order": 91,
       "rank": 25,
       "is_live_page1": false,
       "id": "4384702056",
@@ -16243,7 +16403,7 @@
       }
     },
     {
-      "snapshot_order": 91,
+      "snapshot_order": 92,
       "rank": 25,
       "is_live_page1": false,
       "id": "4116817188",
@@ -16370,7 +16530,7 @@
       }
     },
     {
-      "snapshot_order": 92,
+      "snapshot_order": 93,
       "rank": 2,
       "is_live_page1": false,
       "id": "4496060084",
@@ -16488,7 +16648,7 @@
       }
     },
     {
-      "snapshot_order": 93,
+      "snapshot_order": 94,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485553277",
@@ -16603,7 +16763,7 @@
       }
     },
     {
-      "snapshot_order": 94,
+      "snapshot_order": 95,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485121604",
@@ -16714,7 +16874,7 @@
       }
     },
     {
-      "snapshot_order": 95,
+      "snapshot_order": 96,
       "rank": 13,
       "is_live_page1": false,
       "id": "4492483199",
@@ -16827,7 +16987,7 @@
       }
     },
     {
-      "snapshot_order": 96,
+      "snapshot_order": 97,
       "rank": 14,
       "is_live_page1": false,
       "id": "4492483193",
@@ -16940,7 +17100,7 @@
       }
     },
     {
-      "snapshot_order": 97,
+      "snapshot_order": 98,
       "rank": 15,
       "is_live_page1": false,
       "id": "4492399598",
@@ -17053,7 +17213,7 @@
       }
     },
     {
-      "snapshot_order": 98,
+      "snapshot_order": 99,
       "rank": 16,
       "is_live_page1": false,
       "id": "4492399595",
@@ -17166,7 +17326,7 @@
       }
     },
     {
-      "snapshot_order": 99,
+      "snapshot_order": 100,
       "rank": 14,
       "is_live_page1": false,
       "id": "4492483196",
@@ -17279,7 +17439,7 @@
       }
     },
     {
-      "snapshot_order": 100,
+      "snapshot_order": 101,
       "rank": 24,
       "is_live_page1": false,
       "id": "4492300007",
@@ -17392,7 +17552,7 @@
       }
     },
     {
-      "snapshot_order": 101,
+      "snapshot_order": 102,
       "rank": 25,
       "is_live_page1": false,
       "id": "4492300004",
@@ -17505,7 +17665,7 @@
       }
     },
     {
-      "snapshot_order": 102,
+      "snapshot_order": 103,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485101663",
@@ -17616,7 +17776,7 @@
       }
     },
     {
-      "snapshot_order": 103,
+      "snapshot_order": 104,
       "rank": 14,
       "is_live_page1": false,
       "id": "4493801354",
@@ -17769,7 +17929,7 @@
       }
     },
     {
-      "snapshot_order": 104,
+      "snapshot_order": 105,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485101234",
@@ -17880,7 +18040,7 @@
       }
     },
     {
-      "snapshot_order": 105,
+      "snapshot_order": 106,
       "rank": 13,
       "is_live_page1": false,
       "id": "4492164425",
@@ -17993,7 +18153,7 @@
       }
     },
     {
-      "snapshot_order": 106,
+      "snapshot_order": 107,
       "rank": 14,
       "is_live_page1": false,
       "id": "4489942280",
@@ -18104,7 +18264,7 @@
       }
     },
     {
-      "snapshot_order": 107,
+      "snapshot_order": 108,
       "rank": 17,
       "is_live_page1": false,
       "id": "4489738529",
@@ -18217,7 +18377,7 @@
       }
     },
     {
-      "snapshot_order": 108,
+      "snapshot_order": 109,
       "rank": 17,
       "is_live_page1": false,
       "id": "4489738535",
@@ -18330,7 +18490,7 @@
       }
     },
     {
-      "snapshot_order": 109,
+      "snapshot_order": 110,
       "rank": 18,
       "is_live_page1": false,
       "id": "4489738532",
@@ -18443,7 +18603,7 @@
       }
     },
     {
-      "snapshot_order": 110,
+      "snapshot_order": 111,
       "rank": 20,
       "is_live_page1": false,
       "id": "4489671545",
@@ -18556,7 +18716,7 @@
       }
     },
     {
-      "snapshot_order": 111,
+      "snapshot_order": 112,
       "rank": 20,
       "is_live_page1": false,
       "id": "4489671548",
@@ -18669,7 +18829,7 @@
       }
     },
     {
-      "snapshot_order": 112,
+      "snapshot_order": 113,
       "rank": 25,
       "is_live_page1": false,
       "id": "4489569611",
@@ -18782,7 +18942,7 @@
       }
     },
     {
-      "snapshot_order": 113,
+      "snapshot_order": 114,
       "rank": 23,
       "is_live_page1": false,
       "id": "4489569608",
@@ -18895,7 +19055,7 @@
       }
     },
     {
-      "snapshot_order": 114,
+      "snapshot_order": 115,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485076160",
@@ -18981,43 +19141,43 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": 47.5,
-      "deal_delta_pct": 30.5,
+      "deal_delta_usd": 48.0,
+      "deal_delta_pct": 31.0,
       "deal_score": 33,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+30%)",
+      "deal_tier_label": "PREMIUM (+31%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 122.42,
-        "recommended_offer_usd": 132.75,
-        "instant_close_offer_usd": 140.12,
-        "savings_vs_ask_usd": 62.25,
-        "savings_pct": 31.9,
-        "fair_item_target_usd": 147.5,
+        "aggressive_offer_usd": 122.01,
+        "recommended_offer_usd": 132.3,
+        "instant_close_offer_usd": 139.65,
+        "savings_vs_ask_usd": 62.7,
+        "savings_pct": 32.2,
+        "fair_item_target_usd": 147.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
-        "buyer_pitch": "Hi jessjessblue2, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485076160). Would you consider an offer of $132.75 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi jessjessblue2, I'm interested in your M/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485076160). Would you consider an offer of $132.30 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 115,
+      "snapshot_order": 116,
       "rank": 24,
       "is_live_page1": false,
       "id": "3906788398",
@@ -19139,7 +19299,7 @@
       }
     },
     {
-      "snapshot_order": 116,
+      "snapshot_order": 117,
       "rank": 25,
       "is_live_page1": false,
       "id": "4483362674",
@@ -19267,7 +19427,7 @@
       }
     },
     {
-      "snapshot_order": 117,
+      "snapshot_order": 118,
       "rank": 25,
       "is_live_page1": false,
       "id": "1558470322",
@@ -19384,7 +19544,7 @@
       }
     },
     {
-      "snapshot_order": 118,
+      "snapshot_order": 119,
       "rank": 25,
       "is_live_page1": false,
       "id": "4483171412",
@@ -19506,7 +19666,7 @@
       }
     },
     {
-      "snapshot_order": 119,
+      "snapshot_order": 120,
       "rank": 2,
       "is_live_page1": false,
       "id": "4491243305",
@@ -19619,7 +19779,7 @@
       }
     },
     {
-      "snapshot_order": 120,
+      "snapshot_order": 121,
       "rank": 25,
       "is_live_page1": false,
       "id": "4482973118",
@@ -19728,7 +19888,7 @@
       }
     },
     {
-      "snapshot_order": 121,
+      "snapshot_order": 122,
       "rank": 25,
       "is_live_page1": false,
       "id": "4481531468",
@@ -19845,7 +20005,7 @@
       }
     },
     {
-      "snapshot_order": 122,
+      "snapshot_order": 123,
       "rank": 25,
       "is_live_page1": false,
       "id": "3872569822",
@@ -19954,7 +20114,7 @@
       }
     },
     {
-      "snapshot_order": 123,
+      "snapshot_order": 124,
       "rank": 25,
       "is_live_page1": false,
       "id": "4308476388",
@@ -20076,7 +20236,7 @@
       }
     },
     {
-      "snapshot_order": 124,
+      "snapshot_order": 125,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479451331",
@@ -20214,7 +20374,7 @@
       }
     },
     {
-      "snapshot_order": 125,
+      "snapshot_order": 126,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488396686",
@@ -20327,7 +20487,7 @@
       }
     },
     {
-      "snapshot_order": 126,
+      "snapshot_order": 127,
       "rank": 9,
       "is_live_page1": false,
       "id": "4488396683",
@@ -20440,7 +20600,7 @@
       }
     },
     {
-      "snapshot_order": 127,
+      "snapshot_order": 128,
       "rank": 10,
       "is_live_page1": false,
       "id": "4488339215",
@@ -20553,7 +20713,7 @@
       }
     },
     {
-      "snapshot_order": 128,
+      "snapshot_order": 129,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488396689",
@@ -20666,7 +20826,7 @@
       }
     },
     {
-      "snapshot_order": 129,
+      "snapshot_order": 130,
       "rank": 12,
       "is_live_page1": false,
       "id": "4488339212",
@@ -20779,7 +20939,7 @@
       }
     },
     {
-      "snapshot_order": 130,
+      "snapshot_order": 131,
       "rank": 24,
       "is_live_page1": false,
       "id": "4488238427",
@@ -20892,7 +21052,7 @@
       }
     },
     {
-      "snapshot_order": 131,
+      "snapshot_order": 132,
       "rank": 25,
       "is_live_page1": false,
       "id": "4488238424",
@@ -21005,7 +21165,7 @@
       }
     },
     {
-      "snapshot_order": 132,
+      "snapshot_order": 133,
       "rank": 25,
       "is_live_page1": false,
       "id": "4488249416",
@@ -21118,7 +21278,7 @@
       }
     },
     {
-      "snapshot_order": 133,
+      "snapshot_order": 134,
       "rank": 8,
       "is_live_page1": false,
       "id": "4488028280",
@@ -21227,7 +21387,7 @@
       }
     },
     {
-      "snapshot_order": 134,
+      "snapshot_order": 135,
       "rank": 14,
       "is_live_page1": false,
       "id": "4485059567",
@@ -21308,21 +21468,21 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": -4.51,
-      "deal_delta_pct": -2.9,
+      "deal_delta_usd": -4.01,
+      "deal_delta_pct": -2.6,
       "deal_score": 72,
       "deal_tier": "FAIR_MARKET",
       "deal_tier_label": "FAIR MARKET",
@@ -21336,15 +21496,15 @@
         "instant_close_offer_usd": 136.8,
         "savings_vs_ask_usd": 12.96,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 148.51,
+        "fair_item_target_usd": 148.01,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
         "buyer_pitch": "Hi Fast_n_Bulbous, I'm interested in your M/M copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4485059567). Would you consider an offer of $131.04 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 135,
+      "snapshot_order": 136,
       "rank": 10,
       "is_live_page1": false,
       "id": "4485412619",
@@ -21457,7 +21617,7 @@
       }
     },
     {
-      "snapshot_order": 136,
+      "snapshot_order": 137,
       "rank": 11,
       "is_live_page1": false,
       "id": "4485412616",
@@ -21570,7 +21730,7 @@
       }
     },
     {
-      "snapshot_order": 137,
+      "snapshot_order": 138,
       "rank": 12,
       "is_live_page1": false,
       "id": "4485412613",
@@ -21683,7 +21843,7 @@
       }
     },
     {
-      "snapshot_order": 138,
+      "snapshot_order": 139,
       "rank": 13,
       "is_live_page1": false,
       "id": "4485324410",
@@ -21796,7 +21956,7 @@
       }
     },
     {
-      "snapshot_order": 139,
+      "snapshot_order": 140,
       "rank": 14,
       "is_live_page1": false,
       "id": "4485324407",
@@ -21909,7 +22069,7 @@
       }
     },
     {
-      "snapshot_order": 140,
+      "snapshot_order": 141,
       "rank": 25,
       "is_live_page1": false,
       "id": "4485224567",
@@ -22022,7 +22182,7 @@
       }
     },
     {
-      "snapshot_order": 141,
+      "snapshot_order": 142,
       "rank": 23,
       "is_live_page1": false,
       "id": "4485224564",
@@ -22135,7 +22295,7 @@
       }
     },
     {
-      "snapshot_order": 142,
+      "snapshot_order": 143,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479368948",
@@ -22246,7 +22406,7 @@
       }
     },
     {
-      "snapshot_order": 143,
+      "snapshot_order": 144,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479346844",
@@ -22357,7 +22517,7 @@
       }
     },
     {
-      "snapshot_order": 144,
+      "snapshot_order": 145,
       "rank": 25,
       "is_live_page1": false,
       "id": "3893994715",
@@ -22475,7 +22635,7 @@
       }
     },
     {
-      "snapshot_order": 145,
+      "snapshot_order": 146,
       "rank": 16,
       "is_live_page1": false,
       "id": "4482215072",
@@ -22588,7 +22748,7 @@
       }
     },
     {
-      "snapshot_order": 146,
+      "snapshot_order": 147,
       "rank": 16,
       "is_live_page1": false,
       "id": "4482215075",
@@ -22701,7 +22861,7 @@
       }
     },
     {
-      "snapshot_order": 147,
+      "snapshot_order": 148,
       "rank": 18,
       "is_live_page1": false,
       "id": "4482215069",
@@ -22814,7 +22974,7 @@
       }
     },
     {
-      "snapshot_order": 148,
+      "snapshot_order": 149,
       "rank": 19,
       "is_live_page1": false,
       "id": "4482029861",
@@ -22927,7 +23087,7 @@
       }
     },
     {
-      "snapshot_order": 149,
+      "snapshot_order": 150,
       "rank": 19,
       "is_live_page1": false,
       "id": "4482141788",
@@ -23040,7 +23200,7 @@
       }
     },
     {
-      "snapshot_order": 150,
+      "snapshot_order": 151,
       "rank": 20,
       "is_live_page1": false,
       "id": "4482141785",
@@ -23153,7 +23313,7 @@
       }
     },
     {
-      "snapshot_order": 151,
+      "snapshot_order": 152,
       "rank": 21,
       "is_live_page1": false,
       "id": "4482040934",
@@ -23266,7 +23426,7 @@
       }
     },
     {
-      "snapshot_order": 152,
+      "snapshot_order": 153,
       "rank": 23,
       "is_live_page1": false,
       "id": "4482029858",
@@ -23379,7 +23539,7 @@
       }
     },
     {
-      "snapshot_order": 153,
+      "snapshot_order": 154,
       "rank": 24,
       "is_live_page1": false,
       "id": "3856546486",
@@ -23460,24 +23620,24 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": 152.4,
-      "deal_delta_pct": 98.0,
+      "deal_delta_usd": 152.9,
+      "deal_delta_pct": 98.6,
       "deal_score": 29,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+98%)",
+      "deal_tier_label": "PREMIUM (+99%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -23488,15 +23648,15 @@
         "instant_close_offer_usd": 173.94,
         "savings_vs_ask_usd": 125.96,
         "savings_pct": 42.0,
-        "fair_item_target_usd": 147.5,
+        "fair_item_target_usd": 147.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
         "buyer_pitch": "Hi WookSlayer, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#3856546486). Would you consider an offer of $173.94 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 154,
+      "snapshot_order": 155,
       "rank": 25,
       "is_live_page1": false,
       "id": "3957529936",
@@ -23607,7 +23767,7 @@
       }
     },
     {
-      "snapshot_order": 155,
+      "snapshot_order": 156,
       "rank": 25,
       "is_live_page1": false,
       "id": "2002974626",
@@ -23724,7 +23884,7 @@
       }
     },
     {
-      "snapshot_order": 156,
+      "snapshot_order": 157,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475662115",
@@ -23833,7 +23993,7 @@
       }
     },
     {
-      "snapshot_order": 157,
+      "snapshot_order": 158,
       "rank": 25,
       "is_live_page1": false,
       "id": "4474311224",
@@ -23951,7 +24111,7 @@
       }
     },
     {
-      "snapshot_order": 158,
+      "snapshot_order": 159,
       "rank": 2,
       "is_live_page1": false,
       "id": "4483360739",
@@ -24081,7 +24241,7 @@
       }
     },
     {
-      "snapshot_order": 159,
+      "snapshot_order": 160,
       "rank": 6,
       "is_live_page1": false,
       "id": "4482327815",
@@ -24205,7 +24365,7 @@
       }
     },
     {
-      "snapshot_order": 160,
+      "snapshot_order": 161,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463045460",
@@ -24320,7 +24480,7 @@
       }
     },
     {
-      "snapshot_order": 161,
+      "snapshot_order": 162,
       "rank": 25,
       "is_live_page1": false,
       "id": "4473611450",
@@ -24439,7 +24599,7 @@
       }
     },
     {
-      "snapshot_order": 162,
+      "snapshot_order": 163,
       "rank": 16,
       "is_live_page1": false,
       "id": "4479370163",
@@ -24556,7 +24716,7 @@
       }
     },
     {
-      "snapshot_order": 163,
+      "snapshot_order": 164,
       "rank": 25,
       "is_live_page1": false,
       "id": "2878849339",
@@ -24667,7 +24827,7 @@
       }
     },
     {
-      "snapshot_order": 164,
+      "snapshot_order": 165,
       "rank": 11,
       "is_live_page1": false,
       "id": "4480679414",
@@ -24780,7 +24940,7 @@
       }
     },
     {
-      "snapshot_order": 165,
+      "snapshot_order": 166,
       "rank": 12,
       "is_live_page1": false,
       "id": "4480679411",
@@ -24893,7 +25053,7 @@
       }
     },
     {
-      "snapshot_order": 166,
+      "snapshot_order": 167,
       "rank": 13,
       "is_live_page1": false,
       "id": "4480679408",
@@ -25006,7 +25166,7 @@
       }
     },
     {
-      "snapshot_order": 167,
+      "snapshot_order": 168,
       "rank": 14,
       "is_live_page1": false,
       "id": "4480606115",
@@ -25119,7 +25279,7 @@
       }
     },
     {
-      "snapshot_order": 168,
+      "snapshot_order": 169,
       "rank": 23,
       "is_live_page1": false,
       "id": "4479125750",
@@ -25232,7 +25392,7 @@
       }
     },
     {
-      "snapshot_order": 169,
+      "snapshot_order": 170,
       "rank": 24,
       "is_live_page1": false,
       "id": "4479035117",
@@ -25345,7 +25505,7 @@
       }
     },
     {
-      "snapshot_order": 170,
+      "snapshot_order": 171,
       "rank": 25,
       "is_live_page1": false,
       "id": "4479035114",
@@ -25458,7 +25618,7 @@
       }
     },
     {
-      "snapshot_order": 171,
+      "snapshot_order": 172,
       "rank": 15,
       "is_live_page1": false,
       "id": "4480606112",
@@ -25571,7 +25731,7 @@
       }
     },
     {
-      "snapshot_order": 172,
+      "snapshot_order": 173,
       "rank": 24,
       "is_live_page1": false,
       "id": "4479125753",
@@ -25684,7 +25844,7 @@
       }
     },
     {
-      "snapshot_order": 173,
+      "snapshot_order": 174,
       "rank": 21,
       "is_live_page1": false,
       "id": "4479125747",
@@ -25797,7 +25957,7 @@
       }
     },
     {
-      "snapshot_order": 174,
+      "snapshot_order": 175,
       "rank": 24,
       "is_live_page1": false,
       "id": "4480503173",
@@ -25910,7 +26070,7 @@
       }
     },
     {
-      "snapshot_order": 175,
+      "snapshot_order": 176,
       "rank": 25,
       "is_live_page1": false,
       "id": "4480503170",
@@ -26023,7 +26183,7 @@
       }
     },
     {
-      "snapshot_order": 176,
+      "snapshot_order": 177,
       "rank": 23,
       "is_live_page1": false,
       "id": "4475667074",
@@ -26134,7 +26294,7 @@
       }
     },
     {
-      "snapshot_order": 177,
+      "snapshot_order": 178,
       "rank": 23,
       "is_live_page1": false,
       "id": "4475668247",
@@ -26257,7 +26417,7 @@
       }
     },
     {
-      "snapshot_order": 178,
+      "snapshot_order": 179,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475667776",
@@ -26368,7 +26528,7 @@
       }
     },
     {
-      "snapshot_order": 179,
+      "snapshot_order": 180,
       "rank": 6,
       "is_live_page1": false,
       "id": "4480439516",
@@ -26449,24 +26609,24 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": -23.5,
-      "deal_delta_pct": -15.1,
-      "deal_score": 98,
-      "deal_tier": "STEAL",
-      "deal_tier_label": "STEAL (-15% vs NM)",
+      "deal_delta_usd": -23.0,
+      "deal_delta_pct": -14.8,
+      "deal_score": 86,
+      "deal_tier": "GREAT_DEAL",
+      "deal_tier_label": "BELOW BENCHMARK (-15%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
@@ -26477,15 +26637,15 @@
         "instant_close_offer_usd": 118.75,
         "savings_vs_ask_usd": 11.25,
         "savings_pct": 9.0,
-        "fair_item_target_usd": 148.5,
+        "fair_item_target_usd": 148.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
         "buyer_pitch": "Hi vcaspary1012, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4480439516). Would you consider an offer of $113.75 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 180,
+      "snapshot_order": 181,
       "rank": 23,
       "is_live_page1": false,
       "id": "4480514249",
@@ -26598,7 +26758,7 @@
       }
     },
     {
-      "snapshot_order": 181,
+      "snapshot_order": 182,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475256713",
@@ -26716,7 +26876,7 @@
       }
     },
     {
-      "snapshot_order": 182,
+      "snapshot_order": 183,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478933516",
@@ -26829,7 +26989,7 @@
       }
     },
     {
-      "snapshot_order": 183,
+      "snapshot_order": 184,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478933513",
@@ -26942,7 +27102,7 @@
       }
     },
     {
-      "snapshot_order": 184,
+      "snapshot_order": 185,
       "rank": 25,
       "is_live_page1": false,
       "id": "4478944709",
@@ -27055,7 +27215,7 @@
       }
     },
     {
-      "snapshot_order": 185,
+      "snapshot_order": 186,
       "rank": 25,
       "is_live_page1": false,
       "id": "4452916363",
@@ -27164,7 +27324,7 @@
       }
     },
     {
-      "snapshot_order": 186,
+      "snapshot_order": 187,
       "rank": 1,
       "is_live_page1": false,
       "id": "4479446846",
@@ -27275,7 +27435,7 @@
       }
     },
     {
-      "snapshot_order": 187,
+      "snapshot_order": 188,
       "rank": 1,
       "is_live_page1": false,
       "id": "4479409265",
@@ -27393,7 +27553,7 @@
       }
     },
     {
-      "snapshot_order": 188,
+      "snapshot_order": 189,
       "rank": 24,
       "is_live_page1": false,
       "id": "4456050832",
@@ -27508,7 +27668,7 @@
       }
     },
     {
-      "snapshot_order": 189,
+      "snapshot_order": 190,
       "rank": 25,
       "is_live_page1": false,
       "id": "4471101056",
@@ -27625,7 +27785,7 @@
       }
     },
     {
-      "snapshot_order": 190,
+      "snapshot_order": 191,
       "rank": 2,
       "is_live_page1": false,
       "id": "4375278801",
@@ -27754,7 +27914,7 @@
       }
     },
     {
-      "snapshot_order": 191,
+      "snapshot_order": 192,
       "rank": 25,
       "is_live_page1": false,
       "id": "3947754763",
@@ -27865,7 +28025,7 @@
       }
     },
     {
-      "snapshot_order": 192,
+      "snapshot_order": 193,
       "rank": 25,
       "is_live_page1": false,
       "id": "4369116762",
@@ -27982,7 +28142,7 @@
       }
     },
     {
-      "snapshot_order": 193,
+      "snapshot_order": 194,
       "rank": 12,
       "is_live_page1": false,
       "id": "4475488346",
@@ -28095,7 +28255,7 @@
       }
     },
     {
-      "snapshot_order": 194,
+      "snapshot_order": 195,
       "rank": 13,
       "is_live_page1": false,
       "id": "4475488340",
@@ -28208,7 +28368,7 @@
       }
     },
     {
-      "snapshot_order": 195,
+      "snapshot_order": 196,
       "rank": 14,
       "is_live_page1": false,
       "id": "4475414213",
@@ -28321,7 +28481,7 @@
       }
     },
     {
-      "snapshot_order": 196,
+      "snapshot_order": 197,
       "rank": 15,
       "is_live_page1": false,
       "id": "4475414210",
@@ -28434,7 +28594,7 @@
       }
     },
     {
-      "snapshot_order": 197,
+      "snapshot_order": 198,
       "rank": 13,
       "is_live_page1": false,
       "id": "4475488343",
@@ -28547,7 +28707,7 @@
       }
     },
     {
-      "snapshot_order": 198,
+      "snapshot_order": 199,
       "rank": 17,
       "is_live_page1": false,
       "id": "4475338877",
@@ -28660,7 +28820,7 @@
       }
     },
     {
-      "snapshot_order": 199,
+      "snapshot_order": 200,
       "rank": 24,
       "is_live_page1": false,
       "id": "4475311160",
@@ -28773,7 +28933,7 @@
       }
     },
     {
-      "snapshot_order": 200,
+      "snapshot_order": 201,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475311157",
@@ -28886,7 +29046,7 @@
       }
     },
     {
-      "snapshot_order": 201,
+      "snapshot_order": 202,
       "rank": 3,
       "is_live_page1": false,
       "id": "4478309981",
@@ -29039,7 +29199,7 @@
       }
     },
     {
-      "snapshot_order": 202,
+      "snapshot_order": 203,
       "rank": 3,
       "is_live_page1": false,
       "id": "4477380452",
@@ -29152,7 +29312,7 @@
       }
     },
     {
-      "snapshot_order": 203,
+      "snapshot_order": 204,
       "rank": 25,
       "is_live_page1": false,
       "id": "4475322356",
@@ -29265,7 +29425,7 @@
       }
     },
     {
-      "snapshot_order": 204,
+      "snapshot_order": 205,
       "rank": 25,
       "is_live_page1": false,
       "id": "4196141748",
@@ -29376,7 +29536,7 @@
       }
     },
     {
-      "snapshot_order": 205,
+      "snapshot_order": 206,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476412571",
@@ -29489,7 +29649,7 @@
       }
     },
     {
-      "snapshot_order": 206,
+      "snapshot_order": 207,
       "rank": 12,
       "is_live_page1": false,
       "id": "4475319770",
@@ -29606,7 +29766,7 @@
       }
     },
     {
-      "snapshot_order": 207,
+      "snapshot_order": 208,
       "rank": 17,
       "is_live_page1": false,
       "id": "4473487364",
@@ -29715,7 +29875,7 @@
       }
     },
     {
-      "snapshot_order": 208,
+      "snapshot_order": 209,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476322346",
@@ -29881,7 +30041,7 @@
       }
     },
     {
-      "snapshot_order": 209,
+      "snapshot_order": 210,
       "rank": 2,
       "is_live_page1": false,
       "id": "4476322328",
@@ -30007,7 +30167,7 @@
       }
     },
     {
-      "snapshot_order": 210,
+      "snapshot_order": 211,
       "rank": 3,
       "is_live_page1": false,
       "id": "4476322295",
@@ -30133,7 +30293,7 @@
       }
     },
     {
-      "snapshot_order": 211,
+      "snapshot_order": 212,
       "rank": 1,
       "is_live_page1": false,
       "id": "4476322619",
@@ -30299,7 +30459,7 @@
       }
     },
     {
-      "snapshot_order": 212,
+      "snapshot_order": 213,
       "rank": 2,
       "is_live_page1": false,
       "id": "4476322580",
@@ -30425,7 +30585,7 @@
       }
     },
     {
-      "snapshot_order": 213,
+      "snapshot_order": 214,
       "rank": 3,
       "is_live_page1": false,
       "id": "4476322556",
@@ -30551,7 +30711,7 @@
       }
     },
     {
-      "snapshot_order": 214,
+      "snapshot_order": 215,
       "rank": 24,
       "is_live_page1": false,
       "id": "4470896705",
@@ -30675,7 +30835,7 @@
       }
     },
     {
-      "snapshot_order": 215,
+      "snapshot_order": 216,
       "rank": 17,
       "is_live_page1": false,
       "id": "4476087260",
@@ -30800,7 +30960,7 @@
       }
     },
     {
-      "snapshot_order": 216,
+      "snapshot_order": 217,
       "rank": 24,
       "is_live_page1": false,
       "id": "4154282661",
@@ -30917,7 +31077,7 @@
       }
     },
     {
-      "snapshot_order": 217,
+      "snapshot_order": 218,
       "rank": 25,
       "is_live_page1": false,
       "id": "4466614913",
@@ -31028,7 +31188,7 @@
       }
     },
     {
-      "snapshot_order": 218,
+      "snapshot_order": 219,
       "rank": 25,
       "is_live_page1": false,
       "id": "3406819743",
@@ -31153,7 +31313,7 @@
       }
     },
     {
-      "snapshot_order": 219,
+      "snapshot_order": 220,
       "rank": 13,
       "is_live_page1": false,
       "id": "4472778137",
@@ -31266,7 +31426,7 @@
       }
     },
     {
-      "snapshot_order": 220,
+      "snapshot_order": 221,
       "rank": 14,
       "is_live_page1": false,
       "id": "4472778134",
@@ -31379,7 +31539,7 @@
       }
     },
     {
-      "snapshot_order": 221,
+      "snapshot_order": 222,
       "rank": 15,
       "is_live_page1": false,
       "id": "4472778131",
@@ -31492,7 +31652,7 @@
       }
     },
     {
-      "snapshot_order": 222,
+      "snapshot_order": 223,
       "rank": 16,
       "is_live_page1": false,
       "id": "4472703509",
@@ -31605,7 +31765,7 @@
       }
     },
     {
-      "snapshot_order": 223,
+      "snapshot_order": 224,
       "rank": 16,
       "is_live_page1": false,
       "id": "4472703512",
@@ -31718,7 +31878,7 @@
       }
     },
     {
-      "snapshot_order": 224,
+      "snapshot_order": 225,
       "rank": 18,
       "is_live_page1": false,
       "id": "4472628902",
@@ -31831,7 +31991,7 @@
       }
     },
     {
-      "snapshot_order": 225,
+      "snapshot_order": 226,
       "rank": 19,
       "is_live_page1": false,
       "id": "4472601797",
@@ -31944,7 +32104,7 @@
       }
     },
     {
-      "snapshot_order": 226,
+      "snapshot_order": 227,
       "rank": 20,
       "is_live_page1": false,
       "id": "4472601794",
@@ -32057,7 +32217,7 @@
       }
     },
     {
-      "snapshot_order": 227,
+      "snapshot_order": 228,
       "rank": 22,
       "is_live_page1": false,
       "id": "4472613050",
@@ -32170,7 +32330,7 @@
       }
     },
     {
-      "snapshot_order": 228,
+      "snapshot_order": 229,
       "rank": 25,
       "is_live_page1": false,
       "id": "4176743628",
@@ -32314,7 +32474,7 @@
       }
     },
     {
-      "snapshot_order": 229,
+      "snapshot_order": 230,
       "rank": 25,
       "is_live_page1": false,
       "id": "3673297912",
@@ -32423,7 +32583,7 @@
       }
     },
     {
-      "snapshot_order": 230,
+      "snapshot_order": 231,
       "rank": 1,
       "is_live_page1": false,
       "id": "4475194412",
@@ -32541,7 +32701,7 @@
       }
     },
     {
-      "snapshot_order": 231,
+      "snapshot_order": 232,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464913568",
@@ -32658,7 +32818,7 @@
       }
     },
     {
-      "snapshot_order": 232,
+      "snapshot_order": 233,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464867734",
@@ -32767,7 +32927,7 @@
       }
     },
     {
-      "snapshot_order": 233,
+      "snapshot_order": 234,
       "rank": 25,
       "is_live_page1": false,
       "id": "4464023652",
@@ -32882,7 +33042,7 @@
       }
     },
     {
-      "snapshot_order": 234,
+      "snapshot_order": 235,
       "rank": 2,
       "is_live_page1": false,
       "id": "4473549389",
@@ -33001,7 +33161,7 @@
       }
     },
     {
-      "snapshot_order": 235,
+      "snapshot_order": 236,
       "rank": 25,
       "is_live_page1": false,
       "id": "4288771419",
@@ -33110,7 +33270,7 @@
       }
     },
     {
-      "snapshot_order": 236,
+      "snapshot_order": 237,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463821434",
@@ -33225,7 +33385,7 @@
       }
     },
     {
-      "snapshot_order": 237,
+      "snapshot_order": 238,
       "rank": 16,
       "is_live_page1": false,
       "id": "4142683482",
@@ -33343,7 +33503,7 @@
       }
     },
     {
-      "snapshot_order": 238,
+      "snapshot_order": 239,
       "rank": 1,
       "is_live_page1": false,
       "id": "4439274435",
@@ -33461,7 +33621,7 @@
       }
     },
     {
-      "snapshot_order": 239,
+      "snapshot_order": 240,
       "rank": 14,
       "is_live_page1": false,
       "id": "4470042746",
@@ -33574,7 +33734,7 @@
       }
     },
     {
-      "snapshot_order": 240,
+      "snapshot_order": 241,
       "rank": 15,
       "is_live_page1": false,
       "id": "4470042743",
@@ -33687,7 +33847,7 @@
       }
     },
     {
-      "snapshot_order": 241,
+      "snapshot_order": 242,
       "rank": 16,
       "is_live_page1": false,
       "id": "4470042740",
@@ -33800,7 +33960,7 @@
       }
     },
     {
-      "snapshot_order": 242,
+      "snapshot_order": 243,
       "rank": 17,
       "is_live_page1": false,
       "id": "4469956451",
@@ -33913,7 +34073,7 @@
       }
     },
     {
-      "snapshot_order": 243,
+      "snapshot_order": 244,
       "rank": 18,
       "is_live_page1": false,
       "id": "4469956448",
@@ -34026,7 +34186,7 @@
       }
     },
     {
-      "snapshot_order": 244,
+      "snapshot_order": 245,
       "rank": 19,
       "is_live_page1": false,
       "id": "4469882078",
@@ -34139,7 +34299,7 @@
       }
     },
     {
-      "snapshot_order": 245,
+      "snapshot_order": 246,
       "rank": 20,
       "is_live_page1": false,
       "id": "4469854475",
@@ -34252,7 +34412,7 @@
       }
     },
     {
-      "snapshot_order": 246,
+      "snapshot_order": 247,
       "rank": 21,
       "is_live_page1": false,
       "id": "4469854472",
@@ -34365,7 +34525,7 @@
       }
     },
     {
-      "snapshot_order": 247,
+      "snapshot_order": 248,
       "rank": 23,
       "is_live_page1": false,
       "id": "4469865761",
@@ -34478,7 +34638,7 @@
       }
     },
     {
-      "snapshot_order": 248,
+      "snapshot_order": 249,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463076771",
@@ -34608,7 +34768,7 @@
       }
     },
     {
-      "snapshot_order": 249,
+      "snapshot_order": 250,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463076525",
@@ -34738,7 +34898,7 @@
       }
     },
     {
-      "snapshot_order": 250,
+      "snapshot_order": 251,
       "rank": 25,
       "is_live_page1": false,
       "id": "4463073609",
@@ -34824,43 +34984,43 @@
       "vault_status_label": "MISSING GRAIL",
       "vault_owned_detail": null,
       "market_stats": {
-        "observed_low_usd": 116.0,
-        "observed_median_usd": 155.5,
+        "observed_low_usd": 99.99,
+        "observed_median_usd": 155.0,
         "observed_high_usd": 307.9,
-        "condition_suggested_usd": 155.5,
-        "condition_suggested_formatted": "$155.50",
-        "benchmark_source": "Observed 10-Seller Market Median",
+        "condition_suggested_usd": 155.0,
+        "condition_suggested_formatted": "$155.00",
+        "benchmark_source": "Observed 11-Seller Market Median",
         "benchmark_verified": false,
-        "release_listings_tracked": 10,
-        "distinct_sellers_tracked": 10,
+        "release_listings_tracked": 11,
+        "distinct_sellers_tracked": 11,
         "community_have": 5423,
         "community_want": 1526,
         "num_for_sale": 21
       },
-      "deal_delta_usd": 50.5,
-      "deal_delta_pct": 32.5,
+      "deal_delta_usd": 51.0,
+      "deal_delta_pct": 32.9,
       "deal_score": 31,
       "deal_tier": "ABOVE_MARKET",
-      "deal_tier_label": "PREMIUM (+32%)",
+      "deal_tier_label": "PREMIUM (+33%)",
       "target_price_usd": null,
       "is_target_hit": false,
       "seller_bundle_count": 1,
       "seller_bundle_savings_usd": 0.0,
       "offer_strategy": {
-        "aggressive_offer_usd": 124.08,
-        "recommended_offer_usd": 134.55,
-        "instant_close_offer_usd": 142.03,
-        "savings_vs_ask_usd": 65.45,
-        "savings_pct": 32.7,
-        "fair_item_target_usd": 149.5,
+        "aggressive_offer_usd": 123.67,
+        "recommended_offer_usd": 134.1,
+        "instant_close_offer_usd": 141.55,
+        "savings_vs_ask_usd": 65.9,
+        "savings_pct": 33.0,
+        "fair_item_target_usd": 149.0,
         "rationales": [
-          "10-seller median $155.50 shipped"
+          "11-seller median $155.00 shipped"
         ],
-        "buyer_pitch": "Hi Oldbonesrecords6, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4463073609). Would you consider an offer of $134.55 (+ shipping) for a quick payment today?"
+        "buyer_pitch": "Hi Oldbonesrecords6, I'm interested in your NM/NM copy of Bone Thugs-N-Harmony - E. 1999 Eternal (#4463073609). Would you consider an offer of $134.10 (+ shipping) for a quick payment today?"
       }
     },
     {
-      "snapshot_order": 251,
+      "snapshot_order": 252,
       "rank": 10,
       "is_live_page1": false,
       "id": "4381865583",
@@ -34978,7 +35138,7 @@
       }
     },
     {
-      "snapshot_order": 252,
+      "snapshot_order": 253,
       "rank": 12,
       "is_live_page1": false,
       "id": "4467788657",
@@ -35087,7 +35247,7 @@
       }
     },
     {
-      "snapshot_order": 253,
+      "snapshot_order": 254,
       "rank": 13,
       "is_live_page1": false,
       "id": "4437329889",
@@ -35217,7 +35377,7 @@
       }
     },
     {
-      "snapshot_order": 254,
+      "snapshot_order": 255,
       "rank": 15,
       "is_live_page1": false,
       "id": "4466977754",
@@ -35335,7 +35495,7 @@
       }
     },
     {
-      "snapshot_order": 255,
+      "snapshot_order": 256,
       "rank": 1,
       "is_live_page1": false,
       "id": "4470905657",
@@ -35454,7 +35614,7 @@
       }
     },
     {
-      "snapshot_order": 256,
+      "snapshot_order": 257,
       "rank": 2,
       "is_live_page1": false,
       "id": "4470904265",
@@ -35573,7 +35733,7 @@
       }
     },
     {
-      "snapshot_order": 257,
+      "snapshot_order": 258,
       "rank": 15,
       "is_live_page1": false,
       "id": "4466728355",
@@ -35686,7 +35846,7 @@
       }
     },
     {
-      "snapshot_order": 258,
+      "snapshot_order": 259,
       "rank": 22,
       "is_live_page1": false,
       "id": "4383393858",
@@ -35821,7 +35981,7 @@
       }
     },
     {
-      "snapshot_order": 259,
+      "snapshot_order": 260,
       "rank": 23,
       "is_live_page1": false,
       "id": "4463040996",
@@ -35940,7 +36100,7 @@
       }
     },
     {
-      "snapshot_order": 260,
+      "snapshot_order": 261,
       "rank": 24,
       "is_live_page1": false,
       "id": "4462189783",
@@ -36058,7 +36218,7 @@
       }
     },
     {
-      "snapshot_order": 261,
+      "snapshot_order": 262,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462189534",
@@ -36176,7 +36336,7 @@
       }
     },
     {
-      "snapshot_order": 262,
+      "snapshot_order": 263,
       "rank": 1,
       "is_live_page1": false,
       "id": "4469594051",
@@ -36300,7 +36460,7 @@
       }
     },
     {
-      "snapshot_order": 263,
+      "snapshot_order": 264,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462089781",
@@ -36419,7 +36579,7 @@
       }
     },
     {
-      "snapshot_order": 264,
+      "snapshot_order": 265,
       "rank": 11,
       "is_live_page1": false,
       "id": "4465538183",
@@ -36543,7 +36703,7 @@
       }
     },
     {
-      "snapshot_order": 265,
+      "snapshot_order": 266,
       "rank": 25,
       "is_live_page1": false,
       "id": "4462022533",
@@ -36652,7 +36812,7 @@
       }
     },
     {
-      "snapshot_order": 266,
+      "snapshot_order": 267,
       "rank": 25,
       "is_live_page1": false,
       "id": "4466711948",
@@ -36765,7 +36925,7 @@
       }
     },
     {
-      "snapshot_order": 267,
+      "snapshot_order": 268,
       "rank": 25,
       "is_live_page1": false,
       "id": "4461009208",
@@ -36883,7 +37043,7 @@
       }
     },
     {
-      "snapshot_order": 268,
+      "snapshot_order": 269,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458734569",
@@ -36992,7 +37152,7 @@
       }
     },
     {
-      "snapshot_order": 269,
+      "snapshot_order": 270,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458713104",
@@ -37110,7 +37270,7 @@
       }
     },
     {
-      "snapshot_order": 270,
+      "snapshot_order": 271,
       "rank": 7,
       "is_live_page1": false,
       "id": "4464988445",
@@ -37239,7 +37399,7 @@
       }
     },
     {
-      "snapshot_order": 271,
+      "snapshot_order": 272,
       "rank": 25,
       "is_live_page1": false,
       "id": "4458645574",
@@ -37363,7 +37523,7 @@
       }
     },
     {
-      "snapshot_order": 272,
+      "snapshot_order": 273,
       "rank": 7,
       "is_live_page1": false,
       "id": "4464976352",
@@ -37476,7 +37636,7 @@
       }
     },
     {
-      "snapshot_order": 273,
+      "snapshot_order": 274,
       "rank": 8,
       "is_live_page1": false,
       "id": "4464960404",
@@ -37589,7 +37749,7 @@
       }
     },
     {
-      "snapshot_order": 274,
+      "snapshot_order": 275,
       "rank": 16,
       "is_live_page1": false,
       "id": "4463058324",
@@ -37698,7 +37858,7 @@
       }
     },
     {
-      "snapshot_order": 275,
+      "snapshot_order": 276,
       "rank": 25,
       "is_live_page1": false,
       "id": "3640971906",
