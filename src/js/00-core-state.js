@@ -35,7 +35,106 @@ const STORAGE_KEYS = {
   LIGHTING_MODE: "krunked_sniper_lighting_v3",
   AUTO_HYDRATE: "krunked_sniper_autohydrate_v3",
   RADAR_LAYOUT: "krunked_sniper_radar_layout_v3",
+  UI_PREFS: "krunked_sniper_ui_prefs_v3",
 };
+
+const HTML_ENTITY_MAP = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  ndash: "–",
+  mdash: "—",
+  hellip: "…",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+  copy: "©",
+  reg: "®",
+  trade: "™",
+  euro: "€",
+  pound: "£",
+  yen: "¥",
+  times: "×",
+  bull: "•",
+  middot: "·",
+};
+
+function decodeHtmlEntitiesOnce(text) {
+  return text.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z][a-zA-Z0-9]+);/g, (match, body) => {
+    if (body[0] === "#") {
+      const isHex = body[1] === "x" || body[1] === "X";
+      const codePoint = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
+      if (Number.isFinite(codePoint) && codePoint > 0 && codePoint <= 0x10ffff) {
+        try {
+          return String.fromCodePoint(codePoint);
+        } catch (_) {
+          return match;
+        }
+      }
+      return match;
+    }
+    const mapped = HTML_ENTITY_MAP[body.toLowerCase()];
+    return mapped !== undefined ? mapped : match;
+  });
+}
+
+function decodeHtmlEntities(str, maxDepth = 12) {
+  let cur = String(str ?? "");
+  if (!cur.includes("&")) return cur;
+  for (let i = 0; i < maxDepth; i += 1) {
+    const next = decodeHtmlEntitiesOnce(cur);
+    if (next === cur) break;
+    cur = next;
+    if (!cur.includes("&")) break;
+  }
+  return cur;
+}
+
+function normalizeSniperStateEntities(state) {
+  if (!state || typeof state !== "object") return state;
+  const decodeFields = (obj, keys) => {
+    if (!obj || typeof obj !== "object") return;
+    for (const k of keys) {
+      if (typeof obj[k] === "string" && obj[k].includes("&")) {
+        obj[k] = decodeHtmlEntities(obj[k]);
+      }
+    }
+  };
+  if (Array.isArray(state.listings)) {
+    for (const item of state.listings) {
+      decodeFields(item, ["title", "artist", "album", "variant", "seller_info", "raw_description", "clean_seller_note"]);
+      if (item.wax_shader) decodeFields(item.wax_shader, ["wax_name"]);
+      if (item.offer_strategy) decodeFields(item.offer_strategy, ["buyer_pitch"]);
+      if (item.vault_owned_detail) decodeFields(item.vault_owned_detail, ["format_string", "title", "artist"]);
+    }
+  }
+  if (Array.isArray(state.seller_bundles)) {
+    for (const b of state.seller_bundles) {
+      decodeFields(b, ["seller", "policy_label"]);
+      if (Array.isArray(b.items)) {
+        for (const it of b.items) decodeFields(it, ["title", "artist", "album", "variant"]);
+      }
+    }
+  }
+  if (Array.isArray(state.seller_leaderboard)) {
+    for (const s of state.seller_leaderboard) decodeFields(s, ["seller", "top_title"]);
+  }
+  if (Array.isArray(state.release_churn_leaderboard)) {
+    for (const r of state.release_churn_leaderboard) decodeFields(r, ["title", "variant", "top_seller"]);
+  }
+  const vb = state.vault_bridge;
+  if (vb) {
+    for (const r of vb.exact_owned_on_wantlist || []) decodeFields(r, ["title", "artist", "album", "variant", "owned_format"]);
+    for (const r of vb.variant_upgrades_on_wantlist || []) decodeFields(r, ["title", "artist", "album", "wantlist_variant", "owned_format"]);
+  }
+  return state;
+}
+
+normalizeSniperStateEntities(SNIPER_STATE);
 
 const SIBLING_VAULT_BASE_URL = "https://krunked-fpv.github.io/discogs_collection/";
 const SIBLING_COLLECTION_JSON_URL = `${SIBLING_VAULT_BASE_URL}data/collection.json`;
@@ -113,24 +212,59 @@ if (prebakedSync.synced) {
   initialLiveWantIds = new Set(stillOn);
 }
 
+function loadSavedUiPrefs() {
+  const raw = safeGetStorage(STORAGE_KEYS.UI_PREFS);
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+const savedUiPrefs = loadSavedUiPrefs();
 const savedLight = safeGetStorage(STORAGE_KEYS.LIGHTING_MODE);
-const initialLighting = savedLight === "uv" || savedLight === "tube" ? savedLight : "neon";
+const initialLighting = savedLight === "uv" || savedLight === "tube" ? savedLight : "obsidian";
 
 const appState = {
   activeView: "radar",
   lightingMode: initialLighting,
   radarLayout: safeGetStorage(STORAGE_KEYS.RADAR_LAYOUT) === "matrix" ? "matrix" : "cards",
   searchQuery: "",
-  scopeMode: "ALL",
-  dedupEnabled: true,
-  hideRecordmule: false,
-  hideSold: false,
-  conditionFilter: "ALL",
-  sortMode: "SNAPSHOT_ORDER",
-  categoryFilter: "ALL",
+  scopeMode: savedUiPrefs.scopeMode === "LIVE_P1" ? "LIVE_P1" : "ALL",
+  dedupEnabled: savedUiPrefs.dedupEnabled !== false,
+  hideRecordmule: Boolean(savedUiPrefs.hideRecordmule),
+  hideSold: Boolean(savedUiPrefs.hideSold),
+  conditionFilter: ["ALL", "M", "NM", "VG+"].includes(savedUiPrefs.conditionFilter) ? savedUiPrefs.conditionFilter : "ALL",
+  sortMode: [
+    "SNAPSHOT_ORDER",
+    "DEAL_SCORE",
+    "PRICE_ASC",
+    "PRICE_DESC",
+    "TARGET_HITS",
+    "BUNDLE_SAVINGS",
+    "MOST_RELISTED",
+  ].includes(savedUiPrefs.sortMode)
+    ? savedUiPrefs.sortMode
+    : "SNAPSHOT_ORDER",
+  categoryFilter: [
+    "ALL",
+    "MISSING_GRAIL",
+    "STEALS",
+    "PRICE_DROP",
+    "BUNDLE_READY",
+    "MAKE_OFFER",
+    "TARGET_HITS",
+    "VARIANT_UPGRADE",
+    "ALREADY_OWNED",
+  ].includes(savedUiPrefs.categoryFilter)
+    ? savedUiPrefs.categoryFilter
+    : "ALL",
   sliderMaxUsd: datasetMaxPrice,
   maxPriceUsd: datasetMaxPrice,
   focusedListingId: null,
+  cmdPaletteSelectedIdx: 0,
   mutedSellers: new Set(initialMuted.map((s) => String(s).trim().toLowerCase()).filter(Boolean)),
   priceDropOnlySellers: new Set(initialDropOnly.map((s) => String(s).trim().toLowerCase()).filter(Boolean)),
   targetPricesByRelease: { ...initialTargetPrices },
@@ -206,6 +340,21 @@ function savePrunedReleaseIds() {
   safeSetStorage(STORAGE_KEYS.PRUNED, JSON.stringify([...appState.prunedReleaseIds]));
 }
 
+function saveUiPrefs() {
+  safeSetStorage(
+    STORAGE_KEYS.UI_PREFS,
+    JSON.stringify({
+      scopeMode: appState.scopeMode,
+      dedupEnabled: appState.dedupEnabled,
+      hideRecordmule: appState.hideRecordmule,
+      hideSold: appState.hideSold,
+      conditionFilter: appState.conditionFilter,
+      sortMode: appState.sortMode,
+      categoryFilter: appState.categoryFilter,
+    })
+  );
+}
+
 function saveConfigOverrides() {
   const cfg = buildCurrentConfigObject();
   safeSetStorage(
@@ -274,12 +423,12 @@ function formatRelativeAge(isoStr) {
 
 function hexToRgba(hex, alpha) {
   const clean = String(hex || "").replace("#", "");
-  if (clean.length !== 6) return `rgba(0, 240, 255, ${alpha})`;
+  if (clean.length !== 6) return `rgba(34, 211, 238, ${alpha})`;
   const r = parseInt(clean.slice(0, 2), 16);
   const g = parseInt(clean.slice(2, 4), 16);
   const b = parseInt(clean.slice(4, 6), 16);
   if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) {
-    return `rgba(0, 240, 255, ${alpha})`;
+    return `rgba(34, 211, 238, ${alpha})`;
   }
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
@@ -442,21 +591,38 @@ function recomputeListingDerivedFields(item) {
 }
 
 function applyLightingMode() {
-  document.body.classList.remove("mode-neon", "mode-uv", "mode-tube");
-  document.body.classList.add(`mode-${appState.lightingMode}`);
+  document.body.classList.remove("mode-neon", "mode-obsidian", "mode-uv", "uv-blacklight", "mode-tube");
+  document.body.classList.add("ambient-stage-bg");
+  if (appState.lightingMode === "uv") {
+    document.body.classList.add("mode-uv", "uv-blacklight");
+  } else if (appState.lightingMode === "tube") {
+    document.body.classList.add("mode-tube");
+  } else {
+    document.body.classList.add("mode-obsidian");
+  }
+  const toggleBtn = document.getElementById("btn-toggle-uv");
+  if (toggleBtn) {
+    toggleBtn.setAttribute("aria-pressed", String(appState.lightingMode === "uv"));
+    toggleBtn.dataset.lightingMode = appState.lightingMode;
+  }
   const lbl = document.getElementById("uv-mode-label");
   if (lbl) {
     lbl.textContent =
-      appState.lightingMode === "uv" ? "UV MODE" : appState.lightingMode === "tube" ? "TUBE AMP" : "NEON";
+      appState.lightingMode === "uv" ? "UV 395nm" : appState.lightingMode === "tube" ? "TUBE AMP" : "OBSIDIAN";
   }
   safeSetStorage(STORAGE_KEYS.LIGHTING_MODE, appState.lightingMode);
 }
 
 function setStageChromaFromWax(wax) {
   if (!wax || appState.lightingMode === "tube") return;
-  const primary = wax.primary && wax.primary !== "#181a1f" ? wax.primary : "#00f0ff";
-  const accent = wax.accent || "#ff1f8f";
-  const boost = appState.lightingMode === "uv" ? 0.3 : 0.16;
-  document.documentElement.style.setProperty("--stage-c1", hexToRgba(primary, boost));
-  document.documentElement.style.setProperty("--stage-c2", hexToRgba(accent, boost * 0.8));
+  const primary = wax.primary && wax.primary !== "#181a1f" ? wax.primary : "#22d3ee";
+  const secondary = wax.secondary && wax.secondary !== "#0d0f12" ? wax.secondary : "#a855f7";
+  const accent = wax.accent || "#f43f5e";
+  const boost = appState.lightingMode === "uv" ? 0.34 : 0.22;
+  const root = document.documentElement.style;
+  root.setProperty("--stage-c1", hexToRgba(primary, boost));
+  root.setProperty("--stage-c2", hexToRgba(secondary, boost * 0.85));
+  root.setProperty("--glow-primary", hexToRgba(primary, boost * 1.15));
+  root.setProperty("--glow-secondary", hexToRgba(secondary, boost));
+  root.setProperty("--glow-accent", hexToRgba(accent, boost * 0.72));
 }

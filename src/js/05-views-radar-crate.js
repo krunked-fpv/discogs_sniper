@@ -160,7 +160,7 @@ function renderPriceSparklineSVG(points, width = 108, height = 26) {
   });
   const first = vals[0];
   const last = vals[vals.length - 1];
-  const stroke = last < first ? "#39ff88" : maxV > minV ? "#ffb800" : "#00f0ff";
+  const stroke = last < first ? "#10b981" : maxV > minV ? "#f59e0b" : "#22d3ee";
   const lastPt = coords[coords.length - 1].split(",");
   return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" aria-hidden="true" style="vertical-align:middle;">
     <polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${coords.join(" ")}" />
@@ -222,6 +222,7 @@ function resetAllRadarFilters() {
     b.classList.toggle("active", b.dataset.filter === "ALL");
   });
 
+  saveUiPrefs();
   renderRadarGrid();
 }
 
@@ -429,7 +430,13 @@ function renderCardDrawersHtml(item) {
 }
 
 function renderDropCard(item) {
-  const fallbackUri = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
+  const artistClean = decodeHtmlEntities(item.artist);
+  const albumClean = decodeHtmlEntities(item.album);
+  const titleClean = decodeHtmlEntities(item.title);
+  const variantClean = decodeHtmlEntities(item.variant);
+  const waxNameClean = decodeHtmlEntities(item.wax_shader?.wax_name || variantClean);
+  const sellerClean = decodeHtmlEntities(item.seller_info);
+  const fallbackUri = renderFallbackSleeveDataUri(artistClean, albumClean, item.wax_shader?.primary);
   const coverSrc = resolveCoverSrc(item);
   const needsHydration =
     !item.cover_image_url && !appState.artCache[item.release_id] && !appState.artCache[item.norm_album_key];
@@ -438,7 +445,7 @@ function renderDropCard(item) {
   const isFocused = appState.focusedListingId === item.id;
   const isSold = isListingSold(item);
   const mkt = item.market_stats || {};
-  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#00f0ff";
+  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#22d3ee";
   const waxGlow = hexToRgba(waxPrimary, 0.24);
   const liveBench = appState.liveApiResults[item.id]?.suggested_usd;
   const benchDisplay = liveBench ? formatUsd(liveBench) : mkt.condition_suggested_formatted || "Live API";
@@ -457,18 +464,19 @@ function renderDropCard(item) {
 
   const collectorBadgesHtml = (item.collector_badges || [])
     .slice(0, 4)
-    .map((b) => `<span class="tag-pill badge-${escapeHtml(b.tone)}">${escapeHtml(b.label)}</span>`)
+    .map((b) => `<span class="tag-pill badge-${escapeHtml(b.tone)}">${escapeHtml(decodeHtmlEntities(b.label))}</span>`)
     .join("");
 
-  const cleanNote =
+  const rawNote =
     item.clean_seller_note !== undefined
       ? item.clean_seller_note
-      : item.raw_description && item.raw_description.toLowerCase() !== item.variant.toLowerCase()
+      : item.raw_description && item.raw_description.toLowerCase() !== (item.variant || "").toLowerCase()
       ? item.raw_description
       : "";
+  const cleanNote = decodeHtmlEntities(rawNote);
 
   return `
-    <article class="drop-card ${vaultCardCls} ${isPlaying ? "card-playing" : ""} ${isFocused ? "card-kbd-focused" : ""} ${isSold ? "card-sold" : ""}" style="--wax-glow:${waxGlow};" data-listing-id="${escapeHtml(item.id)}" data-release-id="${escapeHtml(item.release_id)}" data-artist="${escapeHtml(item.artist)}" data-album="${escapeHtml(item.album)}">
+    <article class="drop-card card-record ${vaultCardCls} ${isPlaying ? "card-playing" : ""} ${isFocused ? "card-kbd-focused" : ""} ${isSold ? "card-sold" : ""}" style="--wax-glow:${waxGlow};--card-wax-glow:${waxGlow};" data-listing-id="${escapeHtml(item.id)}" data-release-id="${escapeHtml(item.release_id)}" data-artist="${escapeHtml(artistClean)}" data-album="${escapeHtml(albumClean)}">
       <div class="drop-card-top">
         <div class="status-pills">
           ${renderVaultStatusPill(item)}
@@ -477,40 +485,38 @@ function renderDropCard(item) {
         <span class="listing-id-label">#${escapeHtml(item.id)}</span>
       </div>
 
-      <div class="drop-card-hero">
-        <button type="button" class="artwork-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect full vinyl pressing, Haggle &amp; Target Price">
-          <div class="sleeve-frame">
-            <img
-              src="${escapeHtml(coverSrc)}"
-              data-fallback-src="${escapeHtml(fallbackUri)}"
-              alt="${escapeHtml(item.title)}"
-              class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
-              loading="lazy"
-              data-release-id="${escapeHtml(item.release_id)}"
-              data-norm-key="${escapeHtml(item.norm_album_key)}"
-              data-artist="${escapeHtml(item.artist)}"
-              data-album="${escapeHtml(item.album)}"
-            />
-          </div>
-          <div class="vinyl-platter-wrap ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
-            ${renderVinylDiscSVG(item.wax_shader, item.id, 86)}
-          </div>
-        </button>
-
-        <div class="drop-meta">
-          <div class="drop-artist">${escapeHtml(item.artist)}</div>
-          <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(item.album)}">
-            <h2 class="drop-album">${escapeHtml(getDisplayAlbumTitle(item))}</h2>
-          </button>
-          <div class="drop-variant" title="${escapeHtml(item.variant)}">
-            <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
-            <span class="drop-variant-text">${escapeHtml(item.wax_shader?.wax_name || item.variant)}</span>
-          </div>
-          ${collectorBadgesHtml ? `<div class="collector-badges-row">${collectorBadgesHtml}</div>` : ""}
+      <button type="button" class="artwork-stage sleeve-peek-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect full vinyl pressing, Haggle &amp; Target Price">
+        <div class="sleeve-frame sleeve-peek-jacket holo-sleeve">
+          <img
+            src="${escapeHtml(coverSrc)}"
+            data-fallback-src="${escapeHtml(fallbackUri)}"
+            alt="${escapeHtml(titleClean)}"
+            class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
+            loading="lazy"
+            data-release-id="${escapeHtml(item.release_id)}"
+            data-norm-key="${escapeHtml(item.norm_album_key)}"
+            data-artist="${escapeHtml(artistClean)}"
+            data-album="${escapeHtml(albumClean)}"
+          />
         </div>
+        <div class="vinyl-platter-wrap sleeve-peek-disc uv-reactive ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
+          ${renderVinylDiscSVG(item.wax_shader, item.id, 120)}
+        </div>
+      </button>
+
+      <div class="drop-meta">
+        <div class="drop-artist">${escapeHtml(artistClean)}</div>
+        <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(albumClean)}">
+          <h2 class="drop-album">${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</h2>
+        </button>
+        <div class="drop-variant" title="${escapeHtml(variantClean)}">
+          <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
+          <span class="drop-variant-text">${escapeHtml(waxNameClean)}</span>
+        </div>
+        ${collectorBadgesHtml ? `<div class="collector-badges-row">${collectorBadgesHtml}</div>` : ""}
       </div>
 
-      <div class="price-matrix">
+      <div class="price-matrix anodized-panel">
         <div class="matrix-cell">
           <span class="matrix-label">Total Shipped</span>
           <span class="matrix-val matrix-val-price">${escapeHtml(item.total_price)}</span>
@@ -536,9 +542,9 @@ function renderDropCard(item) {
 
       <div class="seller-strip">
         <div class="seller-left">
-          <a href="https://www.discogs.com/seller/${encodeURIComponent(item.seller_info)}/profile" target="_blank" rel="noopener" class="seller-link">${escapeHtml(item.seller_info)}</a>
-          ${item.seller_rating ? `<span style="color:var(--neon-lime);font-family:var(--font-mono);font-size:0.67rem;">${escapeHtml(item.seller_rating)}</span>` : ""}
-          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(item.seller_info)}" title="Mute all listings from ${escapeHtml(item.seller_info)}">Mute</button>
+          <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener" class="seller-link">${escapeHtml(sellerClean)}</a>
+          ${item.seller_rating ? `<span style="color:var(--mint-lock, var(--neon-lime));font-family:var(--font-mono);font-size:0.67rem;">${escapeHtml(item.seller_rating)}</span>` : ""}
+          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(sellerClean)}" title="Mute all listings from ${escapeHtml(sellerClean)}">Mute</button>
         </div>
         <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">
           ${escapeHtml((item.alerted_at || "").replace("T", " ").slice(0, 16) || item.listed_age)}
@@ -559,11 +565,8 @@ function renderDropCard(item) {
         <button type="button" class="btn-action btn-audition ${isPlaying ? "playing" : ""}" data-audition-id="${escapeHtml(item.id)}" title="Audition 30-second studio preview (Space)">
           ${isPlaying ? ICONS.stop : ICONS.play}<span>${isPlaying ? "Stop" : "30s"}</span>
         </button>
-        <button type="button" class="btn-action" data-open-deck-id="${escapeHtml(item.id)}" title="Load onto 3D Turntable Deck">
-          <span>Deck</span>
-        </button>
         <button type="button" class="btn-action" data-live-api-id="${escapeHtml(item.id)}" title="Verify live status &amp; Discogs API price suggestions">
-          ${ICONS.bolt}
+          ${ICONS.bolt}<span>API</span>
         </button>
       </div>
     </article>
@@ -616,7 +619,7 @@ function renderMatrixTapeTable(filtered) {
     .join("");
 
   return `
-    <div class="matrix-tape-wrap">
+    <div class="matrix-tape-wrap machined-plinth">
       <table class="data-table">
         <thead>
           <tr>
@@ -806,15 +809,15 @@ function renderCrateStudio() {
     const fallback = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
 
     cardsHtml.push(`
-      <div class="crate-sleeve-card ${offset === 0 ? "is-active" : ""} ${isFoil ? "is-foil" : ""}"
+      <div class="crate-sleeve-card holo-sleeve ${offset === 0 ? "is-active" : ""} ${isFoil ? "is-foil" : ""}"
            data-crate-pos="${i}"
            style="z-index:${zIndex};opacity:${opacity};transform:translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale});">
-        <img class="crate-sleeve-art" src="${escapeHtml(cover)}" data-fallback-src="${escapeHtml(fallback)}" alt="${escapeHtml(item.title)}" />
+        <img class="crate-sleeve-art" src="${escapeHtml(cover)}" data-fallback-src="${escapeHtml(fallback)}" alt="${escapeHtml(decodeHtmlEntities(item.title))}" />
         <div class="crate-sleeve-footer">
-          <div class="crate-sleeve-title">${escapeHtml(item.artist)} — ${escapeHtml(getDisplayAlbumTitle(item))}</div>
+          <div class="crate-sleeve-title">${escapeHtml(decodeHtmlEntities(item.artist))} — ${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</div>
           <div class="crate-sleeve-sub">
             <span>${escapeHtml(item.total_price)}</span>
-            <span style="color:var(--neon-cyan);">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</span>
+            <span style="color:var(--quartz-cyan, var(--neon-cyan));">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</span>
           </div>
         </div>
       </div>`);

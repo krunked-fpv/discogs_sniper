@@ -154,8 +154,8 @@ function drawFftSpectrumFrame(nowMs) {
 
   const barW = (w - (bands - 1) * 3) / bands;
   const isTube = appState.lightingMode === "tube";
-  const cTop = isTube ? "#ffb020" : "#ff1f8f";
-  const cBot = isTube ? "#19f08a" : "#00f0ff";
+  const cTop = isTube ? "#f59e0b" : "#c026d3";
+  const cBot = isTube ? "#10b981" : "#22d3ee";
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, cTop);
   grad.addColorStop(1, cBot);
@@ -395,11 +395,11 @@ async function auditionListing(listingId, trackIndexOverride = null) {
     if (thumbEl) thumbEl.src = previewInfo.artwork;
   }
 
-  const trackTitleText = `${previewInfo.artistName || item.artist} — "${previewInfo.trackName}"`;
+  const trackTitleText = `${decodeHtmlEntities(previewInfo.artistName || item.artist)} — "${decodeHtmlEntities(previewInfo.trackName)}"`;
   if (titleEl) titleEl.textContent = trackTitleText;
-  if (subEl) subEl.textContent = `${previewInfo.source} // ${item.wax_shader?.wax_name || item.variant} (${item.total_price})`;
+  if (subEl) subEl.textContent = `${previewInfo.source} // ${decodeHtmlEntities(item.wax_shader?.wax_name || item.variant)} (${item.total_price})`;
   const deckTrackEl = document.getElementById("deck-now-track");
-  if (deckTrackEl) deckTrackEl.textContent = `▶ ${previewInfo.trackName} (${previewInfo.source})`;
+  if (deckTrackEl) deckTrackEl.textContent = `▶ ${decodeHtmlEntities(previewInfo.trackName)} (${previewInfo.source})`;
 
   playPreviewStreamWithFallback(audio, previewInfo.previewUrl, previewInfo.corsCapable).catch(() => {
     if (subEl) subEl.textContent = "Click Play to start audio (autoplay blocked by browser)";

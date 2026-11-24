@@ -10,19 +10,21 @@ function createSeededRng(seedVal) {
 }
 
 function renderFallbackSleeveDataUri(artist, album, primaryColor) {
-  const initials = `${(artist || "D")[0] || "D"}${(album || "S")[0] || "S"}`.toUpperCase();
-  const accent = primaryColor && primaryColor !== "#181a1f" ? primaryColor : "#00f0ff";
+  const cleanArtist = decodeHtmlEntities(artist || "D");
+  const cleanAlbum = decodeHtmlEntities(album || "S");
+  const initials = `${cleanArtist[0] || "D"}${cleanAlbum[0] || "S"}`.toUpperCase();
+  const accent = primaryColor && primaryColor !== "#181a1f" ? primaryColor : "#22d3ee";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
     <defs>
       <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#121829"/>
-        <stop offset="100%" stop-color="#05070e"/>
+        <stop offset="0%" stop-color="#111524"/>
+        <stop offset="100%" stop-color="#05060b"/>
       </linearGradient>
     </defs>
     <rect width="160" height="160" fill="url(#g)"/>
     <circle cx="80" cy="80" r="56" fill="none" stroke="${accent}" stroke-opacity="0.34" stroke-width="1.5"/>
     <circle cx="80" cy="80" r="38" fill="none" stroke="${accent}" stroke-opacity="0.18" stroke-width="1"/>
-    <text x="80" y="89" text-anchor="middle" fill="${accent}" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="28" letter-spacing="3">${escapeHtml(initials)}</text>
+    <text x="80" y="89" text-anchor="middle" fill="${accent}" font-family="Space Grotesk, Inter, sans-serif" font-weight="700" font-size="28" letter-spacing="3">${escapeHtml(initials)}</text>
   </svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }

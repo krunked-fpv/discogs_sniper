@@ -869,6 +869,101 @@ class TestDiscogsSniperV2(unittest.TestCase):
             self.assertFalse((stage_dir / "discogs_sniper.py").exists())
             self.assertFalse((stage_dir / "sniper.log").exists())
 
+    def test_html_entity_decoding_and_compiled_notes_clean(self):
+        import re
+        import tempfile
+        from unittest.mock import patch
+
+        # 1. Recursive 7-layer entity decoding (regression for &amp;amp;amp;amp;amp;amp;#34; -> ")
+        seven_layer_quote = "&amp;amp;amp;amp;amp;amp;#34;"
+        self.assertEqual(builder.decode_html_entities(seven_layer_quote), '"')
+        self.assertEqual(
+            builder.decode_html_entities(
+                f"There is a {seven_layer_quote}Made in Czech Republic{seven_layer_quote} sticker on shrink."
+            ),
+            'There is a "Made in Czech Republic" sticker on shrink.',
+        )
+        self.assertEqual(builder.decode_html_entities("&amp;amp;amp;amp;amp;amp;#39;Mint&amp;amp;quot;"), "'Mint\"")
+        self.assertEqual(builder.decode_html_entities(None), "")
+        self.assertEqual(builder.decode_html_entities("Plain text 100% clean"), "Plain text 100% clean")
+
+        # 2. Zero leftover HTML entities across compiled clean_seller_note fields (snapshot-resilient)
+        leftover_entity_re = re.compile(r"&(?:amp|quot|apos|lt|gt|nbsp|#\d+|#x[0-9a-fA-F]+);", re.IGNORECASE)
+        state = builder.build_sniper_state(persist=False)
+        self.assertGreater(len(state["listings"]), 0)
+        for row in state["listings"]:
+            note = row.get("clean_seller_note") or ""
+            self.assertIsNone(
+                leftover_entity_re.search(note),
+                f"Leftover HTML entity in clean_seller_note for listing {row.get('id')}: {note!r}",
+            )
+
+        # 3. Decoded note content preserves RFC 8259 </ and <!-- escaping in embedded HTML script block
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_html = Path(tmpdir) / "index_entity_escape_test.html"
+            decoded_payload = builder.decode_html_entities(
+                "&amp;amp;amp;amp;amp;amp;#34;Made in Czech Republic&amp;amp;amp;amp;amp;amp;#34; </script><!--probe-->"
+            )
+            probe_state = {"clean_seller_note": decoded_payload}
+            with patch.object(builder, "OUTPUT_HTML", tmp_html):
+                builder.compile_static_html(probe_state, check_only=False)
+            compiled = tmp_html.read_text(encoding="utf-8")
+            m = re.search(
+                r'<script id="sniper-prebaked-state" type="application/json">\s*(.*?)\s*</script>',
+                compiled,
+                flags=re.DOTALL,
+            )
+            self.assertIsNotNone(m)
+            raw_json = m.group(1)
+            self.assertIn(r"\u003c/", raw_json)
+            self.assertIn(r"\u003c!--", raw_json)
+            self.assertNotIn("</script>", raw_json)
+            self.assertNotIn("<!--", raw_json)
+            parsed = json.loads(raw_json)
+            self.assertEqual(parsed["clean_seller_note"], decoded_payload)
+            self.assertIn('"Made in Czech Republic"', parsed["clean_seller_note"])
+
+    def test_v6_obsidian_parity_markers_cookie_security_and_manifest(self):
+        import re
+
+        # 1. Compiled index.html carries discogs_collection v6.0 parity markers and zero Chakra Petch
+        html_path = REPO_ROOT / "index.html"
+        self.assertTrue(html_path.exists())
+        html_text = html_path.read_text(encoding="utf-8")
+        for marker in (
+            "Space Grotesk",
+            "krunked-cookie-vault-v1",
+            "suite-switcher",
+            "sleeve-peek-stage",
+            "uv-blacklight",
+        ):
+            self.assertIn(marker, html_text, f"Missing v6.0 parity marker in index.html: {marker}")
+        self.assertNotIn("chakra petch", html_text.lower(), "Legacy Chakra Petch font trace found in index.html")
+
+        # 2. Shadow-cookie auto-healer script strictly denies tokens and GitHub PATs
+        cookie_block = re.search(
+            r'<script id="krunked-cookie-vault-v1">(.*?)</script>',
+            html_text,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(cookie_block, "Missing krunked-cookie-vault-v1 script block in index.html")
+        cookie_js = cookie_block.group(1)
+        key_re_match = re.search(r"SENSITIVE_KEY_RE\s*=\s*/([^/]+)/([a-z]*)", cookie_js)
+        val_re_match = re.search(r"SENSITIVE_VALUE_RE\s*=\s*/([^/]+)/([a-z]*)", cookie_js)
+        self.assertIsNotNone(key_re_match, "Missing SENSITIVE_KEY_RE deny-list in shadow-cookie script")
+        self.assertIsNotNone(val_re_match, "Missing SENSITIVE_VALUE_RE deny-list in shadow-cookie script")
+        key_re = re.compile(key_re_match.group(1), re.IGNORECASE if "i" in key_re_match.group(2) else 0)
+        val_re = re.compile(val_re_match.group(1), re.IGNORECASE if "i" in val_re_match.group(2) else 0)
+        for sensitive_key in ("krunked_discogs_token", "krunked_sniper_github_pat_v3", "api_key", "user_secret"):
+            self.assertIsNotNone(key_re.search(sensitive_key), f"SENSITIVE_KEY_RE failed to block {sensitive_key}")
+        for sensitive_val in ("github_pat_11ABCDEF123456", "ghp_secretTokenValue123"):
+            self.assertIsNotNone(val_re.search(sensitive_val), f"SENSITIVE_VALUE_RE failed to block {sensitive_val}")
+
+        # 3. PWA manifest.webmanifest uses canonical Obsidian v6.0 palette
+        manifest = json.loads((REPO_ROOT / "manifest.webmanifest").read_text(encoding="utf-8"))
+        self.assertEqual(manifest.get("theme_color"), "#06070b")
+        self.assertEqual(manifest.get("background_color"), "#05060b")
+
 
 if __name__ == "__main__":
     unittest.main()

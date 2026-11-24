@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter, defaultdict
 from datetime import datetime
+import html
 import json
 import os
 import pathlib
@@ -58,6 +59,21 @@ def _atomic_write_text(target: pathlib.Path, content: str) -> None:
     tmp_path = target.parent / f".{target.name}.{os.getpid()}.tmp"
     tmp_path.write_text(content, encoding="utf-8")
     tmp_path.replace(target)
+
+
+def decode_html_entities(text: str | None, max_depth: int = 12) -> str:
+    """Recursively decodes multi-escaped HTML entities (e.g. '&amp;amp;amp;#34;') until convergence."""
+    if not text:
+        return ""
+    cur = str(text)
+    if "&" not in cur:
+        return cur
+    for _ in range(max_depth):
+        nxt = html.unescape(cur)
+        if nxt == cur:
+            break
+        cur = nxt
+    return cur
 
 
 def normalize_album_key(raw_title: str) -> str:
@@ -184,8 +200,8 @@ def parse_wax_shader(variant_str: str) -> dict[str, Any]:
 
 def extract_collector_signals(raw_description: str, variant_str: str) -> dict[str, Any]:
     """Deduplicates raw_description == variant boilerplate and extracts structured collector signal badges."""
-    raw_clean = (raw_description or "").strip()
-    var_clean = (variant_str or "").strip()
+    raw_clean = decode_html_entities(raw_description).strip()
+    var_clean = decode_html_entities(variant_str).strip()
     norm_raw = re.sub(r"\s+", " ", raw_clean.lower())
     norm_var = re.sub(r"\s+", " ", var_clean.lower())
 
@@ -661,7 +677,7 @@ def build_sniper_state(
         total_usd = parse_usd(item.get("total_price")) or list_usd
         ship_usd = max(0.0, round(total_usd - list_usd, 2))
 
-        raw_title = (item.get("title") or "Unknown Title").strip()
+        raw_title = decode_html_entities(item.get("title") or "Unknown Title").strip()
         if " - " in raw_title:
             artist_raw, album_raw = raw_title.split(" - ", 1)
         else:
@@ -671,13 +687,13 @@ def build_sniper_state(
         album_clean = album_raw.strip()
         norm_album_key = normalize_album_key(raw_title)
 
-        seller = (item.get("seller_info") or "US Seller").strip()
+        seller = decode_html_entities(item.get("seller_info") or "US Seller").strip()
         media_cond = (item.get("media_condition") or "NM").strip()
         sleeve_cond = (item.get("sleeve_condition") or "NM").strip()
         alert_ts = alert_timestamps.get(str(item_id)) or item.get("seeded_at") or snap.get("updated_at") or ""
         api_stats = item.get("api_stats") or {}
-        variant_str = (item.get("variant") or "LP, Vinyl").strip()
-        raw_desc_str = (item.get("raw_description") or "").strip()
+        variant_str = decode_html_entities(item.get("variant") or "LP, Vinyl").strip()
+        raw_desc_str = decode_html_entities(item.get("raw_description") or "").strip()
         signals = extract_collector_signals(raw_desc_str, variant_str)
 
         fp = f"{release_id}::{seller.lower()}::{media_cond.upper()}"

@@ -10,30 +10,36 @@ function openInspectModal(listingId) {
   appState.inspectListingId = listingId;
   setStageChromaFromWax(item.wax_shader);
 
-  const fallbackUri = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
+  const artistClean = decodeHtmlEntities(item.artist);
+  const albumClean = decodeHtmlEntities(item.album);
+  const titleClean = decodeHtmlEntities(item.title);
+  const variantClean = decodeHtmlEntities(item.variant);
+  const sellerClean = decodeHtmlEntities(item.seller_info);
+  const fallbackUri = renderFallbackSleeveDataUri(artistClean, albumClean, item.wax_shader?.primary);
   const coverSrc = resolveCoverSrc(item);
   const mkt = item.market_stats || {};
-  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#00f0ff";
+  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#22d3ee";
   const waxGlow = hexToRgba(waxPrimary, 0.35);
   const isPlaying = appState.currentlyPlayingId === item.id;
   const vaultPhotoRaw = item.vault_owned_detail?.pressing_image_url || "";
   const vaultPhoto = vaultPhotoRaw ? resolveSiblingVaultAssetUrl(vaultPhotoRaw) : "";
   const strat = item.offer_strategy || {};
   const curTarget = getTargetPriceForRelease(item.release_id);
-  const cleanNote =
+  const rawNote =
     item.clean_seller_note !== undefined
       ? item.clean_seller_note
-      : item.raw_description && item.raw_description.toLowerCase() !== item.variant.toLowerCase()
+      : item.raw_description && item.raw_description.toLowerCase() !== (item.variant || "").toLowerCase()
       ? item.raw_description
       : "";
+  const cleanNote = decodeHtmlEntities(rawNote);
 
   body.innerHTML = `
     <div class="inspect-hero" style="--wax-glow:${waxGlow};">
       <div class="inspect-vinyl-stage">
-        <div class="inspect-sleeve">
-          <img src="${escapeHtml(coverSrc)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="${escapeHtml(item.title)}" />
+        <div class="inspect-sleeve holo-sleeve">
+          <img src="${escapeHtml(coverSrc)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="${escapeHtml(titleClean)}" />
         </div>
-        <div class="inspect-platter">
+        <div class="inspect-platter uv-reactive">
           <canvas id="inspect-vinyl-canvas" width="160" height="160" style="width:146px;height:146px;"></canvas>
         </div>
       </div>
@@ -45,48 +51,48 @@ function openInspectModal(listingId) {
           ${item.allow_offers ? `<span class="tag-pill badge-amber">MAKE OFFER</span>` : ""}
           ${isListingTargetHit(item) ? `<span class="tag-pill badge-gold">TARGET HIT</span>` : ""}
         </div>
-        <div class="drop-artist" style="font-size:0.8rem;">${escapeHtml(item.artist)}</div>
-        <h2 id="inspect-modal-title" style="font-family:var(--font-display);font-size:1.38rem;color:#fff;margin:3px 0 8px;">${escapeHtml(getDisplayAlbumTitle(item))}</h2>
-        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">${escapeHtml(item.variant)}</p>
+        <div class="drop-artist" style="font-size:0.8rem;">${escapeHtml(artistClean)}</div>
+        <h2 id="inspect-modal-title" style="font-family:var(--font-display);font-size:1.38rem;color:#fff;margin:3px 0 8px;">${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</h2>
+        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">${escapeHtml(variantClean)}</p>
         <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);">
-          Listing #${escapeHtml(item.id)} // Release #${escapeHtml(item.release_id)} // Seller: <a href="https://www.discogs.com/seller/${encodeURIComponent(item.seller_info)}/profile" target="_blank" rel="noopener" class="inline-neon-link">${escapeHtml(item.seller_info)}</a>
+          Listing #${escapeHtml(item.id)} // Release #${escapeHtml(item.release_id)} // Seller: <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener" class="inline-neon-link">${escapeHtml(sellerClean)}</a>
         </div>
       </div>
     </div>
 
     <div class="inspect-spec-grid">
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Total Shipped</span>
         <div class="matrix-val matrix-val-price" style="font-size:1.22rem;">${escapeHtml(item.total_price)}</div>
         <div class="matrix-sub">${escapeHtml(item.list_price)} + ${formatUsd(item.shipping_price_usd)} ship</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Benchmark (${escapeHtml(item.media_condition)})</span>
         <div class="matrix-val" style="font-size:1.08rem;">${escapeHtml(mkt.condition_suggested_formatted || "Live API")}</div>
         <div class="matrix-sub">${escapeHtml(mkt.benchmark_source || "")}</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Condition Grade</span>
         <div class="matrix-val" style="font-size:1.08rem;">${escapeHtml(item.media_condition)} / ${escapeHtml(item.sleeve_condition)}</div>
         <div class="matrix-sub">${escapeHtml(item.media_condition_full || "")}</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Observed Range / Trend</span>
         <div class="matrix-val" style="font-size:1.02rem;">${formatUsd(mkt.observed_low_usd)} – ${formatUsd(mkt.observed_high_usd)}</div>
         <div class="matrix-sub">${renderPriceSparklineSVG(item.price_trajectory, 110, 22)}</div>
       </div>
     </div>
 
-    ${cleanNote ? `<div class="seller-notes ${item.has_wear_warning ? "notes-wear" : ""}" style="-webkit-line-clamp:unset;margin-bottom:12px;"><strong style="color:var(--neon-cyan);font-family:var(--font-mono);font-size:0.68rem;display:block;margin-bottom:4px;">SELLER NOTES</strong>${escapeHtml(cleanNote)}</div>` : ""}
+    ${cleanNote ? `<div class="seller-notes ${item.has_wear_warning ? "notes-wear" : ""}" style="-webkit-line-clamp:unset;margin-bottom:12px;"><strong style="color:var(--quartz-cyan, var(--neon-cyan));font-family:var(--font-mono);font-size:0.68rem;display:block;margin-bottom:4px;">SELLER NOTES</strong>${escapeHtml(cleanNote)}</div>` : ""}
 
     ${
       strat.recommended_offer_usd
-        ? `<div style="margin-bottom:12px;padding:11px 13px;border-radius:8px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.28);">
+        ? `<div style="margin-bottom:12px;padding:11px 13px;border-radius:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.32);">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-              <strong style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-amber);">HAGGLE STRATEGIST // TARGET ITEM OFFER: ${formatUsd(strat.recommended_offer_usd)} (Range ${formatUsd(strat.aggressive_offer_usd)}–${formatUsd(strat.instant_close_offer_usd)})</strong>
+              <strong style="font-family:var(--font-mono);font-size:0.74rem;color:var(--strobe-amber, var(--neon-amber));">HAGGLE STRATEGIST // TARGET ITEM OFFER: ${formatUsd(strat.recommended_offer_usd)} (Range ${formatUsd(strat.aggressive_offer_usd)}–${formatUsd(strat.instant_close_offer_usd)})</strong>
               <button type="button" class="btn-action btn-sm" data-copy-offer-pitch="${escapeHtml(item.id)}">Copy Pitch</button>
             </div>
-            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);">${escapeHtml(strat.buyer_pitch || "")}</div>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);">${escapeHtml(decodeHtmlEntities(strat.buyer_pitch || ""))}</div>
           </div>`
         : ""
     }
@@ -167,6 +173,7 @@ function renderCommandPaletteResults(query) {
   const listEl = document.getElementById("cmd-palette-results");
   if (!listEl) return;
   const q = String(query || "").trim().toLowerCase();
+  appState.cmdPaletteSelectedIdx = 0;
 
   const commands = [
     { kind: "VIEW", label: "Go to Drop Radar", hint: "View 1", action: () => switchView("radar") },
@@ -175,7 +182,8 @@ function renderCommandPaletteResults(query) {
     { kind: "VIEW", label: "Go to Relist Forensics & Bot Weather", hint: "View 4", action: () => switchView("forensics") },
     { kind: "VIEW", label: "Go to Vault Showdown & Wantlist Pruner", hint: "View 5", action: () => switchView("vault") },
     { kind: "VIEW", label: "Go to Remote & API Console", hint: "View 6", action: () => switchView("rules") },
-    { kind: "MODE", label: "Cycle Lighting Profile (NEON / UV / TUBE AMP)", hint: "Shortcut: U", action: cycleLightingMode },
+    { kind: "SUITE", label: "Open Sibling Collection Vault (v6.0)", hint: "krunked-fpv", action: () => window.open(SIBLING_VAULT_BASE_URL, "_blank", "noopener") },
+    { kind: "MODE", label: "Cycle Lighting Profile (Obsidian / UV 395nm / Tube Amp)", hint: "Shortcut: U", action: cycleLightingMode },
     { kind: "ACTION", label: "Toggle Matrix Tape / Card Layout", hint: "Radar", action: () => setRadarLayout(appState.radarLayout === "cards" ? "matrix" : "cards") },
     { kind: "ACTION", label: "Pull Fresh Snapshot from GitHub main", hint: "Remote Sync", action: () => pullLiveRepoSnapshotFromGitHub({ silent: false }) },
     { kind: "ACTION", label: "Sync Live Collection Vault JSON", hint: "Sibling Repo", action: () => fetchSiblingVaultJson({ silent: false }) },
@@ -187,28 +195,42 @@ function renderCommandPaletteResults(query) {
     .filter((x) => !q || `${x.title} ${x.seller_info} ${x.variant} ${x.id}`.toLowerCase().includes(q))
     .slice(0, q ? 10 : 5);
 
+  let rowCounter = 0;
   const cmdHtml = matchingCmds
-    .map(
-      (c, idx) => `
-      <button type="button" class="cmd-item-btn" data-cmd-idx="${idx}">
+    .map((c, idx) => {
+      const sel = rowCounter === 0 ? " is-selected" : "";
+      rowCounter += 1;
+      return `
+      <button type="button" class="cmd-item-btn cmd-palette-item${sel}" data-cmd-idx="${idx}">
         <span><span class="kpi-badge badge-cyan" style="margin-right:8px;">${escapeHtml(c.kind)}</span>${escapeHtml(c.label)}</span>
         <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(c.hint)}</span>
-      </button>`
-    )
+      </button>`;
+    })
     .join("");
 
   const listingHtml = matchingListings
-    .map(
-      (x) => `
-      <button type="button" class="cmd-item-btn" data-cmd-listing-id="${escapeHtml(x.id)}">
-        <span><span class="kpi-badge badge-lime" style="margin-right:8px;">${escapeHtml(x.total_price)}</span>${escapeHtml(x.title)}</span>
-        <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(x.seller_info)}</span>
-      </button>`
-    )
+    .map((x) => {
+      const sel = rowCounter === 0 ? " is-selected" : "";
+      rowCounter += 1;
+      return `
+      <button type="button" class="cmd-item-btn cmd-palette-item${sel}" data-cmd-listing-id="${escapeHtml(x.id)}">
+        <span><span class="kpi-badge badge-lime" style="margin-right:8px;">${escapeHtml(x.total_price)}</span>${escapeHtml(decodeHtmlEntities(x.title))}</span>
+        <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(decodeHtmlEntities(x.seller_info))}</span>
+      </button>`;
+    })
     .join("");
 
   listEl.innerHTML = `${cmdHtml}${listingHtml}` || `<div style="padding:18px;text-align:center;color:var(--text-muted);">No matching commands or records.</div>`;
   listEl._cmdActions = matchingCmds;
+}
+
+function moveCommandPaletteSelection(delta) {
+  const items = Array.from(document.querySelectorAll("#cmd-palette-results .cmd-palette-item"));
+  if (items.length === 0) return;
+  const next = (appState.cmdPaletteSelectedIdx + delta + items.length) % items.length;
+  appState.cmdPaletteSelectedIdx = next;
+  items.forEach((el, i) => el.classList.toggle("is-selected", i === next));
+  items[next]?.scrollIntoView({ block: "nearest" });
 }
 
 // =====================================================================
@@ -338,11 +360,17 @@ async function saveAndVerifyDiscogsToken(rawUser, rawTok) {
 }
 
 function cycleLightingMode() {
-  const order = ["neon", "uv", "tube"];
-  const next = order[(order.indexOf(appState.lightingMode) + 1) % order.length];
+  const order = ["obsidian", "uv", "tube"];
+  const curIdx = order.indexOf(appState.lightingMode);
+  const next = order[(curIdx < 0 ? 0 : curIdx + 1) % order.length];
   appState.lightingMode = next;
   applyLightingMode();
-  const label = next === "uv" ? "UV Blacklight Overdrive" : next === "tube" ? "Boutique Vacuum Tube Amp" : "Neon Telemetry";
+  const label =
+    next === "uv"
+      ? "UV 395nm Blacklight Overdrive"
+      : next === "tube"
+      ? "Boutique Vacuum Tube Amp"
+      : "Studio Obsidian";
   showToast(`${label} engaged.`, "cyan", 2000);
 }
 
@@ -357,7 +385,10 @@ function setRadarLayout(layout) {
 function switchView(viewName) {
   appState.activeView = viewName;
   document.querySelectorAll(".nav-tab").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === viewName);
+    const isActive = btn.dataset.view === viewName;
+    btn.classList.toggle("active", isActive);
+    btn.classList.toggle("nav-tab-active", isActive);
+    btn.classList.toggle("nav-tab-idle", !isActive);
   });
   document.querySelectorAll(".view-section").forEach((sec) => {
     sec.classList.toggle("active", sec.id === `view-${viewName}`);
@@ -401,6 +432,19 @@ function bindEvents() {
   }
   document.getElementById("btn-layout-cards")?.classList.toggle("active", appState.radarLayout === "cards");
   document.getElementById("btn-layout-matrix")?.classList.toggle("active", appState.radarLayout === "matrix");
+  document.querySelectorAll(".scope-btn[data-scope]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.scope === appState.scopeMode);
+  });
+  document.getElementById("btn-toggle-dedup")?.classList.toggle("active", appState.dedupEnabled);
+  document.getElementById("btn-hide-sold")?.classList.toggle("active", appState.hideSold);
+  document.getElementById("btn-hide-recordmule")?.classList.toggle("active", appState.hideRecordmule);
+  const initCondSel = document.getElementById("radar-condition-select");
+  if (initCondSel) initCondSel.value = appState.conditionFilter;
+  const initSortSel = document.getElementById("radar-sort-select");
+  if (initSortSel) initSortSel.value = appState.sortMode;
+  document.querySelectorAll(".filter-pill").forEach((p) => {
+    p.classList.toggle("active", p.dataset.filter === appState.categoryFilter);
+  });
 
   // Navigation
   document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -473,10 +517,18 @@ function bindEvents() {
     renderCommandPaletteResults(e.target.value);
   });
   document.getElementById("cmd-palette-input")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      const firstBtn = document.querySelector("#cmd-palette-results .cmd-item-btn");
-      if (firstBtn) firstBtn.click();
+      moveCommandPaletteSelection(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveCommandPaletteSelection(-1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selBtn =
+        document.querySelector("#cmd-palette-results .cmd-palette-item.is-selected") ||
+        document.querySelector("#cmd-palette-results .cmd-item-btn");
+      if (selBtn) selBtn.click();
     }
   });
   document.getElementById("cmd-palette-results")?.addEventListener("click", (e) => {
@@ -525,6 +577,7 @@ function bindEvents() {
     btn.addEventListener("click", () => {
       appState.scopeMode = btn.dataset.scope || "ALL";
       document.querySelectorAll(".scope-btn[data-scope]").forEach((b) => b.classList.toggle("active", b === btn));
+      saveUiPrefs();
       renderRadarGrid();
     });
   });
@@ -535,28 +588,33 @@ function bindEvents() {
   document.getElementById("btn-toggle-dedup")?.addEventListener("click", (e) => {
     appState.dedupEnabled = !appState.dedupEnabled;
     e.currentTarget.classList.toggle("active", appState.dedupEnabled);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("btn-hide-sold")?.addEventListener("click", (e) => {
     appState.hideSold = !appState.hideSold;
     e.currentTarget.classList.toggle("active", appState.hideSold);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("btn-hide-recordmule")?.addEventListener("click", (e) => {
     appState.hideRecordmule = !appState.hideRecordmule;
     e.currentTarget.classList.toggle("active", appState.hideRecordmule);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("radar-condition-select")?.addEventListener("change", (e) => {
     appState.conditionFilter = e.target.value;
+    saveUiPrefs();
     updateConfigJsonPreview();
     renderRadarGrid();
   });
   document.getElementById("radar-sort-select")?.addEventListener("change", (e) => {
     appState.sortMode = e.target.value;
+    saveUiPrefs();
     renderRadarGrid();
   });
 
@@ -564,6 +622,7 @@ function bindEvents() {
     pill.addEventListener("click", () => {
       appState.categoryFilter = pill.dataset.filter || "ALL";
       document.querySelectorAll(".filter-pill").forEach((p) => p.classList.toggle("active", p === pill));
+      saveUiPrefs();
       renderRadarGrid();
     });
   });

@@ -1,11 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
+<!-- BEGIN KRUNKED_COOKIE_VAULT_V1 -->
+<script id="krunked-cookie-vault-v1">
+(function () {
+  "use strict";
+  if (window.__KRUNKED_COOKIE_VAULT__) return;
+
+  var COOKIE_PREFIX = "kv1_";
+  var PULSE_COOKIE = "krunked_family_pulse";
+  var MAX_AGE_SEC = 34560000; // 400 days (RFC 6265 browser cap)
+  var CHUNK_SIZE = 3200;      // Safe margin under 4096-byte per-cookie limit
+  var MAX_CHUNKS_PER_KEY = 4; // Up to ~12.8 KB compacted JSON per state key
+
+  // SECURITY INVARIANT: Credentials, tokens, and PATs MUST NEVER leave localStorage into HTTP cookies
+  var SENSITIVE_KEY_RE = /token|pat|secret|auth|password|passwd|credential|api_?key|bearer/i;
+  var SENSITIVE_VALUE_RE = /(?:github_pat_|ghp_|gho_|ghu_|ghs_|ghr_)/i;
+
+  // Never mirror massive read-only image/release caches or debug blobs into cookies
+  var IGNORED_KEY_PATTERNS = [
+    /releases_cache/i,
+    /full_collection_cache/i,
+    /art_cache/i,
+    /^debug/i
+  ];
+
+  // Mirror non-sensitive UI preferences & config overrides across Krunked Vinyl Suite apps
+  var TRACKED_KEY_PATTERNS = [
+    /krunked/i,
+    /sniper/i,
+    /discogs/i,
+    /vault/i,
+    /violet/i,
+    /quest/i,
+    /ozias/i,
+    /pokemath/i,
+    /flatten/i,
+    /override/i,
+    /thumbmode/i,
+    /uvblacklight/i,
+    /spinmode/i,
+    /arena/i,
+    /lighting/i,
+    /layout/i,
+    /prefs/i,
+    /pruned/i,
+    /sync/i,
+    /state/i,
+    /progress/i
+  ];
+
+  function shouldTrackKey(key) {
+    if (!key || typeof key !== "string") return false;
+    if (SENSITIVE_KEY_RE.test(key)) return false;
+    for (var i = 0; i < IGNORED_KEY_PATTERNS.length; i++) {
+      if (IGNORED_KEY_PATTERNS[i].test(key)) return false;
+    }
+    for (var j = 0; j < TRACKED_KEY_PATTERNS.length; j++) {
+      if (TRACKED_KEY_PATTERNS[j].test(key)) return true;
+    }
+    return false;
+  }
+
+  function getAppScopePath() {
+    try {
+      var p = window.location.pathname || "/";
+      if (p.endsWith(".html")) {
+        p = p.substring(0, p.lastIndexOf("/") + 1);
+      }
+      return p || "/";
+    } catch (e) {
+      return "/";
+    }
+  }
+
+  function sanitizeSlug(key) {
+    return String(key).replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 40);
+  }
+
+  function readAllCookies() {
+    var map = {};
+    try {
+      var raw = document.cookie || "";
+      if (!raw) return map;
+      var parts = raw.split(";");
+      for (var i = 0; i < parts.length; i++) {
+        var seg = parts[i].trim();
+        if (!seg) continue;
+        var eq = seg.indexOf("=");
+        if (eq < 0) continue;
+        var k = seg.substring(0, eq).trim();
+        var v = seg.substring(eq + 1).trim();
+        map[k] = v;
+      }
+    } catch (e) {}
+    return map;
+  }
+
+  function writeRawCookie(name, value, path, maxAge) {
+    try {
+      if (window.location.protocol === "file:") return false;
+      var p = path || getAppScopePath();
+      var age = typeof maxAge === "number" ? maxAge : MAX_AGE_SEC;
+      var secureFlag = window.location.protocol === "https:" ? "; Secure" : "";
+      document.cookie =
+        name + "=" + value +
+        "; Max-Age=" + age +
+        "; Path=" + p +
+        "; SameSite=Lax" +
+        secureFlag;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function deleteCookieChunks(slug) {
+    var all = readAllCookies();
+    var prefix = COOKIE_PREFIX + slug + "__";
+    var appPath = getAppScopePath();
+    for (var k in all) {
+      if (Object.prototype.hasOwnProperty.call(all, k) && k.indexOf(prefix) === 0) {
+        writeRawCookie(k, "", appPath, 0);
+        writeRawCookie(k, "", "/", 0);
+      }
+    }
+  }
+
+  function clearAllAppShadowCookies() {
+    var all = readAllCookies();
+    var appPath = getAppScopePath();
+    for (var k in all) {
+      if (Object.prototype.hasOwnProperty.call(all, k) && k.indexOf(COOKIE_PREFIX) === 0) {
+        writeRawCookie(k, "", appPath, 0);
+        writeRawCookie(k, "", "/", 0);
+      }
+    }
+  }
+
+  function compactValueForCookie(key, rawValue) {
+    if (typeof rawValue !== "string") return "";
+    if (SENSITIVE_KEY_RE.test(key) || SENSITIVE_VALUE_RE.test(rawValue)) return "";
+    if (rawValue.length <= 2800 && rawValue.indexOf("{") !== 0 && rawValue.indexOf("[") !== 0) {
+      return rawValue;
+    }
+
+    try {
+      var parsed = JSON.parse(rawValue);
+      if (!parsed || typeof parsed !== "object") {
+        return rawValue.length <= CHUNK_SIZE * MAX_CHUNKS_PER_KEY ? rawValue : "";
+      }
+      if (Array.isArray(parsed.records) && parsed.records.length > 25) return "";
+      if (Array.isArray(parsed.listings) && parsed.listings.length > 25) return "";
+
+      var clone = Array.isArray(parsed) ? parsed.slice() : Object.assign({}, parsed);
+      var heavyKeys = [
+        "drawingDataUrl",
+        "canvasDataUrl",
+        "scratchpadDataUrl",
+        "scratchpadImage",
+        "comicDataUrl",
+        "audioBlob",
+        "rawReleases",
+        "releases",
+        "need_to_be_done_entries",
+        "done_entries"
+      ];
+      for (var i = 0; i < heavyKeys.length; i++) {
+        if (heavyKeys[i] in clone) delete clone[heavyKeys[i]];
+      }
+
+      var strippedJson = JSON.stringify(clone, function (k, v) {
+        if (k && SENSITIVE_KEY_RE.test(k)) return undefined;
+        if (typeof v === "string") {
+          if (SENSITIVE_VALUE_RE.test(v)) return undefined;
+          if (v.indexOf("data:image/") === 0) return undefined;
+          if (v.length > 2000) return v.slice(0, 2000);
+        }
+        return v;
+      });
+      return strippedJson;
+    } catch (e) {
+      return rawValue.length <= CHUNK_SIZE * MAX_CHUNKS_PER_KEY ? rawValue : "";
+    }
+  }
+
+  function readFamilyPulseCookie() {
+    try {
+      var cookies = readAllCookies();
+      if (!cookies[PULSE_COOKIE]) return {};
+      return JSON.parse(decodeURIComponent(cookies[PULSE_COOKIE])) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function updateFamilyPulseCookie(key, compactedStr) {
+    try {
+      var pulse = readFamilyPulseCookie();
+      var obj = null;
+      try {
+        obj = JSON.parse(compactedStr);
+      } catch (e) {}
+
+      if (obj && typeof obj === "object" && key.indexOf("sniper_config") !== -1) {
+        pulse.sniper = {
+          muted: Array.isArray(obj.muted_sellers) ? obj.muted_sellers.length : 0,
+          dropOnly: Array.isArray(obj.price_drop_only_sellers) ? obj.price_drop_only_sellers.length : 0,
+          targets: obj.target_prices_by_release && typeof obj.target_prices_by_release === "object"
+            ? Object.keys(obj.target_prices_by_release).length
+            : 0,
+          ts: Date.now()
+        };
+      } else if (key === "krunked_sniper_lighting_v3") {
+        pulse.sniper = pulse.sniper || {};
+        pulse.sniper.lighting = compactedStr;
+        pulse.sniper.ts = Date.now();
+      }
+
+      var encodedPulse = encodeURIComponent(JSON.stringify(pulse));
+      if (encodedPulse.length <= 1800) {
+        writeRawCookie(PULSE_COOKIE, encodedPulse, "/", MAX_AGE_SEC);
+      }
+    } catch (e) {}
+  }
+
+  function mirrorKeyToCookie(key, rawValue) {
+    try {
+      if (!shouldTrackKey(key)) return false;
+      var compacted = compactValueForCookie(key, String(rawValue));
+      if (!compacted) return false;
+
+      var envelope = JSON.stringify({
+        k: key,
+        t: Date.now(),
+        d: compacted
+      });
+      var encoded = encodeURIComponent(envelope);
+      var numChunks = Math.ceil(encoded.length / CHUNK_SIZE);
+      if (numChunks > MAX_CHUNKS_PER_KEY) return false;
+
+      var slug = sanitizeSlug(key);
+      deleteCookieChunks(slug);
+
+      var appPath = getAppScopePath();
+      for (var c = 0; c < numChunks; c++) {
+        var slice = encoded.slice(c * CHUNK_SIZE, (c + 1) * CHUNK_SIZE);
+        writeRawCookie(COOKIE_PREFIX + slug + "__" + c, slice, appPath, MAX_AGE_SEC);
+      }
+      writeRawCookie(
+        COOKIE_PREFIX + slug + "__meta",
+        encodeURIComponent(JSON.stringify({ k: key, n: numChunks, t: Date.now() })),
+        appPath,
+        MAX_AGE_SEC
+      );
+
+      updateFamilyPulseCookie(key, compacted);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function healLocalStorageFromCookies() {
+    var healedKeys = [];
+    try {
+      var cookies = readAllCookies();
+      for (var ck in cookies) {
+        if (!Object.prototype.hasOwnProperty.call(cookies, ck)) continue;
+        if (ck.indexOf(COOKIE_PREFIX) !== 0 || !ck.endsWith("__meta")) continue;
+
+        var slug = ck.slice(COOKIE_PREFIX.length, ck.length - "__meta".length);
+        var meta = null;
+        try {
+          meta = JSON.parse(decodeURIComponent(cookies[ck]));
+        } catch (e) {
+          continue;
+        }
+        if (!meta || !meta.k || !meta.n) continue;
+        if (SENSITIVE_KEY_RE.test(meta.k)) {
+          deleteCookieChunks(slug);
+          continue;
+        }
+        if (!shouldTrackKey(meta.k)) continue;
+
+        var chunks = [];
+        var complete = true;
+        for (var c = 0; c < meta.n; c++) {
+          var part = cookies[COOKIE_PREFIX + slug + "__" + c];
+          if (typeof part !== "string") {
+            complete = false;
+            break;
+          }
+          chunks.push(part);
+        }
+        if (!complete) continue;
+
+        var envelope = null;
+        try {
+          envelope = JSON.parse(decodeURIComponent(chunks.join("")));
+        } catch (e) {
+          continue;
+        }
+        if (!envelope || !envelope.k || typeof envelope.d !== "string") continue;
+        if (SENSITIVE_KEY_RE.test(envelope.k) || SENSITIVE_VALUE_RE.test(envelope.d)) {
+          deleteCookieChunks(slug);
+          continue;
+        }
+
+        var targetKey = envelope.k;
+        var existingVal = null;
+        try {
+          existingVal = window.localStorage.getItem(targetKey);
+        } catch (e) {}
+
+        if (existingVal === null || existingVal === undefined || existingVal === "") {
+          try {
+            Storage.prototype.setItem.call(window.localStorage, targetKey, envelope.d);
+            healedKeys.push(targetKey);
+          } catch (e) {}
+        }
+      }
+    } catch (e) {}
+    return healedKeys;
+  }
+
+  function syncExistingLocalStorageToCookies() {
+    var count = 0;
+    try {
+      for (var i = 0; i < window.localStorage.length; i++) {
+        var k = window.localStorage.key(i);
+        if (shouldTrackKey(k)) {
+          var v = window.localStorage.getItem(k);
+          if (v && mirrorKeyToCookie(k, v)) count++;
+        }
+      }
+    } catch (e) {}
+    return count;
+  }
+
+  function installStorageInterceptor() {
+    try {
+      var origSetItem = Storage.prototype.setItem;
+      var origRemoveItem = Storage.prototype.removeItem;
+      var origClear = Storage.prototype.clear;
+
+      Storage.prototype.setItem = function (key, value) {
+        origSetItem.apply(this, arguments);
+        if (this === window.localStorage) {
+          mirrorKeyToCookie(String(key), String(value));
+        }
+      };
+
+      Storage.prototype.removeItem = function (key) {
+        origRemoveItem.apply(this, arguments);
+        if (this === window.localStorage && shouldTrackKey(String(key))) {
+          deleteCookieChunks(sanitizeSlug(String(key)));
+        }
+      };
+
+      Storage.prototype.clear = function () {
+        origClear.apply(this, arguments);
+        if (this === window.localStorage) {
+          clearAllAppShadowCookies();
+        }
+      };
+    } catch (e) {}
+  }
+
+  var healedOnBoot = healLocalStorageFromCookies();
+  installStorageInterceptor();
+  var mirroredOnBoot = syncExistingLocalStorageToCookies();
+
+  window.addEventListener("DOMContentLoaded", function () {
+    try {
+      var el = document.getElementById("rig-heartbeat-btn");
+      if (el && !el.getAttribute("data-cookie-vault")) {
+        el.setAttribute("data-cookie-vault", "active");
+        var prevTitle = el.getAttribute("title") || "";
+        el.setAttribute(
+          "title",
+          (prevTitle ? prevTitle + " • " : "") +
+            "Shadow-Cookie Auto-Healer Active for UI Prefs (Tokens stay strictly in localStorage)"
+        );
+      }
+    } catch (e) {}
+  });
+
+  window.__KRUNKED_COOKIE_VAULT__ = {
+    version: "1.0.0",
+    healedOnBoot: healedOnBoot,
+    mirroredOnBoot: mirroredOnBoot,
+    shouldTrackKey: shouldTrackKey,
+    healNow: healLocalStorageFromCookies,
+    syncFromLocalStorage: syncExistingLocalStorageToCookies,
+    getFamilyPulse: readFamilyPulseCookie,
+    clearCookies: clearAllAppShadowCookies,
+    status: function () {
+      return {
+        protocol: window.location.protocol,
+        cookiesEnabled: navigator.cookieEnabled && window.location.protocol !== "file:",
+        healedKeysOnBoot: healedOnBoot,
+        mirroredKeysCount: syncExistingLocalStorageToCookies(),
+        familyPulse: readFamilyPulseCookie()
+      };
+    }
+  };
+})();
+</script>
+<!-- END KRUNKED_COOKIE_VAULT_V1 -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discogs Sniper v3.0 — Obsidian Turntable &amp; Tactical Wantlist Command Center</title>
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>KRUNKED // DISCOGS SNIPER v3.0 — Obsidian Turntable &amp; Tactical Wantlist Command Center</title>
   <meta name="description" content="Discogs Sniper v3.0: Boutique hardware vinyl-sniping command center with 3D Crate &amp; WebAudio Turntable Studio, live Token-Bucket API hydration, Combined Shipping Bundle Optimizer, Make-Offer Haggle Desk, Sibling Vault Showdown, and Two-Way GitHub Remote Sync." />
-  <meta name="theme-color" content="#040509" />
+  <meta name="theme-color" content="#06070b" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
@@ -13,13 +422,13 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&amp;family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet" />
   <style>
 /* __INJECT_STYLES_CSS__ */
   </style>
 </head>
-<body class="mode-neon">
-  <!-- DYNAMIC AMBIENT NEON STAGE & ANALOG FILM GRAIN -->
+<body class="ambient-stage-bg mode-obsidian">
+  <!-- DYNAMIC AMBIENT OBSIDIAN STAGE & ANALOG FILM GRAIN -->
   <div class="stage-backdrop" aria-hidden="true"></div>
   <div class="stage-grain" aria-hidden="true"></div>
 
@@ -27,40 +436,37 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <button type="button" class="brand-mark-btn" id="btn-brand-home" title="Return to Drop Radar">
-          <svg class="brand-vinyl-svg" viewBox="0 0 64 64" width="42" height="42" aria-hidden="true">
-            <defs>
-              <radialGradient id="hdrVinyl" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#191f2e"/>
-                <stop offset="70%" stop-color="#0b0e17"/>
-                <stop offset="100%" stop-color="#121826"/>
-              </radialGradient>
-              <linearGradient id="hdrRim" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#00f0ff"/>
-                <stop offset="55%" stop-color="#a855f7"/>
-                <stop offset="100%" stop-color="#ff1f8f"/>
-              </linearGradient>
-            </defs>
-            <circle cx="32" cy="32" r="27" fill="url(#hdrVinyl)" stroke="url(#hdrRim)" stroke-width="2.2"/>
-            <circle cx="32" cy="32" r="21.5" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="0.9"/>
-            <circle cx="32" cy="32" r="16.5" fill="none" stroke="#00f0ff" stroke-opacity="0.22" stroke-width="0.9" stroke-dasharray="14 10"/>
-            <g class="brand-reticle" stroke="#00f0ff" stroke-linecap="round">
-              <line x1="32" y1="2" x2="32" y2="11" stroke-width="2.4"/>
-              <line x1="32" y1="53" x2="32" y2="62" stroke-width="2.4"/>
-              <line x1="2" y1="32" x2="11" y2="32" stroke-width="2.4"/>
-              <line x1="53" y1="32" x2="62" y2="32" stroke-width="2.4"/>
-            </g>
-            <circle cx="32" cy="32" r="9.5" fill="#0d111d" stroke="#ff1f8f" stroke-width="1.8"/>
-            <circle cx="32" cy="32" r="3" fill="#ff1f8f"/>
-          </svg>
+        <button type="button" class="brand-mark-btn brand-tile" id="btn-brand-home" title="Return to Drop Radar">
+          <span class="brand-tile-core" aria-hidden="true">
+            <svg class="brand-vinyl-svg" viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+              <defs>
+                <linearGradient id="hdrRim" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#c026d3"/>
+                  <stop offset="52%" stop-color="#7c3aed"/>
+                  <stop offset="100%" stop-color="#22d3ee"/>
+                </linearGradient>
+              </defs>
+              <circle cx="32" cy="32" r="24" fill="#05060b" stroke="url(#hdrRim)" stroke-width="3.2"/>
+              <circle cx="32" cy="32" r="15" fill="none" stroke="#22d3ee" stroke-opacity="0.38" stroke-width="1.4" stroke-dasharray="10 8"/>
+              <g class="brand-reticle" stroke="#22d3ee" stroke-linecap="round">
+                <line x1="32" y1="2" x2="32" y2="12" stroke-width="2.8"/>
+                <line x1="32" y1="52" x2="32" y2="62" stroke-width="2.8"/>
+                <line x1="2" y1="32" x2="12" y2="32" stroke-width="2.8"/>
+                <line x1="52" y1="32" x2="62" y2="32" stroke-width="2.8"/>
+              </g>
+              <circle cx="32" cy="32" r="6.5" fill="#c026d3"/>
+              <circle cx="32" cy="32" r="2.4" fill="#05060b"/>
+            </svg>
+          </span>
+          <span class="brand-live-dot" aria-hidden="true"></span>
         </button>
 
         <div class="brand-title-wrap">
           <div class="brand-headline-row">
-            <h1>DISCOGS SNIPER</h1>
+            <h1><span class="brand-prefix">KRUNKED //</span> DISCOGS SNIPER</h1>
             <span class="beta-stamp">v3.0</span>
             <button type="button" class="heartbeat-pill" id="rig-heartbeat-btn" title="Local 5-min sniper rig sync freshness (click to check GitHub live)">
-              <span class="hb-dot" id="hb-dot"></span>
+              <span class="hb-dot hardware-led is-on" id="hb-dot"></span>
               <span id="hb-label">Rig Sync</span>
             </button>
           </div>
@@ -70,38 +476,13 @@
         </div>
       </div>
 
-      <nav class="nav-tabs" aria-label="Primary tactical views">
-        <button type="button" class="nav-tab active" id="tab-btn-radar" data-view="radar">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
-          <span>Drop Radar</span>
-          <span class="nav-tab-count" id="nav-count-radar">114</span>
-        </button>
-        <button type="button" class="nav-tab" id="tab-btn-crate" data-view="crate">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M19 5l-5 5"/></svg>
-          <span>3D Crate</span>
-          <span class="nav-tab-count" id="nav-count-crate">Deck</span>
-        </button>
-        <button type="button" class="nav-tab" id="tab-btn-alpha" data-view="alpha">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6 6 .9-4.4 4.3 1 6.1L12 16.4l-5.6 2.9 1-6.1L3 8.9 9 8z"/></svg>
-          <span>Alpha</span>
-          <span class="nav-tab-count" id="nav-count-alpha">16</span>
-        </button>
-        <button type="button" class="nav-tab" id="tab-btn-forensics" data-view="forensics">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
-          <span>Forensics</span>
-          <span class="nav-tab-count" id="nav-count-forensics">-47.9%</span>
-        </button>
-        <button type="button" class="nav-tab" id="tab-btn-vault" data-view="vault">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/></svg>
-          <span>Vault</span>
-          <span class="nav-tab-count" id="nav-count-vault">Syncing</span>
-        </button>
-        <button type="button" class="nav-tab" id="tab-btn-rules" data-view="rules">
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>
-          <span>Remote</span>
-          <span class="nav-tab-count" id="nav-count-api">API v2</span>
-        </button>
-      </nav>
+      <div class="suite-switcher" role="navigation" aria-label="Krunked Vinyl Suite">
+        <a href="https://krunked-fpv.github.io/discogs_collection/" target="_blank" rel="noopener noreferrer" class="suite-pill" title="Open sibling Collection Vault (v6.0)">
+          <span>Collection Vault</span>
+          <svg class="ico ico-xs" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
+        </a>
+        <span class="suite-pill suite-pill-active" aria-current="page">Wantlist Sniper</span>
+      </div>
 
       <div class="header-actions">
         <button type="button" class="api-status-btn hydrator-pill" id="hydrator-status-btn" title="Background Token-Bucket Discogs API Hydrator &amp; Sold Sweeper">
@@ -110,12 +491,12 @@
         </button>
 
         <button type="button" class="mode-switch-btn cmd-pill-btn" id="btn-open-cmd-palette" title="Open Command Palette (Ctrl/Cmd + K)">
-          <span>CMD+K</span>
+          <span>⌘K</span>
         </button>
 
-        <button type="button" class="mode-switch-btn" id="btn-toggle-uv" title="Cycle Lighting: NEON / UV BLACKLIGHT / TUBE AMP (Shortcut: U)">
+        <button type="button" class="mode-switch-btn" id="btn-toggle-uv" title="Cycle Lighting: Studio Obsidian / UV 395nm Blacklight / Tube Amp (Shortcut: U)">
           <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-          <span id="uv-mode-label">NEON</span>
+          <span id="uv-mode-label">OBSIDIAN</span>
         </button>
 
         <button type="button" class="api-status-btn" id="btn-open-api-modal" title="Connect Discogs API &amp; GitHub PAT (Local Storage Only)">
@@ -124,17 +505,52 @@
         </button>
 
         <a href="https://www.discogs.com/shop/mywants/?formatDescription=LP&amp;formatName=Vinyl&amp;shipsFrom=United+States&amp;sort=listedNewest" target="_blank" rel="noopener" class="api-status-btn btn-ext-wantlist" title="Open live filtered Wantlist on Discogs">
-          <span>Wantlist</span>
+          <span>Live Wantlist</span>
           <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg>
         </a>
       </div>
+    </div>
+
+    <div class="header-nav-bar">
+      <nav class="nav-tabs" aria-label="Primary tactical views">
+        <button type="button" class="nav-tab active nav-tab-active" id="tab-btn-radar" data-view="radar">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>
+          <span>Drop Radar</span>
+          <span class="nav-tab-count" id="nav-count-radar">114</span>
+        </button>
+        <button type="button" class="nav-tab nav-tab-idle" id="tab-btn-crate" data-view="crate">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M19 5l-5 5"/></svg>
+          <span>3D Crate</span>
+          <span class="nav-tab-count" id="nav-count-crate">Deck</span>
+        </button>
+        <button type="button" class="nav-tab nav-tab-idle" id="tab-btn-alpha" data-view="alpha">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6 6 .9-4.4 4.3 1 6.1L12 16.4l-5.6 2.9 1-6.1L3 8.9 9 8z"/></svg>
+          <span>Alpha</span>
+          <span class="nav-tab-count" id="nav-count-alpha">16</span>
+        </button>
+        <button type="button" class="nav-tab nav-tab-idle" id="tab-btn-forensics" data-view="forensics">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          <span>Forensics</span>
+          <span class="nav-tab-count" id="nav-count-forensics">-47.9%</span>
+        </button>
+        <button type="button" class="nav-tab nav-tab-idle" id="tab-btn-vault" data-view="vault">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/></svg>
+          <span>Vault</span>
+          <span class="nav-tab-count" id="nav-count-vault">Syncing</span>
+        </button>
+        <button type="button" class="nav-tab nav-tab-idle" id="tab-btn-rules" data-view="rules">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 10-12h-7l0-8z"/></svg>
+          <span>Remote</span>
+          <span class="nav-tab-count" id="nav-count-api">API v2</span>
+        </button>
+      </nav>
     </div>
   </header>
 
   <main class="main-container">
     <!-- 5-CHANNEL INTERACTIVE TELEMETRY RIBBON -->
     <section class="kpi-grid" aria-label="Sniper production telemetry">
-      <button type="button" class="kpi-card kpi-cyan" id="kpi-card-offerings" data-jump-view="radar" data-jump-scope="ALL">
+      <button type="button" class="kpi-card anodized-panel kpi-cyan" id="kpi-card-offerings" data-jump-view="radar" data-jump-scope="ALL">
         <div class="kpi-head">
           <span class="kpi-label">Active Offerings</span>
           <span class="kpi-badge badge-cyan" id="kpi-raw-total-badge">from 219 raw</span>
@@ -146,7 +562,7 @@
         <span class="kpi-sub" id="kpi-distinct-releases-sub">Across 73 distinct Wantlist pressings</span>
       </button>
 
-      <button type="button" class="kpi-card kpi-lime" id="kpi-card-alpha" data-jump-view="alpha">
+      <button type="button" class="kpi-card anodized-panel kpi-lime" id="kpi-card-alpha" data-jump-view="alpha">
         <div class="kpi-head">
           <span class="kpi-label">Sniper Alpha</span>
           <span class="kpi-badge badge-lime" id="kpi-bundle-save-badge">Save up to $22.50</span>
@@ -158,7 +574,7 @@
         <span class="kpi-sub" id="kpi-alpha-sub">Multi-LP seller bundles + Haggle Desk</span>
       </button>
 
-      <button type="button" class="kpi-card kpi-amber" id="kpi-card-relists" data-jump-view="forensics">
+      <button type="button" class="kpi-card anodized-panel kpi-amber" id="kpi-card-relists" data-jump-view="forensics">
         <div class="kpi-head">
           <span class="kpi-label">Relist Shield</span>
           <span class="kpi-badge badge-amber" id="kpi-spam-pct-badge">-47.9% Noise</span>
@@ -170,7 +586,7 @@
         <span class="kpi-sub" id="kpi-recordmule-sub">recordmule drives 99/219 (45.2%)</span>
       </button>
 
-      <button type="button" class="kpi-card kpi-magenta" id="kpi-card-vault" data-jump-view="vault">
+      <button type="button" class="kpi-card anodized-panel kpi-magenta" id="kpi-card-vault" data-jump-view="vault">
         <div class="kpi-head">
           <span class="kpi-label">Vault Showdown</span>
           <span class="kpi-badge badge-cyan" id="kpi-owned-overlap-badge">Verifying Live...</span>
@@ -182,7 +598,7 @@
         <span class="kpi-sub" id="kpi-vault-sub">54 Grails // 9 Variants // 159 Vault LPs</span>
       </button>
 
-      <button type="button" class="kpi-card kpi-violet" id="kpi-card-engine" data-jump-view="rules">
+      <button type="button" class="kpi-card anodized-panel kpi-violet" id="kpi-card-engine" data-jump-view="rules">
         <div class="kpi-head">
           <span class="kpi-label">Rig &amp; Hydrator</span>
           <span class="kpi-badge badge-cyan" id="kpi-hydrated-badge">Live Queue</span>
@@ -199,7 +615,7 @@
          VIEW 1: TACTICAL DROP RADAR
          ================================================================= -->
     <section class="view-section active" id="view-radar" aria-label="Live Wantlist Drop Radar">
-      <div class="controls-panel">
+      <div class="controls-panel machined-plinth">
         <div class="controls-top-row">
           <div class="search-box-wrap">
             <svg class="search-icon ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -294,7 +710,7 @@
 
             <div class="price-slider-wrap">
               <label for="radar-max-price-slider">Max: <strong id="max-price-readout">No Limit</strong></label>
-              <input type="range" id="radar-max-price-slider" class="price-slider" min="25" max="500" step="5" value="500" />
+              <input type="range" id="radar-max-price-slider" class="price-slider audiophile-slider" min="25" max="500" step="5" value="500" />
             </div>
 
             <button type="button" class="btn-ghost-reset" id="btn-quick-reset-filters" hidden>Reset</button>
@@ -329,7 +745,7 @@
          ================================================================= -->
     <section class="view-section" id="view-crate" aria-label="3D Vinyl Crate and Direct-Drive Turntable Studio">
       <div class="crate-studio-grid">
-        <div class="panel-card crate-rack-panel">
+        <div class="panel-card machined-plinth crate-rack-panel">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">3D RECORD STORE CRATE</span>
@@ -356,13 +772,13 @@
 
           <div class="crate-scrubber-bar">
             <button type="button" class="btn-action btn-sm" id="btn-crate-prev" aria-label="Previous sleeve">◀ Prev</button>
-            <input type="range" id="crate-index-slider" class="price-slider crate-slider" min="0" max="10" value="0" aria-label="Crate sleeve index" />
+            <input type="range" id="crate-index-slider" class="price-slider audiophile-slider crate-slider" min="0" max="10" value="0" aria-label="Crate sleeve index" />
             <button type="button" class="btn-action btn-sm" id="btn-crate-next" aria-label="Next sleeve">Next ▶</button>
             <span class="crate-counter-label" id="crate-counter-label">1 / 114</span>
           </div>
         </div>
 
-        <div class="panel-card turntable-deck-panel">
+        <div class="panel-card machined-plinth turntable-deck-panel">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">QUARTZ DIRECT-DRIVE AUDITION DECK // WEBAUDIO DSP</span>
@@ -374,10 +790,12 @@
             </div>
           </div>
 
-          <div class="turntable-chassis">
+          <div class="turntable-chassis anodized-panel">
             <div class="platter-bay">
+              <div class="plinth-edge-bracket-left" aria-hidden="true"></div>
+              <div class="plinth-edge-bracket-right" aria-hidden="true"></div>
               <div class="platter-strobe-ring" id="platter-strobe-ring">
-                <canvas id="turntable-platter-canvas" width="380" height="380" aria-label="Procedural colored vinyl platter"></canvas>
+                <canvas id="turntable-platter-canvas" class="uv-reactive" width="380" height="380" aria-label="Procedural colored vinyl platter"></canvas>
               </div>
               <button type="button" class="turntable-tonearm" id="btn-tonearm-toggle" title="Drop or lift tonearm stylus">
                 <span class="tonearm-pivot"></span>
@@ -411,7 +829,7 @@
 
               <div class="pitch-fader-row">
                 <label for="deck-pitch-slider">Quartz Pitch (±8%)</label>
-                <input type="range" id="deck-pitch-slider" class="price-slider" min="-8" max="8" step="0.5" value="0" />
+                <input type="range" id="deck-pitch-slider" class="price-slider audiophile-slider" min="-8" max="8" step="0.5" value="0" />
                 <button type="button" class="btn-micro" id="btn-pitch-reset">0%</button>
               </div>
 
@@ -437,7 +855,7 @@
          VIEW 3: SNIPER ALPHA (BUNDLE OPTIMIZER, HAGGLE DESK & TARGET WATCH)
          ================================================================= -->
     <section class="view-section" id="view-alpha" aria-label="Sniper Alpha: Combined Shipping Bundles, Make-Offer Strategist &amp; Target Prices">
-      <div class="panel-card" style="margin-bottom: 18px;">
+      <div class="panel-card machined-plinth" style="margin-bottom: 18px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">ALPHA // 01 — COMBINED SHIPPING RADAR</span>
@@ -456,7 +874,7 @@
       </div>
 
       <div class="section-grid-2">
-        <div class="panel-card">
+        <div class="panel-card machined-plinth">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">ALPHA // 02 — HAGGLE CALCULATOR</span>
@@ -470,7 +888,7 @@
           <div class="alpha-haggle-list" id="alpha-haggle-grid"></div>
         </div>
 
-        <div class="panel-card" id="alpha-targets-panel">
+        <div class="panel-card machined-plinth" id="alpha-targets-panel">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">ALPHA // 03 — SNIPE WATCHLIST &amp; BACKTEST</span>
@@ -508,7 +926,7 @@
          VIEW 4: RELIST FORENSICS & BOT WEATHER RADAR
          ================================================================= -->
     <section class="view-section" id="view-forensics" aria-label="Relist Forensics and Production Log Audit">
-      <div class="panel-card forensics-weather-banner" id="forensics-weather-banner">
+      <div class="panel-card machined-plinth forensics-weather-banner" id="forensics-weather-banner">
         <div class="weather-left">
           <span class="panel-kicker">GRAIL WEATHER CLOCK // LIVE BOT WINDOW MONITOR</span>
           <h2 id="weather-headline">Calculating Current Bot Burst Window...</h2>
@@ -517,7 +935,7 @@
       </div>
 
       <div class="section-grid-2">
-        <div class="panel-card">
+        <div class="panel-card machined-plinth">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">TELEMETRY // 01</span>
@@ -531,7 +949,7 @@
           <div class="chart-stage" id="chart-hourly-alerts"></div>
         </div>
 
-        <div class="panel-card">
+        <div class="panel-card machined-plinth">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">TELEMETRY // 02</span>
@@ -546,7 +964,7 @@
         </div>
       </div>
 
-      <div class="panel-card" style="margin-bottom: 18px;">
+      <div class="panel-card machined-plinth" style="margin-bottom: 18px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">BLUFF DETECTOR // TRAJECTORY AUDIT</span>
@@ -557,7 +975,7 @@
         <div class="forensics-bluff-grid" id="forensics-bluff-grid"></div>
       </div>
 
-      <div class="panel-card" style="margin-bottom: 20px;">
+      <div class="panel-card machined-plinth" style="margin-bottom: 20px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">SELLER RADAR</span>
@@ -590,7 +1008,7 @@
         </div>
       </div>
 
-      <div class="panel-card">
+      <div class="panel-card machined-plinth">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">CHURN INDEX</span>
@@ -621,7 +1039,7 @@
          VIEW 5: SIBLING VAULT SPLIT-SCREEN SHOWDOWN & WANTLIST PRUNER
          ================================================================= -->
     <section class="view-section" id="view-vault" aria-label="Collection Vault Split-Screen Showdown and Live Wantlist Cross-Check">
-      <div class="panel-card" style="margin-bottom: 18px;">
+      <div class="panel-card machined-plinth" style="margin-bottom: 18px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">VARIANT HUNTER // SPLIT-SCREEN SHOWDOWN</span>
@@ -641,7 +1059,7 @@
         <div class="showdown-stage" id="vault-showdown-stage"></div>
       </div>
 
-      <div class="panel-card vault-hero-card">
+      <div class="panel-card machined-plinth vault-hero-card">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">VAULT CROSS-CHECK // LIVE WANTLIST AUDIT</span>
@@ -718,7 +1136,7 @@
         </details>
       </div>
 
-      <div class="panel-card">
+      <div class="panel-card machined-plinth">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">VARIANT HUNTER // ALL TARGETS</span>
@@ -747,7 +1165,7 @@
          VIEW 6: TWO-WAY GITHUB REMOTE CONTROL, DISCOGS API & RULE BUILDER
          ================================================================= -->
     <section class="view-section" id="view-rules" aria-label="Two-Way GitHub Sync, Live Discogs API Console &amp; Sniper Rules">
-      <div class="panel-card" style="margin-bottom: 18px;">
+      <div class="panel-card machined-plinth" style="margin-bottom: 18px;">
         <div class="panel-title">
           <div class="panel-title-left">
             <span class="panel-kicker">BREAKING THE STATIC AIRGAP // TWO-WAY REPO SYNC</span>
@@ -797,7 +1215,7 @@
       </div>
 
       <div class="section-grid-2">
-        <div class="panel-card">
+        <div class="panel-card machined-plinth">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">OFFICIAL REST API v2.0 + TOKEN-BUCKET HYDRATOR</span>
@@ -846,7 +1264,7 @@
           <div class="code-block" id="api-console-output">// Ready. Click "Save &amp; Verify Identity" or "Test Price Suggestions" to query https://api.discogs.com live.</div>
         </div>
 
-        <div class="panel-card">
+        <div class="panel-card machined-plinth">
           <div class="panel-title">
             <div class="panel-title-left">
               <span class="panel-kicker">ENGINE CONFIGURATION</span>
@@ -908,8 +1326,8 @@
   </main>
 
   <!-- CMD/CTRL+K TACTICAL COMMAND PALETTE -->
-  <div class="modal-backdrop" id="cmd-palette-backdrop" hidden>
-    <div class="inspect-modal cmd-palette-modal" role="dialog" aria-modal="true" aria-label="Tactical Command Palette">
+  <div class="modal-backdrop cmd-palette-backdrop" id="cmd-palette-backdrop" hidden>
+    <div class="inspect-modal cmd-palette-modal machined-plinth" role="dialog" aria-modal="true" aria-label="Tactical Command Palette">
       <div class="cmd-palette-header">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="search" id="cmd-palette-input" class="cmd-palette-input" placeholder="Jump to album, seller, command, lighting mode, or view..." autocomplete="off" />
@@ -921,7 +1339,7 @@
 
   <!-- PRESSING QUICK-INSPECT + HAGGLE + TRAJECTORY LIGHTBOX MODAL -->
   <div class="modal-backdrop" id="inspect-modal-backdrop" hidden>
-    <div class="inspect-modal" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title">
+    <div class="inspect-modal machined-plinth" role="dialog" aria-modal="true" aria-labelledby="inspect-modal-title">
       <button type="button" class="modal-close-btn" id="btn-close-inspect-modal" aria-label="Close pressing inspector">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -931,7 +1349,7 @@
 
   <!-- QUICK API & GITHUB SYNC CONNECT MODAL -->
   <div class="modal-backdrop" id="api-modal-backdrop" hidden>
-    <div class="inspect-modal api-quick-modal" role="dialog" aria-modal="true" aria-labelledby="api-modal-heading">
+    <div class="inspect-modal api-quick-modal machined-plinth" role="dialog" aria-modal="true" aria-labelledby="api-modal-heading">
       <button type="button" class="modal-close-btn" id="btn-close-api-modal" aria-label="Close API connect dialog">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
@@ -968,7 +1386,7 @@
       <div class="transport-track-info">
         <img src="" alt="Track cover" class="transport-thumb" id="audio-player-thumb" />
         <div class="transport-eq" id="audio-eq-bars" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          <span class="eq-bar-1"></span><span class="eq-bar-2"></span><span class="eq-bar-3"></span><span class="eq-bar-1"></span><span class="eq-bar-2"></span><span class="eq-bar-3"></span><span class="eq-bar-1"></span><span class="eq-bar-2"></span>
         </div>
         <div class="transport-text-wrap">
           <div class="transport-title" id="audio-player-title">Select a record to audition</div>

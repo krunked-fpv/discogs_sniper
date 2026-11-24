@@ -15,10 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,15 +27,42 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Compile Sniper v3.0 State & Stage Static Web Artifact (_site)
+      # scripts/build_dashboard.py & unit tests use Python stdlib only — never install Playwright/Chromium in CI.
+      - name: Compile Sniper State & Stage Static Web Artifact (_site)
         env:
           DISCOGS_USERNAME: "krunked"
           DISCOGS_TOKEN: ${{ secrets.DISCOGS_TOKEN }}
         run: |
-          python scripts/build_dashboard.py --sync-wantlist --stage-dir _site
+          set -euo pipefail
+          if [ -n "${DISCOGS_TOKEN:-}" ]; then
+            echo "DISCOGS_TOKEN secret present; attempting live wantlist sync + static build..."
+            if ! python scripts/build_dashboard.py --sync-wantlist --stage-dir _site; then
+              echo "::warning::Live wantlist sync failed; falling back to offline static build."
+              python scripts/build_dashboard.py --stage-dir _site
+            fi
+          else
+            echo "DISCOGS_TOKEN secret not configured; running offline static build..."
+            python scripts/build_dashboard.py --stage-dir _site
+          fi
           python scripts/build_dashboard.py --check
 
-      - name: Run Sniper v3.0 Unit & Forensic Integrity Tests
+      - name: Verify staged static artifact (_site)
+        run: |
+          set -euo pipefail
+          test -s _site/index.html || { echo "::error::_site/index.html is missing or empty!"; exit 1; }
+          test -f _site/.nojekyll || { echo "::error::_site/.nojekyll is missing!"; exit 1; }
+          for asset in manifest.webmanifest sw.js favicon.svg favicon.ico favicon-32x32.png apple-touch-icon.png data/sniper_state.json; do
+            test -s "_site/$asset" || { echo "::error::Expected public static asset missing or empty: _site/$asset"; exit 1; }
+          done
+          for forbidden in .env .env.local discogs_sniper.py sniper.log sniper.lock seed_snapshot.json sniper_config.json chrome_discogs_profile; do
+            if [ -e "_site/$forbidden" ]; then
+              echo "::error::Private/backend file leaked into _site/: $forbidden"
+              exit 1
+            fi
+          done
+          echo "[ok] Verified _site/index.html ($(wc -c < _site/index.html) bytes) and clean public PWA asset staging."
+
+      - name: Run Sniper Unit & Forensic Integrity Tests
         run: |
           python -m unittest discover -s tests -p "test_*.py" -v
 
@@ -50,6 +74,14 @@ jobs:
         with:
           path: "_site"
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

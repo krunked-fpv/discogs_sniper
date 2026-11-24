@@ -38,7 +38,106 @@ const STORAGE_KEYS = {
   LIGHTING_MODE: "krunked_sniper_lighting_v3",
   AUTO_HYDRATE: "krunked_sniper_autohydrate_v3",
   RADAR_LAYOUT: "krunked_sniper_radar_layout_v3",
+  UI_PREFS: "krunked_sniper_ui_prefs_v3",
 };
+
+const HTML_ENTITY_MAP = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+  ndash: "–",
+  mdash: "—",
+  hellip: "…",
+  lsquo: "‘",
+  rsquo: "’",
+  ldquo: "“",
+  rdquo: "”",
+  copy: "©",
+  reg: "®",
+  trade: "™",
+  euro: "€",
+  pound: "£",
+  yen: "¥",
+  times: "×",
+  bull: "•",
+  middot: "·",
+};
+
+function decodeHtmlEntitiesOnce(text) {
+  return text.replace(/&(#x[0-9a-fA-F]+|#\d+|[a-zA-Z][a-zA-Z0-9]+);/g, (match, body) => {
+    if (body[0] === "#") {
+      const isHex = body[1] === "x" || body[1] === "X";
+      const codePoint = parseInt(isHex ? body.slice(2) : body.slice(1), isHex ? 16 : 10);
+      if (Number.isFinite(codePoint) && codePoint > 0 && codePoint <= 0x10ffff) {
+        try {
+          return String.fromCodePoint(codePoint);
+        } catch (_) {
+          return match;
+        }
+      }
+      return match;
+    }
+    const mapped = HTML_ENTITY_MAP[body.toLowerCase()];
+    return mapped !== undefined ? mapped : match;
+  });
+}
+
+function decodeHtmlEntities(str, maxDepth = 12) {
+  let cur = String(str ?? "");
+  if (!cur.includes("&")) return cur;
+  for (let i = 0; i < maxDepth; i += 1) {
+    const next = decodeHtmlEntitiesOnce(cur);
+    if (next === cur) break;
+    cur = next;
+    if (!cur.includes("&")) break;
+  }
+  return cur;
+}
+
+function normalizeSniperStateEntities(state) {
+  if (!state || typeof state !== "object") return state;
+  const decodeFields = (obj, keys) => {
+    if (!obj || typeof obj !== "object") return;
+    for (const k of keys) {
+      if (typeof obj[k] === "string" && obj[k].includes("&")) {
+        obj[k] = decodeHtmlEntities(obj[k]);
+      }
+    }
+  };
+  if (Array.isArray(state.listings)) {
+    for (const item of state.listings) {
+      decodeFields(item, ["title", "artist", "album", "variant", "seller_info", "raw_description", "clean_seller_note"]);
+      if (item.wax_shader) decodeFields(item.wax_shader, ["wax_name"]);
+      if (item.offer_strategy) decodeFields(item.offer_strategy, ["buyer_pitch"]);
+      if (item.vault_owned_detail) decodeFields(item.vault_owned_detail, ["format_string", "title", "artist"]);
+    }
+  }
+  if (Array.isArray(state.seller_bundles)) {
+    for (const b of state.seller_bundles) {
+      decodeFields(b, ["seller", "policy_label"]);
+      if (Array.isArray(b.items)) {
+        for (const it of b.items) decodeFields(it, ["title", "artist", "album", "variant"]);
+      }
+    }
+  }
+  if (Array.isArray(state.seller_leaderboard)) {
+    for (const s of state.seller_leaderboard) decodeFields(s, ["seller", "top_title"]);
+  }
+  if (Array.isArray(state.release_churn_leaderboard)) {
+    for (const r of state.release_churn_leaderboard) decodeFields(r, ["title", "variant", "top_seller"]);
+  }
+  const vb = state.vault_bridge;
+  if (vb) {
+    for (const r of vb.exact_owned_on_wantlist || []) decodeFields(r, ["title", "artist", "album", "variant", "owned_format"]);
+    for (const r of vb.variant_upgrades_on_wantlist || []) decodeFields(r, ["title", "artist", "album", "wantlist_variant", "owned_format"]);
+  }
+  return state;
+}
+
+normalizeSniperStateEntities(SNIPER_STATE);
 
 const SIBLING_VAULT_BASE_URL = "https://krunked-fpv.github.io/discogs_collection/";
 const SIBLING_COLLECTION_JSON_URL = `${SIBLING_VAULT_BASE_URL}data/collection.json`;
@@ -116,24 +215,59 @@ if (prebakedSync.synced) {
   initialLiveWantIds = new Set(stillOn);
 }
 
+function loadSavedUiPrefs() {
+  const raw = safeGetStorage(STORAGE_KEYS.UI_PREFS);
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (_) {
+    return {};
+  }
+}
+
+const savedUiPrefs = loadSavedUiPrefs();
 const savedLight = safeGetStorage(STORAGE_KEYS.LIGHTING_MODE);
-const initialLighting = savedLight === "uv" || savedLight === "tube" ? savedLight : "neon";
+const initialLighting = savedLight === "uv" || savedLight === "tube" ? savedLight : "obsidian";
 
 const appState = {
   activeView: "radar",
   lightingMode: initialLighting,
   radarLayout: safeGetStorage(STORAGE_KEYS.RADAR_LAYOUT) === "matrix" ? "matrix" : "cards",
   searchQuery: "",
-  scopeMode: "ALL",
-  dedupEnabled: true,
-  hideRecordmule: false,
-  hideSold: false,
-  conditionFilter: "ALL",
-  sortMode: "SNAPSHOT_ORDER",
-  categoryFilter: "ALL",
+  scopeMode: savedUiPrefs.scopeMode === "LIVE_P1" ? "LIVE_P1" : "ALL",
+  dedupEnabled: savedUiPrefs.dedupEnabled !== false,
+  hideRecordmule: Boolean(savedUiPrefs.hideRecordmule),
+  hideSold: Boolean(savedUiPrefs.hideSold),
+  conditionFilter: ["ALL", "M", "NM", "VG+"].includes(savedUiPrefs.conditionFilter) ? savedUiPrefs.conditionFilter : "ALL",
+  sortMode: [
+    "SNAPSHOT_ORDER",
+    "DEAL_SCORE",
+    "PRICE_ASC",
+    "PRICE_DESC",
+    "TARGET_HITS",
+    "BUNDLE_SAVINGS",
+    "MOST_RELISTED",
+  ].includes(savedUiPrefs.sortMode)
+    ? savedUiPrefs.sortMode
+    : "SNAPSHOT_ORDER",
+  categoryFilter: [
+    "ALL",
+    "MISSING_GRAIL",
+    "STEALS",
+    "PRICE_DROP",
+    "BUNDLE_READY",
+    "MAKE_OFFER",
+    "TARGET_HITS",
+    "VARIANT_UPGRADE",
+    "ALREADY_OWNED",
+  ].includes(savedUiPrefs.categoryFilter)
+    ? savedUiPrefs.categoryFilter
+    : "ALL",
   sliderMaxUsd: datasetMaxPrice,
   maxPriceUsd: datasetMaxPrice,
   focusedListingId: null,
+  cmdPaletteSelectedIdx: 0,
   mutedSellers: new Set(initialMuted.map((s) => String(s).trim().toLowerCase()).filter(Boolean)),
   priceDropOnlySellers: new Set(initialDropOnly.map((s) => String(s).trim().toLowerCase()).filter(Boolean)),
   targetPricesByRelease: { ...initialTargetPrices },
@@ -209,6 +343,21 @@ function savePrunedReleaseIds() {
   safeSetStorage(STORAGE_KEYS.PRUNED, JSON.stringify([...appState.prunedReleaseIds]));
 }
 
+function saveUiPrefs() {
+  safeSetStorage(
+    STORAGE_KEYS.UI_PREFS,
+    JSON.stringify({
+      scopeMode: appState.scopeMode,
+      dedupEnabled: appState.dedupEnabled,
+      hideRecordmule: appState.hideRecordmule,
+      hideSold: appState.hideSold,
+      conditionFilter: appState.conditionFilter,
+      sortMode: appState.sortMode,
+      categoryFilter: appState.categoryFilter,
+    })
+  );
+}
+
 function saveConfigOverrides() {
   const cfg = buildCurrentConfigObject();
   safeSetStorage(
@@ -277,12 +426,12 @@ function formatRelativeAge(isoStr) {
 
 function hexToRgba(hex, alpha) {
   const clean = String(hex || "").replace("#", "");
-  if (clean.length !== 6) return `rgba(0, 240, 255, ${alpha})`;
+  if (clean.length !== 6) return `rgba(34, 211, 238, ${alpha})`;
   const r = parseInt(clean.slice(0, 2), 16);
   const g = parseInt(clean.slice(2, 4), 16);
   const b = parseInt(clean.slice(4, 6), 16);
   if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) {
-    return `rgba(0, 240, 255, ${alpha})`;
+    return `rgba(34, 211, 238, ${alpha})`;
   }
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
@@ -445,23 +594,40 @@ function recomputeListingDerivedFields(item) {
 }
 
 function applyLightingMode() {
-  document.body.classList.remove("mode-neon", "mode-uv", "mode-tube");
-  document.body.classList.add(`mode-${appState.lightingMode}`);
+  document.body.classList.remove("mode-neon", "mode-obsidian", "mode-uv", "uv-blacklight", "mode-tube");
+  document.body.classList.add("ambient-stage-bg");
+  if (appState.lightingMode === "uv") {
+    document.body.classList.add("mode-uv", "uv-blacklight");
+  } else if (appState.lightingMode === "tube") {
+    document.body.classList.add("mode-tube");
+  } else {
+    document.body.classList.add("mode-obsidian");
+  }
+  const toggleBtn = document.getElementById("btn-toggle-uv");
+  if (toggleBtn) {
+    toggleBtn.setAttribute("aria-pressed", String(appState.lightingMode === "uv"));
+    toggleBtn.dataset.lightingMode = appState.lightingMode;
+  }
   const lbl = document.getElementById("uv-mode-label");
   if (lbl) {
     lbl.textContent =
-      appState.lightingMode === "uv" ? "UV MODE" : appState.lightingMode === "tube" ? "TUBE AMP" : "NEON";
+      appState.lightingMode === "uv" ? "UV 395nm" : appState.lightingMode === "tube" ? "TUBE AMP" : "OBSIDIAN";
   }
   safeSetStorage(STORAGE_KEYS.LIGHTING_MODE, appState.lightingMode);
 }
 
 function setStageChromaFromWax(wax) {
   if (!wax || appState.lightingMode === "tube") return;
-  const primary = wax.primary && wax.primary !== "#181a1f" ? wax.primary : "#00f0ff";
-  const accent = wax.accent || "#ff1f8f";
-  const boost = appState.lightingMode === "uv" ? 0.3 : 0.16;
-  document.documentElement.style.setProperty("--stage-c1", hexToRgba(primary, boost));
-  document.documentElement.style.setProperty("--stage-c2", hexToRgba(accent, boost * 0.8));
+  const primary = wax.primary && wax.primary !== "#181a1f" ? wax.primary : "#22d3ee";
+  const secondary = wax.secondary && wax.secondary !== "#0d0f12" ? wax.secondary : "#a855f7";
+  const accent = wax.accent || "#f43f5e";
+  const boost = appState.lightingMode === "uv" ? 0.34 : 0.22;
+  const root = document.documentElement.style;
+  root.setProperty("--stage-c1", hexToRgba(primary, boost));
+  root.setProperty("--stage-c2", hexToRgba(secondary, boost * 0.85));
+  root.setProperty("--glow-primary", hexToRgba(primary, boost * 1.15));
+  root.setProperty("--glow-secondary", hexToRgba(secondary, boost));
+  root.setProperty("--glow-accent", hexToRgba(accent, boost * 0.72));
 }
 
 
@@ -477,19 +643,21 @@ function createSeededRng(seedVal) {
 }
 
 function renderFallbackSleeveDataUri(artist, album, primaryColor) {
-  const initials = `${(artist || "D")[0] || "D"}${(album || "S")[0] || "S"}`.toUpperCase();
-  const accent = primaryColor && primaryColor !== "#181a1f" ? primaryColor : "#00f0ff";
+  const cleanArtist = decodeHtmlEntities(artist || "D");
+  const cleanAlbum = decodeHtmlEntities(album || "S");
+  const initials = `${cleanArtist[0] || "D"}${cleanAlbum[0] || "S"}`.toUpperCase();
+  const accent = primaryColor && primaryColor !== "#181a1f" ? primaryColor : "#22d3ee";
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
     <defs>
       <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#121829"/>
-        <stop offset="100%" stop-color="#05070e"/>
+        <stop offset="0%" stop-color="#111524"/>
+        <stop offset="100%" stop-color="#05060b"/>
       </linearGradient>
     </defs>
     <rect width="160" height="160" fill="url(#g)"/>
     <circle cx="80" cy="80" r="56" fill="none" stroke="${accent}" stroke-opacity="0.34" stroke-width="1.5"/>
     <circle cx="80" cy="80" r="38" fill="none" stroke="${accent}" stroke-opacity="0.18" stroke-width="1"/>
-    <text x="80" y="89" text-anchor="middle" fill="${accent}" font-family="Chakra Petch, sans-serif" font-weight="700" font-size="28" letter-spacing="3">${escapeHtml(initials)}</text>
+    <text x="80" y="89" text-anchor="middle" fill="${accent}" font-family="Space Grotesk, Inter, sans-serif" font-weight="700" font-size="28" letter-spacing="3">${escapeHtml(initials)}</text>
   </svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
@@ -945,8 +1113,8 @@ function drawFftSpectrumFrame(nowMs) {
 
   const barW = (w - (bands - 1) * 3) / bands;
   const isTube = appState.lightingMode === "tube";
-  const cTop = isTube ? "#ffb020" : "#ff1f8f";
-  const cBot = isTube ? "#19f08a" : "#00f0ff";
+  const cTop = isTube ? "#f59e0b" : "#c026d3";
+  const cBot = isTube ? "#10b981" : "#22d3ee";
   const grad = ctx.createLinearGradient(0, 0, 0, h);
   grad.addColorStop(0, cTop);
   grad.addColorStop(1, cBot);
@@ -1186,11 +1354,11 @@ async function auditionListing(listingId, trackIndexOverride = null) {
     if (thumbEl) thumbEl.src = previewInfo.artwork;
   }
 
-  const trackTitleText = `${previewInfo.artistName || item.artist} — "${previewInfo.trackName}"`;
+  const trackTitleText = `${decodeHtmlEntities(previewInfo.artistName || item.artist)} — "${decodeHtmlEntities(previewInfo.trackName)}"`;
   if (titleEl) titleEl.textContent = trackTitleText;
-  if (subEl) subEl.textContent = `${previewInfo.source} // ${item.wax_shader?.wax_name || item.variant} (${item.total_price})`;
+  if (subEl) subEl.textContent = `${previewInfo.source} // ${decodeHtmlEntities(item.wax_shader?.wax_name || item.variant)} (${item.total_price})`;
   const deckTrackEl = document.getElementById("deck-now-track");
-  if (deckTrackEl) deckTrackEl.textContent = `▶ ${previewInfo.trackName} (${previewInfo.source})`;
+  if (deckTrackEl) deckTrackEl.textContent = `▶ ${decodeHtmlEntities(previewInfo.trackName)} (${previewInfo.source})`;
 
   playPreviewStreamWithFallback(audio, previewInfo.previewUrl, previewInfo.corsCapable).catch(() => {
     if (subEl) subEl.textContent = "Click Play to start audio (autoplay blocked by browser)";
@@ -1745,7 +1913,7 @@ async function pullLiveRepoSnapshotFromGitHub({ silent = false } = {}) {
     if (stateResp.status === "fulfilled" && stateResp.value.ok) {
       const remoteState = await stateResp.value.json();
       if (remoteState && Array.isArray(remoteState.listings)) {
-        SNIPER_STATE = remoteState;
+        SNIPER_STATE = normalizeSniperStateEntities(remoteState);
         for (const item of SNIPER_STATE.listings) {
           recomputeListingDerivedFields(item);
         }
@@ -2015,7 +2183,7 @@ function renderPriceSparklineSVG(points, width = 108, height = 26) {
   });
   const first = vals[0];
   const last = vals[vals.length - 1];
-  const stroke = last < first ? "#39ff88" : maxV > minV ? "#ffb800" : "#00f0ff";
+  const stroke = last < first ? "#10b981" : maxV > minV ? "#f59e0b" : "#22d3ee";
   const lastPt = coords[coords.length - 1].split(",");
   return `<svg viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" aria-hidden="true" style="vertical-align:middle;">
     <polyline fill="none" stroke="${stroke}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" points="${coords.join(" ")}" />
@@ -2077,6 +2245,7 @@ function resetAllRadarFilters() {
     b.classList.toggle("active", b.dataset.filter === "ALL");
   });
 
+  saveUiPrefs();
   renderRadarGrid();
 }
 
@@ -2284,7 +2453,13 @@ function renderCardDrawersHtml(item) {
 }
 
 function renderDropCard(item) {
-  const fallbackUri = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
+  const artistClean = decodeHtmlEntities(item.artist);
+  const albumClean = decodeHtmlEntities(item.album);
+  const titleClean = decodeHtmlEntities(item.title);
+  const variantClean = decodeHtmlEntities(item.variant);
+  const waxNameClean = decodeHtmlEntities(item.wax_shader?.wax_name || variantClean);
+  const sellerClean = decodeHtmlEntities(item.seller_info);
+  const fallbackUri = renderFallbackSleeveDataUri(artistClean, albumClean, item.wax_shader?.primary);
   const coverSrc = resolveCoverSrc(item);
   const needsHydration =
     !item.cover_image_url && !appState.artCache[item.release_id] && !appState.artCache[item.norm_album_key];
@@ -2293,7 +2468,7 @@ function renderDropCard(item) {
   const isFocused = appState.focusedListingId === item.id;
   const isSold = isListingSold(item);
   const mkt = item.market_stats || {};
-  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#00f0ff";
+  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#22d3ee";
   const waxGlow = hexToRgba(waxPrimary, 0.24);
   const liveBench = appState.liveApiResults[item.id]?.suggested_usd;
   const benchDisplay = liveBench ? formatUsd(liveBench) : mkt.condition_suggested_formatted || "Live API";
@@ -2312,18 +2487,19 @@ function renderDropCard(item) {
 
   const collectorBadgesHtml = (item.collector_badges || [])
     .slice(0, 4)
-    .map((b) => `<span class="tag-pill badge-${escapeHtml(b.tone)}">${escapeHtml(b.label)}</span>`)
+    .map((b) => `<span class="tag-pill badge-${escapeHtml(b.tone)}">${escapeHtml(decodeHtmlEntities(b.label))}</span>`)
     .join("");
 
-  const cleanNote =
+  const rawNote =
     item.clean_seller_note !== undefined
       ? item.clean_seller_note
-      : item.raw_description && item.raw_description.toLowerCase() !== item.variant.toLowerCase()
+      : item.raw_description && item.raw_description.toLowerCase() !== (item.variant || "").toLowerCase()
       ? item.raw_description
       : "";
+  const cleanNote = decodeHtmlEntities(rawNote);
 
   return `
-    <article class="drop-card ${vaultCardCls} ${isPlaying ? "card-playing" : ""} ${isFocused ? "card-kbd-focused" : ""} ${isSold ? "card-sold" : ""}" style="--wax-glow:${waxGlow};" data-listing-id="${escapeHtml(item.id)}" data-release-id="${escapeHtml(item.release_id)}" data-artist="${escapeHtml(item.artist)}" data-album="${escapeHtml(item.album)}">
+    <article class="drop-card card-record ${vaultCardCls} ${isPlaying ? "card-playing" : ""} ${isFocused ? "card-kbd-focused" : ""} ${isSold ? "card-sold" : ""}" style="--wax-glow:${waxGlow};--card-wax-glow:${waxGlow};" data-listing-id="${escapeHtml(item.id)}" data-release-id="${escapeHtml(item.release_id)}" data-artist="${escapeHtml(artistClean)}" data-album="${escapeHtml(albumClean)}">
       <div class="drop-card-top">
         <div class="status-pills">
           ${renderVaultStatusPill(item)}
@@ -2332,40 +2508,38 @@ function renderDropCard(item) {
         <span class="listing-id-label">#${escapeHtml(item.id)}</span>
       </div>
 
-      <div class="drop-card-hero">
-        <button type="button" class="artwork-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect full vinyl pressing, Haggle &amp; Target Price">
-          <div class="sleeve-frame">
-            <img
-              src="${escapeHtml(coverSrc)}"
-              data-fallback-src="${escapeHtml(fallbackUri)}"
-              alt="${escapeHtml(item.title)}"
-              class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
-              loading="lazy"
-              data-release-id="${escapeHtml(item.release_id)}"
-              data-norm-key="${escapeHtml(item.norm_album_key)}"
-              data-artist="${escapeHtml(item.artist)}"
-              data-album="${escapeHtml(item.album)}"
-            />
-          </div>
-          <div class="vinyl-platter-wrap ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
-            ${renderVinylDiscSVG(item.wax_shader, item.id, 86)}
-          </div>
-        </button>
-
-        <div class="drop-meta">
-          <div class="drop-artist">${escapeHtml(item.artist)}</div>
-          <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(item.album)}">
-            <h2 class="drop-album">${escapeHtml(getDisplayAlbumTitle(item))}</h2>
-          </button>
-          <div class="drop-variant" title="${escapeHtml(item.variant)}">
-            <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
-            <span class="drop-variant-text">${escapeHtml(item.wax_shader?.wax_name || item.variant)}</span>
-          </div>
-          ${collectorBadgesHtml ? `<div class="collector-badges-row">${collectorBadgesHtml}</div>` : ""}
+      <button type="button" class="artwork-stage sleeve-peek-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect full vinyl pressing, Haggle &amp; Target Price">
+        <div class="sleeve-frame sleeve-peek-jacket holo-sleeve">
+          <img
+            src="${escapeHtml(coverSrc)}"
+            data-fallback-src="${escapeHtml(fallbackUri)}"
+            alt="${escapeHtml(titleClean)}"
+            class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
+            loading="lazy"
+            data-release-id="${escapeHtml(item.release_id)}"
+            data-norm-key="${escapeHtml(item.norm_album_key)}"
+            data-artist="${escapeHtml(artistClean)}"
+            data-album="${escapeHtml(albumClean)}"
+          />
         </div>
+        <div class="vinyl-platter-wrap sleeve-peek-disc uv-reactive ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
+          ${renderVinylDiscSVG(item.wax_shader, item.id, 120)}
+        </div>
+      </button>
+
+      <div class="drop-meta">
+        <div class="drop-artist">${escapeHtml(artistClean)}</div>
+        <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(albumClean)}">
+          <h2 class="drop-album">${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</h2>
+        </button>
+        <div class="drop-variant" title="${escapeHtml(variantClean)}">
+          <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
+          <span class="drop-variant-text">${escapeHtml(waxNameClean)}</span>
+        </div>
+        ${collectorBadgesHtml ? `<div class="collector-badges-row">${collectorBadgesHtml}</div>` : ""}
       </div>
 
-      <div class="price-matrix">
+      <div class="price-matrix anodized-panel">
         <div class="matrix-cell">
           <span class="matrix-label">Total Shipped</span>
           <span class="matrix-val matrix-val-price">${escapeHtml(item.total_price)}</span>
@@ -2391,9 +2565,9 @@ function renderDropCard(item) {
 
       <div class="seller-strip">
         <div class="seller-left">
-          <a href="https://www.discogs.com/seller/${encodeURIComponent(item.seller_info)}/profile" target="_blank" rel="noopener" class="seller-link">${escapeHtml(item.seller_info)}</a>
-          ${item.seller_rating ? `<span style="color:var(--neon-lime);font-family:var(--font-mono);font-size:0.67rem;">${escapeHtml(item.seller_rating)}</span>` : ""}
-          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(item.seller_info)}" title="Mute all listings from ${escapeHtml(item.seller_info)}">Mute</button>
+          <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener" class="seller-link">${escapeHtml(sellerClean)}</a>
+          ${item.seller_rating ? `<span style="color:var(--mint-lock, var(--neon-lime));font-family:var(--font-mono);font-size:0.67rem;">${escapeHtml(item.seller_rating)}</span>` : ""}
+          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(sellerClean)}" title="Mute all listings from ${escapeHtml(sellerClean)}">Mute</button>
         </div>
         <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">
           ${escapeHtml((item.alerted_at || "").replace("T", " ").slice(0, 16) || item.listed_age)}
@@ -2414,11 +2588,8 @@ function renderDropCard(item) {
         <button type="button" class="btn-action btn-audition ${isPlaying ? "playing" : ""}" data-audition-id="${escapeHtml(item.id)}" title="Audition 30-second studio preview (Space)">
           ${isPlaying ? ICONS.stop : ICONS.play}<span>${isPlaying ? "Stop" : "30s"}</span>
         </button>
-        <button type="button" class="btn-action" data-open-deck-id="${escapeHtml(item.id)}" title="Load onto 3D Turntable Deck">
-          <span>Deck</span>
-        </button>
         <button type="button" class="btn-action" data-live-api-id="${escapeHtml(item.id)}" title="Verify live status &amp; Discogs API price suggestions">
-          ${ICONS.bolt}
+          ${ICONS.bolt}<span>API</span>
         </button>
       </div>
     </article>
@@ -2471,7 +2642,7 @@ function renderMatrixTapeTable(filtered) {
     .join("");
 
   return `
-    <div class="matrix-tape-wrap">
+    <div class="matrix-tape-wrap machined-plinth">
       <table class="data-table">
         <thead>
           <tr>
@@ -2661,15 +2832,15 @@ function renderCrateStudio() {
     const fallback = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
 
     cardsHtml.push(`
-      <div class="crate-sleeve-card ${offset === 0 ? "is-active" : ""} ${isFoil ? "is-foil" : ""}"
+      <div class="crate-sleeve-card holo-sleeve ${offset === 0 ? "is-active" : ""} ${isFoil ? "is-foil" : ""}"
            data-crate-pos="${i}"
            style="z-index:${zIndex};opacity:${opacity};transform:translate(-50%, -50%) translateX(${tx}px) translateZ(${tz}px) rotateY(${ry}deg) scale(${scale});">
-        <img class="crate-sleeve-art" src="${escapeHtml(cover)}" data-fallback-src="${escapeHtml(fallback)}" alt="${escapeHtml(item.title)}" />
+        <img class="crate-sleeve-art" src="${escapeHtml(cover)}" data-fallback-src="${escapeHtml(fallback)}" alt="${escapeHtml(decodeHtmlEntities(item.title))}" />
         <div class="crate-sleeve-footer">
-          <div class="crate-sleeve-title">${escapeHtml(item.artist)} — ${escapeHtml(getDisplayAlbumTitle(item))}</div>
+          <div class="crate-sleeve-title">${escapeHtml(decodeHtmlEntities(item.artist))} — ${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</div>
           <div class="crate-sleeve-sub">
             <span>${escapeHtml(item.total_price)}</span>
-            <span style="color:var(--neon-cyan);">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</span>
+            <span style="color:var(--quartz-cyan, var(--neon-cyan));">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</span>
           </div>
         </div>
       </div>`);
@@ -2800,7 +2971,7 @@ function renderAlphaBundles() {
         .join("");
 
       return `
-        <article class="bundle-card">
+        <article class="bundle-card anodized-panel">
           <div class="bundle-card-head">
             <div>
               <a href="${escapeHtml(sanitizeHttpUrl(b.seller_url))}" target="_blank" rel="noopener" style="font-family:var(--font-mono);font-weight:700;font-size:0.95rem;color:#fff;">
@@ -2875,7 +3046,7 @@ function renderAlphaHaggleDesk() {
         .join("");
 
       return `
-        <article class="haggle-card">
+        <article class="haggle-card anodized-panel">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
             <div>
               <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" style="color:#fff;font-weight:700;font-size:0.92rem;">
@@ -2907,8 +3078,8 @@ function renderAlphaHaggleDesk() {
 
           <div class="pitch-fader-row">
             <span>Custom Item Offer:</span>
-            <input type="range" class="price-slider" min="${minOffer}" max="${maxOffer}" step="0.5" value="${curOffer.toFixed(2)}" data-offer-slider-id="${escapeHtml(item.id)}" />
-            <strong style="color:var(--neon-lime);">${formatUsd(curOffer)}</strong>
+            <input type="range" class="price-slider audiophile-slider" min="${minOffer}" max="${maxOffer}" step="0.5" value="${curOffer.toFixed(2)}" data-offer-slider-id="${escapeHtml(item.id)}" />
+            <strong style="color:var(--mint-lock, var(--neon-lime));">${formatUsd(curOffer)}</strong>
           </div>
 
           <div class="card-actions">
@@ -3133,24 +3304,24 @@ function renderForensicsView() {
     const flatBots = dedup.filter((x) => x.relist_behavior === "FLATLINE_BOT").length;
     const singles = dedup.filter((x) => x.relist_behavior === "SINGLE_DROP").length;
     bluffGrid.innerHTML = `
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Genuine Price Cuts</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-lime);">${genuineCuts}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--mint-lock, var(--neon-lime));">${genuineCuts}</div>
         <div class="matrix-sub">Strictly lower than historical peak</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Yo-Yo Bluff Groups</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-amber);">${yoyoBluffs}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--strobe-amber, var(--neon-amber));">${yoyoBluffs}</div>
         <div class="matrix-sub">Price bounced without true floor cut</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Flatline Bot Spam</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-crimson);">${flatBots}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--signal-rose, var(--neon-crimson));">${flatBots}</div>
         <div class="matrix-sub">Zero price change across relist IDs</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Clean Single Drops</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-cyan);">${singles}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--quartz-cyan, var(--neon-cyan));">${singles}</div>
         <div class="matrix-sub">First-time listings with zero churn</div>
       </div>`;
   }
@@ -3332,27 +3503,27 @@ function renderVaultShowdown() {
   const priceDiff = shelfVal > 0 && target.lowest_sniped_usd > 0 ? target.lowest_sniped_usd - shelfVal : null;
 
   stageEl.innerHTML = `
-    <div class="showdown-side side-shelf">
+    <div class="showdown-side anodized-panel side-shelf">
       <img src="${escapeHtml(shelfImgUrl)}" data-fallback-src="${escapeHtml(renderFallbackSleeveDataUri(target.artist, target.album))}" alt="Owned pressing" class="showdown-disc-photo" />
       <div style="min-width:0;flex:1;">
         <span class="kpi-badge badge-lime">ON YOUR SHELF // VAULT #${escapeHtml(target.owned_release_id)}</span>
-        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(target.title)}</h3>
-        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;">${escapeHtml(shelfFormat)}</div>
-        <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-lime);">
+        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(decodeHtmlEntities(target.title))}</h3>
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;">${escapeHtml(decodeHtmlEntities(shelfFormat))}</div>
+        <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--mint-lock, var(--neon-lime));">
           Est. Vault Value: <strong>${formatUsd(shelfVal)}</strong> // ${escapeHtml(shelfCond)}
         </div>
-        ${siblingRec?.wax_spec?.variant_badge ? `<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:4px;">${escapeHtml(siblingRec.wax_spec.variant_badge)}</div>` : ""}
+        ${siblingRec?.wax_spec?.variant_badge ? `<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:4px;">${escapeHtml(decodeHtmlEntities(siblingRec.wax_spec.variant_badge))}</div>` : ""}
       </div>
     </div>
 
-    <div class="showdown-side side-target">
-      <canvas id="showdown-target-canvas" width="128" height="128" style="width:112px;height:112px;flex-shrink:0;"></canvas>
+    <div class="showdown-side anodized-panel side-target">
+      <canvas id="showdown-target-canvas" class="uv-reactive" width="128" height="128" style="width:112px;height:112px;flex-shrink:0;"></canvas>
       <div style="min-width:0;flex:1;">
         <span class="kpi-badge badge-magenta">MARKET TARGET // RELEASE #${escapeHtml(target.wantlist_release_id)}</span>
-        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(target.wantlist_variant)}</h3>
-        <div style="font-family:var(--font-mono);font-size:0.76rem;color:var(--neon-cyan);margin-bottom:8px;">
+        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(decodeHtmlEntities(target.wantlist_variant))}</h3>
+        <div style="font-family:var(--font-mono);font-size:0.76rem;color:var(--quartz-cyan, var(--neon-cyan));margin-bottom:8px;">
           Lowest Sniped: <strong>${formatUsd(target.lowest_sniped_usd)}</strong> (${target.wantlist_hits_count}x seen)
-          ${priceDiff !== null ? ` // <span style="color:${priceDiff <= 0 ? "var(--neon-lime)" : "var(--neon-amber)"};">${priceDiff >= 0 ? "+" : ""}${formatUsd(priceDiff)} vs shelf</span>` : ""}
+          ${priceDiff !== null ? ` // <span style="color:${priceDiff <= 0 ? "var(--mint-lock, var(--neon-lime))" : "var(--strobe-amber, var(--neon-amber))"};">${priceDiff >= 0 ? "+" : ""}${formatUsd(priceDiff)} vs shelf</span>` : ""}
         </div>
         <div class="card-actions">
           ${matchingListing ? `<a href="${escapeHtml(sanitizeHttpUrl(matchingListing.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-neon-lime btn-sm">${ICONS.cart}<span>Cart (${escapeHtml(matchingListing.total_price)})</span></a>` : ""}
@@ -3692,30 +3863,36 @@ function openInspectModal(listingId) {
   appState.inspectListingId = listingId;
   setStageChromaFromWax(item.wax_shader);
 
-  const fallbackUri = renderFallbackSleeveDataUri(item.artist, item.album, item.wax_shader?.primary);
+  const artistClean = decodeHtmlEntities(item.artist);
+  const albumClean = decodeHtmlEntities(item.album);
+  const titleClean = decodeHtmlEntities(item.title);
+  const variantClean = decodeHtmlEntities(item.variant);
+  const sellerClean = decodeHtmlEntities(item.seller_info);
+  const fallbackUri = renderFallbackSleeveDataUri(artistClean, albumClean, item.wax_shader?.primary);
   const coverSrc = resolveCoverSrc(item);
   const mkt = item.market_stats || {};
-  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#00f0ff";
+  const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#22d3ee";
   const waxGlow = hexToRgba(waxPrimary, 0.35);
   const isPlaying = appState.currentlyPlayingId === item.id;
   const vaultPhotoRaw = item.vault_owned_detail?.pressing_image_url || "";
   const vaultPhoto = vaultPhotoRaw ? resolveSiblingVaultAssetUrl(vaultPhotoRaw) : "";
   const strat = item.offer_strategy || {};
   const curTarget = getTargetPriceForRelease(item.release_id);
-  const cleanNote =
+  const rawNote =
     item.clean_seller_note !== undefined
       ? item.clean_seller_note
-      : item.raw_description && item.raw_description.toLowerCase() !== item.variant.toLowerCase()
+      : item.raw_description && item.raw_description.toLowerCase() !== (item.variant || "").toLowerCase()
       ? item.raw_description
       : "";
+  const cleanNote = decodeHtmlEntities(rawNote);
 
   body.innerHTML = `
     <div class="inspect-hero" style="--wax-glow:${waxGlow};">
       <div class="inspect-vinyl-stage">
-        <div class="inspect-sleeve">
-          <img src="${escapeHtml(coverSrc)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="${escapeHtml(item.title)}" />
+        <div class="inspect-sleeve holo-sleeve">
+          <img src="${escapeHtml(coverSrc)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="${escapeHtml(titleClean)}" />
         </div>
-        <div class="inspect-platter">
+        <div class="inspect-platter uv-reactive">
           <canvas id="inspect-vinyl-canvas" width="160" height="160" style="width:146px;height:146px;"></canvas>
         </div>
       </div>
@@ -3727,48 +3904,48 @@ function openInspectModal(listingId) {
           ${item.allow_offers ? `<span class="tag-pill badge-amber">MAKE OFFER</span>` : ""}
           ${isListingTargetHit(item) ? `<span class="tag-pill badge-gold">TARGET HIT</span>` : ""}
         </div>
-        <div class="drop-artist" style="font-size:0.8rem;">${escapeHtml(item.artist)}</div>
-        <h2 id="inspect-modal-title" style="font-family:var(--font-display);font-size:1.38rem;color:#fff;margin:3px 0 8px;">${escapeHtml(getDisplayAlbumTitle(item))}</h2>
-        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">${escapeHtml(item.variant)}</p>
+        <div class="drop-artist" style="font-size:0.8rem;">${escapeHtml(artistClean)}</div>
+        <h2 id="inspect-modal-title" style="font-family:var(--font-display);font-size:1.38rem;color:#fff;margin:3px 0 8px;">${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</h2>
+        <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:10px;">${escapeHtml(variantClean)}</p>
         <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);">
-          Listing #${escapeHtml(item.id)} // Release #${escapeHtml(item.release_id)} // Seller: <a href="https://www.discogs.com/seller/${encodeURIComponent(item.seller_info)}/profile" target="_blank" rel="noopener" class="inline-neon-link">${escapeHtml(item.seller_info)}</a>
+          Listing #${escapeHtml(item.id)} // Release #${escapeHtml(item.release_id)} // Seller: <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener" class="inline-neon-link">${escapeHtml(sellerClean)}</a>
         </div>
       </div>
     </div>
 
     <div class="inspect-spec-grid">
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Total Shipped</span>
         <div class="matrix-val matrix-val-price" style="font-size:1.22rem;">${escapeHtml(item.total_price)}</div>
         <div class="matrix-sub">${escapeHtml(item.list_price)} + ${formatUsd(item.shipping_price_usd)} ship</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Benchmark (${escapeHtml(item.media_condition)})</span>
         <div class="matrix-val" style="font-size:1.08rem;">${escapeHtml(mkt.condition_suggested_formatted || "Live API")}</div>
         <div class="matrix-sub">${escapeHtml(mkt.benchmark_source || "")}</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Condition Grade</span>
         <div class="matrix-val" style="font-size:1.08rem;">${escapeHtml(item.media_condition)} / ${escapeHtml(item.sleeve_condition)}</div>
         <div class="matrix-sub">${escapeHtml(item.media_condition_full || "")}</div>
       </div>
-      <div class="inspect-spec-cell">
+      <div class="inspect-spec-cell anodized-panel">
         <span class="matrix-label">Observed Range / Trend</span>
         <div class="matrix-val" style="font-size:1.02rem;">${formatUsd(mkt.observed_low_usd)} – ${formatUsd(mkt.observed_high_usd)}</div>
         <div class="matrix-sub">${renderPriceSparklineSVG(item.price_trajectory, 110, 22)}</div>
       </div>
     </div>
 
-    ${cleanNote ? `<div class="seller-notes ${item.has_wear_warning ? "notes-wear" : ""}" style="-webkit-line-clamp:unset;margin-bottom:12px;"><strong style="color:var(--neon-cyan);font-family:var(--font-mono);font-size:0.68rem;display:block;margin-bottom:4px;">SELLER NOTES</strong>${escapeHtml(cleanNote)}</div>` : ""}
+    ${cleanNote ? `<div class="seller-notes ${item.has_wear_warning ? "notes-wear" : ""}" style="-webkit-line-clamp:unset;margin-bottom:12px;"><strong style="color:var(--quartz-cyan, var(--neon-cyan));font-family:var(--font-mono);font-size:0.68rem;display:block;margin-bottom:4px;">SELLER NOTES</strong>${escapeHtml(cleanNote)}</div>` : ""}
 
     ${
       strat.recommended_offer_usd
-        ? `<div style="margin-bottom:12px;padding:11px 13px;border-radius:8px;background:rgba(255,184,0,0.06);border:1px solid rgba(255,184,0,0.28);">
+        ? `<div style="margin-bottom:12px;padding:11px 13px;border-radius:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.32);">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
-              <strong style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-amber);">HAGGLE STRATEGIST // TARGET ITEM OFFER: ${formatUsd(strat.recommended_offer_usd)} (Range ${formatUsd(strat.aggressive_offer_usd)}–${formatUsd(strat.instant_close_offer_usd)})</strong>
+              <strong style="font-family:var(--font-mono);font-size:0.74rem;color:var(--strobe-amber, var(--neon-amber));">HAGGLE STRATEGIST // TARGET ITEM OFFER: ${formatUsd(strat.recommended_offer_usd)} (Range ${formatUsd(strat.aggressive_offer_usd)}–${formatUsd(strat.instant_close_offer_usd)})</strong>
               <button type="button" class="btn-action btn-sm" data-copy-offer-pitch="${escapeHtml(item.id)}">Copy Pitch</button>
             </div>
-            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);">${escapeHtml(strat.buyer_pitch || "")}</div>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);">${escapeHtml(decodeHtmlEntities(strat.buyer_pitch || ""))}</div>
           </div>`
         : ""
     }
@@ -3849,6 +4026,7 @@ function renderCommandPaletteResults(query) {
   const listEl = document.getElementById("cmd-palette-results");
   if (!listEl) return;
   const q = String(query || "").trim().toLowerCase();
+  appState.cmdPaletteSelectedIdx = 0;
 
   const commands = [
     { kind: "VIEW", label: "Go to Drop Radar", hint: "View 1", action: () => switchView("radar") },
@@ -3857,7 +4035,8 @@ function renderCommandPaletteResults(query) {
     { kind: "VIEW", label: "Go to Relist Forensics & Bot Weather", hint: "View 4", action: () => switchView("forensics") },
     { kind: "VIEW", label: "Go to Vault Showdown & Wantlist Pruner", hint: "View 5", action: () => switchView("vault") },
     { kind: "VIEW", label: "Go to Remote & API Console", hint: "View 6", action: () => switchView("rules") },
-    { kind: "MODE", label: "Cycle Lighting Profile (NEON / UV / TUBE AMP)", hint: "Shortcut: U", action: cycleLightingMode },
+    { kind: "SUITE", label: "Open Sibling Collection Vault (v6.0)", hint: "krunked-fpv", action: () => window.open(SIBLING_VAULT_BASE_URL, "_blank", "noopener") },
+    { kind: "MODE", label: "Cycle Lighting Profile (Obsidian / UV 395nm / Tube Amp)", hint: "Shortcut: U", action: cycleLightingMode },
     { kind: "ACTION", label: "Toggle Matrix Tape / Card Layout", hint: "Radar", action: () => setRadarLayout(appState.radarLayout === "cards" ? "matrix" : "cards") },
     { kind: "ACTION", label: "Pull Fresh Snapshot from GitHub main", hint: "Remote Sync", action: () => pullLiveRepoSnapshotFromGitHub({ silent: false }) },
     { kind: "ACTION", label: "Sync Live Collection Vault JSON", hint: "Sibling Repo", action: () => fetchSiblingVaultJson({ silent: false }) },
@@ -3869,28 +4048,42 @@ function renderCommandPaletteResults(query) {
     .filter((x) => !q || `${x.title} ${x.seller_info} ${x.variant} ${x.id}`.toLowerCase().includes(q))
     .slice(0, q ? 10 : 5);
 
+  let rowCounter = 0;
   const cmdHtml = matchingCmds
-    .map(
-      (c, idx) => `
-      <button type="button" class="cmd-item-btn" data-cmd-idx="${idx}">
+    .map((c, idx) => {
+      const sel = rowCounter === 0 ? " is-selected" : "";
+      rowCounter += 1;
+      return `
+      <button type="button" class="cmd-item-btn cmd-palette-item${sel}" data-cmd-idx="${idx}">
         <span><span class="kpi-badge badge-cyan" style="margin-right:8px;">${escapeHtml(c.kind)}</span>${escapeHtml(c.label)}</span>
         <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(c.hint)}</span>
-      </button>`
-    )
+      </button>`;
+    })
     .join("");
 
   const listingHtml = matchingListings
-    .map(
-      (x) => `
-      <button type="button" class="cmd-item-btn" data-cmd-listing-id="${escapeHtml(x.id)}">
-        <span><span class="kpi-badge badge-lime" style="margin-right:8px;">${escapeHtml(x.total_price)}</span>${escapeHtml(x.title)}</span>
-        <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(x.seller_info)}</span>
-      </button>`
-    )
+    .map((x) => {
+      const sel = rowCounter === 0 ? " is-selected" : "";
+      rowCounter += 1;
+      return `
+      <button type="button" class="cmd-item-btn cmd-palette-item${sel}" data-cmd-listing-id="${escapeHtml(x.id)}">
+        <span><span class="kpi-badge badge-lime" style="margin-right:8px;">${escapeHtml(x.total_price)}</span>${escapeHtml(decodeHtmlEntities(x.title))}</span>
+        <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-muted);">${escapeHtml(decodeHtmlEntities(x.seller_info))}</span>
+      </button>`;
+    })
     .join("");
 
   listEl.innerHTML = `${cmdHtml}${listingHtml}` || `<div style="padding:18px;text-align:center;color:var(--text-muted);">No matching commands or records.</div>`;
   listEl._cmdActions = matchingCmds;
+}
+
+function moveCommandPaletteSelection(delta) {
+  const items = Array.from(document.querySelectorAll("#cmd-palette-results .cmd-palette-item"));
+  if (items.length === 0) return;
+  const next = (appState.cmdPaletteSelectedIdx + delta + items.length) % items.length;
+  appState.cmdPaletteSelectedIdx = next;
+  items.forEach((el, i) => el.classList.toggle("is-selected", i === next));
+  items[next]?.scrollIntoView({ block: "nearest" });
 }
 
 // =====================================================================
@@ -4020,11 +4213,17 @@ async function saveAndVerifyDiscogsToken(rawUser, rawTok) {
 }
 
 function cycleLightingMode() {
-  const order = ["neon", "uv", "tube"];
-  const next = order[(order.indexOf(appState.lightingMode) + 1) % order.length];
+  const order = ["obsidian", "uv", "tube"];
+  const curIdx = order.indexOf(appState.lightingMode);
+  const next = order[(curIdx < 0 ? 0 : curIdx + 1) % order.length];
   appState.lightingMode = next;
   applyLightingMode();
-  const label = next === "uv" ? "UV Blacklight Overdrive" : next === "tube" ? "Boutique Vacuum Tube Amp" : "Neon Telemetry";
+  const label =
+    next === "uv"
+      ? "UV 395nm Blacklight Overdrive"
+      : next === "tube"
+      ? "Boutique Vacuum Tube Amp"
+      : "Studio Obsidian";
   showToast(`${label} engaged.`, "cyan", 2000);
 }
 
@@ -4039,7 +4238,10 @@ function setRadarLayout(layout) {
 function switchView(viewName) {
   appState.activeView = viewName;
   document.querySelectorAll(".nav-tab").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.view === viewName);
+    const isActive = btn.dataset.view === viewName;
+    btn.classList.toggle("active", isActive);
+    btn.classList.toggle("nav-tab-active", isActive);
+    btn.classList.toggle("nav-tab-idle", !isActive);
   });
   document.querySelectorAll(".view-section").forEach((sec) => {
     sec.classList.toggle("active", sec.id === `view-${viewName}`);
@@ -4083,6 +4285,19 @@ function bindEvents() {
   }
   document.getElementById("btn-layout-cards")?.classList.toggle("active", appState.radarLayout === "cards");
   document.getElementById("btn-layout-matrix")?.classList.toggle("active", appState.radarLayout === "matrix");
+  document.querySelectorAll(".scope-btn[data-scope]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.scope === appState.scopeMode);
+  });
+  document.getElementById("btn-toggle-dedup")?.classList.toggle("active", appState.dedupEnabled);
+  document.getElementById("btn-hide-sold")?.classList.toggle("active", appState.hideSold);
+  document.getElementById("btn-hide-recordmule")?.classList.toggle("active", appState.hideRecordmule);
+  const initCondSel = document.getElementById("radar-condition-select");
+  if (initCondSel) initCondSel.value = appState.conditionFilter;
+  const initSortSel = document.getElementById("radar-sort-select");
+  if (initSortSel) initSortSel.value = appState.sortMode;
+  document.querySelectorAll(".filter-pill").forEach((p) => {
+    p.classList.toggle("active", p.dataset.filter === appState.categoryFilter);
+  });
 
   // Navigation
   document.querySelectorAll(".nav-tab").forEach((btn) => {
@@ -4155,10 +4370,18 @@ function bindEvents() {
     renderCommandPaletteResults(e.target.value);
   });
   document.getElementById("cmd-palette-input")?.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
-      const firstBtn = document.querySelector("#cmd-palette-results .cmd-item-btn");
-      if (firstBtn) firstBtn.click();
+      moveCommandPaletteSelection(1);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      moveCommandPaletteSelection(-1);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selBtn =
+        document.querySelector("#cmd-palette-results .cmd-palette-item.is-selected") ||
+        document.querySelector("#cmd-palette-results .cmd-item-btn");
+      if (selBtn) selBtn.click();
     }
   });
   document.getElementById("cmd-palette-results")?.addEventListener("click", (e) => {
@@ -4207,6 +4430,7 @@ function bindEvents() {
     btn.addEventListener("click", () => {
       appState.scopeMode = btn.dataset.scope || "ALL";
       document.querySelectorAll(".scope-btn[data-scope]").forEach((b) => b.classList.toggle("active", b === btn));
+      saveUiPrefs();
       renderRadarGrid();
     });
   });
@@ -4217,28 +4441,33 @@ function bindEvents() {
   document.getElementById("btn-toggle-dedup")?.addEventListener("click", (e) => {
     appState.dedupEnabled = !appState.dedupEnabled;
     e.currentTarget.classList.toggle("active", appState.dedupEnabled);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("btn-hide-sold")?.addEventListener("click", (e) => {
     appState.hideSold = !appState.hideSold;
     e.currentTarget.classList.toggle("active", appState.hideSold);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("btn-hide-recordmule")?.addEventListener("click", (e) => {
     appState.hideRecordmule = !appState.hideRecordmule;
     e.currentTarget.classList.toggle("active", appState.hideRecordmule);
+    saveUiPrefs();
     renderRadarGrid();
   });
 
   document.getElementById("radar-condition-select")?.addEventListener("change", (e) => {
     appState.conditionFilter = e.target.value;
+    saveUiPrefs();
     updateConfigJsonPreview();
     renderRadarGrid();
   });
   document.getElementById("radar-sort-select")?.addEventListener("change", (e) => {
     appState.sortMode = e.target.value;
+    saveUiPrefs();
     renderRadarGrid();
   });
 
@@ -4246,6 +4475,7 @@ function bindEvents() {
     pill.addEventListener("click", () => {
       appState.categoryFilter = pill.dataset.filter || "ALL";
       document.querySelectorAll(".filter-pill").forEach((p) => p.classList.toggle("active", p === pill));
+      saveUiPrefs();
       renderRadarGrid();
     });
   });

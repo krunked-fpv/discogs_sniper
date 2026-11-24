@@ -86,7 +86,7 @@ async function pullLiveRepoSnapshotFromGitHub({ silent = false } = {}) {
     if (stateResp.status === "fulfilled" && stateResp.value.ok) {
       const remoteState = await stateResp.value.json();
       if (remoteState && Array.isArray(remoteState.listings)) {
-        SNIPER_STATE = remoteState;
+        SNIPER_STATE = normalizeSniperStateEntities(remoteState);
         for (const item of SNIPER_STATE.listings) {
           recomputeListingDerivedFields(item);
         }

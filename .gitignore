@@ -1,5 +1,11 @@
-# Local overrides (optional untracked file; .env is tracked with $env:DISCOGS_TOKEN auto-hydration)
+# Local secrets & environment overrides (NEVER commit .env to git)
+.env
 .env.local
+.env.*.local
+
+# Backup & cookie backup files
+*.bak
+*.cookie_bak
 
 # Persistent Playwright browser profile & runtime state
 chrome_discogs_profile/
@@ -13,9 +19,10 @@ debug_*.html
 # Staged GitHub Pages artifact directory
 _site/
 
-# Python bytecode & virtual environments
+# Python bytecode, test caches & virtual environments
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
 .venv/
 venv/

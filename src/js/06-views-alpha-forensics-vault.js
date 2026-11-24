@@ -67,7 +67,7 @@ function renderAlphaBundles() {
         .join("");
 
       return `
-        <article class="bundle-card">
+        <article class="bundle-card anodized-panel">
           <div class="bundle-card-head">
             <div>
               <a href="${escapeHtml(sanitizeHttpUrl(b.seller_url))}" target="_blank" rel="noopener" style="font-family:var(--font-mono);font-weight:700;font-size:0.95rem;color:#fff;">
@@ -142,7 +142,7 @@ function renderAlphaHaggleDesk() {
         .join("");
 
       return `
-        <article class="haggle-card">
+        <article class="haggle-card anodized-panel">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;">
             <div>
               <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" style="color:#fff;font-weight:700;font-size:0.92rem;">
@@ -174,8 +174,8 @@ function renderAlphaHaggleDesk() {
 
           <div class="pitch-fader-row">
             <span>Custom Item Offer:</span>
-            <input type="range" class="price-slider" min="${minOffer}" max="${maxOffer}" step="0.5" value="${curOffer.toFixed(2)}" data-offer-slider-id="${escapeHtml(item.id)}" />
-            <strong style="color:var(--neon-lime);">${formatUsd(curOffer)}</strong>
+            <input type="range" class="price-slider audiophile-slider" min="${minOffer}" max="${maxOffer}" step="0.5" value="${curOffer.toFixed(2)}" data-offer-slider-id="${escapeHtml(item.id)}" />
+            <strong style="color:var(--mint-lock, var(--neon-lime));">${formatUsd(curOffer)}</strong>
           </div>
 
           <div class="card-actions">
@@ -400,24 +400,24 @@ function renderForensicsView() {
     const flatBots = dedup.filter((x) => x.relist_behavior === "FLATLINE_BOT").length;
     const singles = dedup.filter((x) => x.relist_behavior === "SINGLE_DROP").length;
     bluffGrid.innerHTML = `
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Genuine Price Cuts</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-lime);">${genuineCuts}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--mint-lock, var(--neon-lime));">${genuineCuts}</div>
         <div class="matrix-sub">Strictly lower than historical peak</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Yo-Yo Bluff Groups</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-amber);">${yoyoBluffs}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--strobe-amber, var(--neon-amber));">${yoyoBluffs}</div>
         <div class="matrix-sub">Price bounced without true floor cut</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Flatline Bot Spam</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-crimson);">${flatBots}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--signal-rose, var(--neon-crimson));">${flatBots}</div>
         <div class="matrix-sub">Zero price change across relist IDs</div>
       </div>
-      <div class="bluff-stat-box">
+      <div class="bluff-stat-box anodized-panel">
         <div class="matrix-label">Clean Single Drops</div>
-        <div class="kpi-value" style="font-size:1.4rem;color:var(--neon-cyan);">${singles}</div>
+        <div class="kpi-value" style="font-size:1.4rem;color:var(--quartz-cyan, var(--neon-cyan));">${singles}</div>
         <div class="matrix-sub">First-time listings with zero churn</div>
       </div>`;
   }
@@ -599,27 +599,27 @@ function renderVaultShowdown() {
   const priceDiff = shelfVal > 0 && target.lowest_sniped_usd > 0 ? target.lowest_sniped_usd - shelfVal : null;
 
   stageEl.innerHTML = `
-    <div class="showdown-side side-shelf">
+    <div class="showdown-side anodized-panel side-shelf">
       <img src="${escapeHtml(shelfImgUrl)}" data-fallback-src="${escapeHtml(renderFallbackSleeveDataUri(target.artist, target.album))}" alt="Owned pressing" class="showdown-disc-photo" />
       <div style="min-width:0;flex:1;">
         <span class="kpi-badge badge-lime">ON YOUR SHELF // VAULT #${escapeHtml(target.owned_release_id)}</span>
-        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(target.title)}</h3>
-        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;">${escapeHtml(shelfFormat)}</div>
-        <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-lime);">
+        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(decodeHtmlEntities(target.title))}</h3>
+        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;">${escapeHtml(decodeHtmlEntities(shelfFormat))}</div>
+        <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--mint-lock, var(--neon-lime));">
           Est. Vault Value: <strong>${formatUsd(shelfVal)}</strong> // ${escapeHtml(shelfCond)}
         </div>
-        ${siblingRec?.wax_spec?.variant_badge ? `<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:4px;">${escapeHtml(siblingRec.wax_spec.variant_badge)}</div>` : ""}
+        ${siblingRec?.wax_spec?.variant_badge ? `<div style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);margin-top:4px;">${escapeHtml(decodeHtmlEntities(siblingRec.wax_spec.variant_badge))}</div>` : ""}
       </div>
     </div>
 
-    <div class="showdown-side side-target">
-      <canvas id="showdown-target-canvas" width="128" height="128" style="width:112px;height:112px;flex-shrink:0;"></canvas>
+    <div class="showdown-side anodized-panel side-target">
+      <canvas id="showdown-target-canvas" class="uv-reactive" width="128" height="128" style="width:112px;height:112px;flex-shrink:0;"></canvas>
       <div style="min-width:0;flex:1;">
         <span class="kpi-badge badge-magenta">MARKET TARGET // RELEASE #${escapeHtml(target.wantlist_release_id)}</span>
-        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(target.wantlist_variant)}</h3>
-        <div style="font-family:var(--font-mono);font-size:0.76rem;color:var(--neon-cyan);margin-bottom:8px;">
+        <h3 style="color:#fff;font-family:var(--font-display);font-size:1.02rem;margin:6px 0 4px;">${escapeHtml(decodeHtmlEntities(target.wantlist_variant))}</h3>
+        <div style="font-family:var(--font-mono);font-size:0.76rem;color:var(--quartz-cyan, var(--neon-cyan));margin-bottom:8px;">
           Lowest Sniped: <strong>${formatUsd(target.lowest_sniped_usd)}</strong> (${target.wantlist_hits_count}x seen)
-          ${priceDiff !== null ? ` // <span style="color:${priceDiff <= 0 ? "var(--neon-lime)" : "var(--neon-amber)"};">${priceDiff >= 0 ? "+" : ""}${formatUsd(priceDiff)} vs shelf</span>` : ""}
+          ${priceDiff !== null ? ` // <span style="color:${priceDiff <= 0 ? "var(--mint-lock, var(--neon-lime))" : "var(--strobe-amber, var(--neon-amber))"};">${priceDiff >= 0 ? "+" : ""}${formatUsd(priceDiff)} vs shelf</span>` : ""}
         </div>
         <div class="card-actions">
           ${matchingListing ? `<a href="${escapeHtml(sanitizeHttpUrl(matchingListing.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-neon-lime btn-sm">${ICONS.cart}<span>Cart (${escapeHtml(matchingListing.total_price)})</span></a>` : ""}
