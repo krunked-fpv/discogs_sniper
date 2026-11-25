@@ -106,7 +106,7 @@ function openInspectModal(listingId) {
 
     ${vaultPhoto ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(255,31,143,0.07);border:1px solid rgba(255,31,143,0.25);"><img src="${escapeHtml(vaultPhoto)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="Vault pressing photo" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:1px solid var(--neon-magenta);" /><div style="font-size:0.78rem;"><strong style="color:#ff6cb9;">Your Vault Pressing Reference:</strong><div style="color:var(--text-secondary);">${escapeHtml(item.vault_owned_detail?.format_string || "")}</div></div></div>` : ""}
 
-    <div style="margin-bottom:14px;">${renderCardDrawersHtml(item)}</div>
+    <div style="margin-bottom:14px;">${renderCardDrawersHtml(item, { forceApiDrawer: true })}</div>
 
     <div class="card-actions" style="flex-wrap:wrap;">
       <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-cart">
@@ -185,6 +185,26 @@ function renderCommandPaletteResults(query) {
     { kind: "SUITE", label: "Open Sibling Collection Vault (v6.0)", hint: "krunked-fpv", action: () => window.open(SIBLING_VAULT_BASE_URL, "_blank", "noopener") },
     { kind: "MODE", label: "Cycle Lighting Profile (Obsidian / UV 395nm / Tube Amp)", hint: "Shortcut: U", action: cycleLightingMode },
     { kind: "ACTION", label: "Toggle Matrix Tape / Card Layout", hint: "Radar", action: () => setRadarLayout(appState.radarLayout === "cards" ? "matrix" : "cards") },
+    {
+      kind: "ACTION",
+      label: "Toggle Advanced Radar Filters Drawer",
+      hint: "Radar",
+      action: () => {
+        switchView("radar");
+        appState.filtersDrawerOpen = !appState.filtersDrawerOpen;
+        syncFiltersDrawerUI();
+      },
+    },
+    ...(appState.dismissedListingIds.size > 0
+      ? [
+          {
+            kind: "ACTION",
+            label: `Restore Skipped Listings (${appState.dismissedListingIds.size})`,
+            hint: "Triage",
+            action: restoreAllDismissedListings,
+          },
+        ]
+      : []),
     { kind: "ACTION", label: "Pull Fresh Snapshot from GitHub main", hint: "Remote Sync", action: () => pullLiveRepoSnapshotFromGitHub({ silent: false }) },
     { kind: "ACTION", label: "Sync Live Collection Vault JSON", hint: "Sibling Repo", action: () => fetchSiblingVaultJson({ silent: false }) },
   ];
@@ -444,6 +464,12 @@ function bindEvents() {
   if (initSortSel) initSortSel.value = appState.sortMode;
   document.querySelectorAll(".filter-pill").forEach((p) => {
     p.classList.toggle("active", p.dataset.filter === appState.categoryFilter);
+  });
+  syncFiltersDrawerUI();
+
+  document.getElementById("btn-radar-filters-toggle")?.addEventListener("click", () => {
+    appState.filtersDrawerOpen = !appState.filtersDrawerOpen;
+    syncFiltersDrawerUI();
   });
 
   // Navigation
@@ -847,9 +873,71 @@ function bindEvents() {
       return;
     }
 
+    const dismissBtn = e.target.closest("[data-dismiss-id]");
+    if (dismissBtn) {
+      dismissListing(dismissBtn.dataset.dismissId);
+      return;
+    }
+
+    const restoreDismissedBtn = e.target.closest("[data-restore-dismissed]");
+    if (restoreDismissedBtn) {
+      restoreAllDismissedListings();
+      return;
+    }
+
+    const clearAdvBtn = e.target.closest("[data-clear-adv]");
+    if (clearAdvBtn) {
+      clearAdvancedFilter(clearAdvBtn.dataset.clearAdv);
+      return;
+    }
+
+    const clearMutedBtn = e.target.closest("[data-clear-muted]");
+    if (clearMutedBtn) {
+      appState.mutedSellers.clear();
+      syncRuleInputsFromState();
+      saveConfigOverrides();
+      renderRadarGrid();
+      renderForensicsView();
+      showToast("Cleared all muted sellers.", "cyan");
+      return;
+    }
+
+    const closeApiDrawerBtn = e.target.closest("[data-close-api-drawer]");
+    if (closeApiDrawerBtn) {
+      const id = closeApiDrawerBtn.dataset.closeApiDrawer;
+      appState.expandedApiIds.delete(id);
+      updateCardInPlace(id);
+      return;
+    }
+
+    const refreshLiveApiBtn = e.target.closest("[data-refresh-live-api-id]");
+    if (refreshLiveApiBtn) {
+      const id = refreshLiveApiBtn.dataset.refreshLiveApiId;
+      appState.expandedApiIds.add(id);
+      verifyLiveListingViaAPI(id);
+      return;
+    }
+
     const liveApiBtn = e.target.closest("[data-live-api-id]");
     if (liveApiBtn) {
-      verifyLiveListingViaAPI(liveApiBtn.dataset.liveApiId);
+      const id = liveApiBtn.dataset.liveApiId;
+      const inInspectModal = Boolean(liveApiBtn.closest("#inspect-modal-backdrop"));
+      if (inInspectModal) {
+        verifyLiveListingViaAPI(id);
+        return;
+      }
+      const existing = appState.liveApiResults[id];
+      if (appState.expandedApiIds.has(id) && existing && !existing.loading && !existing.error) {
+        appState.expandedApiIds.delete(id);
+        updateCardInPlace(id);
+      } else {
+        appState.expandedApiIds.add(id);
+        if (existing && !existing.loading && !existing.error && !liveApiBtn.classList.contains("snipe-verify-link")) {
+          updateCardInPlace(id);
+        } else {
+          verifyLiveListingViaAPI(id);
+        }
+      }
       return;
     }
 
@@ -1324,6 +1412,9 @@ function bindEvents() {
       } else if (e.key.toLowerCase() === "o" && appState.focusedListingId) {
         e.preventDefault();
         openInspectModal(appState.focusedListingId);
+      } else if (e.key.toLowerCase() === "x" && appState.focusedListingId) {
+        e.preventDefault();
+        dismissListing(appState.focusedListingId);
       } else if (e.key.toLowerCase() === "c" && appState.focusedListingId) {
         const item = getListingById(appState.focusedListingId);
         if (item) window.open(sanitizeHttpUrl(item.add_to_cart_url), "_blank", "noopener");

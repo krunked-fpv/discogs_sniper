@@ -964,6 +964,20 @@ class TestDiscogsSniperV2(unittest.TestCase):
         self.assertEqual(manifest.get("theme_color"), "#06070b")
         self.assertEqual(manifest.get("background_color"), "#05060b")
 
+    def test_drop_radar_revamp_markers_and_triage_hooks(self):
+        html_path = REPO_ROOT / "index.html"
+        self.assertTrue(html_path.exists())
+        html_text = html_path.read_text(encoding="utf-8")
+        for marker in (
+            "kpi-strip-compact",
+            "radar-command-deck",
+            "radar-advanced-drawer",
+            "snipe-price-bar",
+            "btn-triage-dismiss",
+            "radar-snipe-strip",
+        ):
+            self.assertIn(marker, html_text, f"Missing Drop Radar revamp marker in index.html: {marker}")
+
 
 if __name__ == "__main__":
     unittest.main()

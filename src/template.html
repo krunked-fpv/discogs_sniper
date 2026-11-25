@@ -548,8 +548,8 @@
   </header>
 
   <main class="main-container">
-    <!-- 5-CHANNEL INTERACTIVE TELEMETRY RIBBON -->
-    <section class="kpi-grid" aria-label="Sniper production telemetry">
+    <!-- 5-CHANNEL INTERACTIVE TELEMETRY RIBBON (COMPACT HARDWARE METER STRIP) -->
+    <section class="kpi-grid kpi-strip-compact" aria-label="Sniper production telemetry">
       <button type="button" class="kpi-card anodized-panel kpi-cyan" id="kpi-card-offerings" data-jump-view="radar" data-jump-scope="ALL">
         <div class="kpi-head">
           <span class="kpi-label">Active Offerings</span>
@@ -615,8 +615,8 @@
          VIEW 1: TACTICAL DROP RADAR
          ================================================================= -->
     <section class="view-section active" id="view-radar" aria-label="Live Wantlist Drop Radar">
-      <div class="controls-panel machined-plinth">
-        <div class="controls-top-row">
+      <div class="controls-panel machined-plinth radar-command-deck">
+        <div class="radar-bar-primary">
           <div class="search-box-wrap">
             <svg class="search-icon ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input
@@ -629,23 +629,91 @@
             <kbd class="search-kbd" id="search-kbd-hint">/</kbd>
           </div>
 
-          <div class="control-group">
+          <div class="radar-primary-controls">
             <div class="scope-segmented" role="group" aria-label="Dataset scope">
               <button type="button" class="scope-btn active" id="btn-scope-all" data-scope="ALL">All Tracked</button>
               <button type="button" class="scope-btn" id="btn-scope-live" data-scope="LIVE_P1">
-                <span class="live-ping"></span>Live Top-25
+                <span class="live-ping"></span>Live P1
               </button>
             </div>
+
+            <select id="radar-sort-select" class="select-control" aria-label="Sort listings">
+              <option value="SNAPSHOT_ORDER">Sort: Newest Drops</option>
+              <option value="DEAL_SCORE">Sort: Deal Score</option>
+              <option value="PRICE_ASC">Sort: Lowest Shipped</option>
+              <option value="PRICE_DESC">Sort: Highest Value</option>
+              <option value="TARGET_HITS">Sort: Target Hits First</option>
+              <option value="BUNDLE_SAVINGS">Sort: Bundle Savings</option>
+              <option value="MOST_RELISTED">Sort: Most Relisted</option>
+            </select>
 
             <div class="scope-segmented" role="group" aria-label="Layout density">
               <button type="button" class="scope-btn active" id="btn-layout-cards" data-layout="cards" title="Tactical Vinyl Cards">Cards</button>
               <button type="button" class="scope-btn" id="btn-layout-matrix" data-layout="matrix" title="High-Density Matrix Tape">Matrix</button>
             </div>
 
+            <button
+              type="button"
+              id="btn-radar-filters-toggle"
+              class="radar-filters-btn"
+              aria-expanded="false"
+              aria-controls="radar-advanced-drawer"
+              title="Toggle Relist Shield, Seller &amp; Grade/Price Filters"
+            >
+              <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>
+              <span>Filters</span>
+              <span class="chip-inline" id="radar-filters-badge">Shield</span>
+              <svg class="ico ico-xs filters-chevron" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="radar-bar-lenses filter-pills-row">
+          <div class="pill-group" role="tablist" aria-label="Category filters">
+            <button type="button" class="filter-pill active" data-filter="ALL" id="pill-filter-all">
+              All Drops <span class="pill-num" id="pill-cnt-all">114</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="STEALS" id="pill-filter-steals">
+              <span class="pill-dot dot-cyan"></span>Steals &amp; Deals <span class="pill-num" id="pill-cnt-steals">0</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="PRICE_DROP" id="pill-filter-pricedrop">
+              <span class="pill-dot dot-amber"></span>Price Drops <span class="pill-num" id="pill-cnt-pricedrop">0</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="MISSING_GRAIL" id="pill-filter-grails">
+              <span class="pill-dot dot-lime"></span>Missing Grails <span class="pill-num" id="pill-cnt-grails">54</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="MAKE_OFFER" id="pill-filter-offers">
+              <span class="pill-dot dot-cyan"></span>Make Offer <span class="pill-num" id="pill-cnt-offers">0</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="BUNDLE_READY" id="pill-filter-bundles">
+              <span class="pill-dot dot-lime"></span>Bundle Ready <span class="pill-num" id="pill-cnt-bundles">0</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="TARGET_HITS" id="pill-filter-targets">
+              <span class="pill-dot dot-amber"></span>Target Hits <span class="pill-num" id="pill-cnt-targets">0</span>
+            </button>
+            <span class="pill-divider" aria-hidden="true"></span>
+            <button type="button" class="filter-pill" data-filter="VARIANT_UPGRADE" id="pill-filter-variants">
+              <span class="pill-dot dot-magenta"></span>Variants <span class="pill-num" id="pill-cnt-variants">9</span>
+            </button>
+            <button type="button" class="filter-pill" data-filter="ALREADY_OWNED" id="pill-filter-owned">
+              <span class="pill-dot dot-crimson"></span>In Vault <span class="pill-num" id="pill-cnt-owned">10</span>
+            </button>
+          </div>
+
+          <button type="button" class="btn-ghost-reset" id="btn-quick-reset-filters" hidden>Reset</button>
+        </div>
+
+        <div id="radar-advanced-drawer" class="radar-advanced-drawer" hidden>
+          <div class="radar-drawer-controls">
             <button type="button" class="dedup-toggle-btn active" id="btn-toggle-dedup" title="Collapse duplicate daily relists from the same seller into one card">
               <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               <span>Relist Shield</span>
               <span class="chip-inline" id="dedup-status-chip">ON (-105)</span>
+            </button>
+
+            <button type="button" class="toggle-chip-btn" id="btn-hide-recordmule" title="Toggle recordmule listings independently">
+              <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5" y1="5" x2="19" y2="19"/></svg>
+              <span>Hide recordmule</span>
             </button>
 
             <button type="button" class="toggle-chip-btn" id="btn-hide-sold" title="Hide listings marked Sold / Removed by live API sweeper">
@@ -659,82 +727,36 @@
               <option value="VG+">Grade: VG++</option>
             </select>
 
-            <select id="radar-sort-select" class="select-control" aria-label="Sort listings">
-              <option value="SNAPSHOT_ORDER">Sort: Newest Drops</option>
-              <option value="DEAL_SCORE">Sort: Deal Score</option>
-              <option value="PRICE_ASC">Sort: Lowest Shipped</option>
-              <option value="PRICE_DESC">Sort: Highest Value</option>
-              <option value="TARGET_HITS">Sort: Target Hits First</option>
-              <option value="BUNDLE_SAVINGS">Sort: Bundle Savings</option>
-              <option value="MOST_RELISTED">Sort: Most Relisted</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="filter-pills-row">
-          <div class="pill-group" role="tablist" aria-label="Category filters">
-            <button type="button" class="filter-pill active" data-filter="ALL" id="pill-filter-all">
-              All Drops <span class="pill-num" id="pill-cnt-all">114</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="MISSING_GRAIL" id="pill-filter-grails">
-              <span class="pill-dot dot-lime"></span>Missing Grails <span class="pill-num" id="pill-cnt-grails">54</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="STEALS" id="pill-filter-steals">
-              <span class="pill-dot dot-cyan"></span>Verified Deals <span class="pill-num" id="pill-cnt-steals">0</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="PRICE_DROP" id="pill-filter-pricedrop">
-              <span class="pill-dot dot-amber"></span>Price Drops <span class="pill-num" id="pill-cnt-pricedrop">0</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="BUNDLE_READY" id="pill-filter-bundles">
-              <span class="pill-dot dot-lime"></span>Bundle Ready <span class="pill-num" id="pill-cnt-bundles">0</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="MAKE_OFFER" id="pill-filter-offers">
-              <span class="pill-dot dot-cyan"></span>Make Offer <span class="pill-num" id="pill-cnt-offers">0</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="TARGET_HITS" id="pill-filter-targets">
-              <span class="pill-dot dot-amber"></span>Target Hits <span class="pill-num" id="pill-cnt-targets">0</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="VARIANT_UPGRADE" id="pill-filter-variants">
-              <span class="pill-dot dot-magenta"></span>Variant Hunter <span class="pill-num" id="pill-cnt-variants">9</span>
-            </button>
-            <button type="button" class="filter-pill" data-filter="ALREADY_OWNED" id="pill-filter-owned">
-              <span class="pill-dot dot-crimson"></span>In Vault <span class="pill-num" id="pill-cnt-owned">10</span>
-            </button>
-          </div>
-
-          <div class="controls-right-cluster">
-            <button type="button" class="toggle-chip-btn" id="btn-hide-recordmule" title="Toggle recordmule listings independently">
-              <svg class="ico ico-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><line x1="5" y1="5" x2="19" y2="19"/></svg>
-              <span>Hide recordmule</span>
-            </button>
-
             <div class="price-slider-wrap">
               <label for="radar-max-price-slider">Max: <strong id="max-price-readout">No Limit</strong></label>
               <input type="range" id="radar-max-price-slider" class="price-slider audiophile-slider" min="25" max="500" step="5" value="500" />
             </div>
-
-            <button type="button" class="btn-ghost-reset" id="btn-quick-reset-filters" hidden>Reset</button>
           </div>
-        </div>
 
-        <div class="kbd-legend-strip" aria-hidden="true">
-          <span><kbd>J</kbd><kbd>K</kbd> Focus</span>
-          <span><kbd>Space</kbd> Spin 30s</span>
-          <span><kbd>C</kbd> Cart</span>
-          <span><kbd>O</kbd> Inspect / Offer</span>
-          <span><kbd>T</kbd> Pin Target</span>
-          <span><kbd>M</kbd> Mute Seller</span>
-          <span><kbd>U</kbd> Lighting</span>
-          <span><kbd>Ctrl+K</kbd> Command Palette</span>
+          <div class="kbd-legend-strip" aria-hidden="true">
+            <span><kbd>J</kbd><kbd>K</kbd> Focus</span>
+            <span><kbd>Space</kbd> Spin 30s</span>
+            <span><kbd>C</kbd> Cart</span>
+            <span><kbd>O</kbd> Inspect / Offer</span>
+            <span><kbd>X</kbd> Skip</span>
+            <span><kbd>T</kbd> Pin Target</span>
+            <span><kbd>M</kbd> Mute Seller</span>
+            <span><kbd>U</kbd> Lighting</span>
+            <span><kbd>Ctrl+K</kbd> Palette</span>
+          </div>
         </div>
       </div>
 
-      <div class="results-toolbar">
+      <div class="results-toolbar radar-snipe-strip">
         <div class="results-summary-wrap">
-          <span id="radar-showing-summary">Showing 114 unique offerings</span>
-          <span class="results-hint" id="radar-hydrator-inline">Background API sweeper ready</span>
+          <span id="radar-showing-summary">114 drops</span>
+          <span class="results-hint" id="radar-hydrator-inline">● Live sync ready</span>
         </div>
-        <span id="radar-muted-sellers-bar"></span>
+        <div class="radar-snipe-right">
+          <div class="radar-active-chips" id="radar-active-chips" hidden></div>
+          <span id="radar-dismissed-bar" hidden></span>
+          <span id="radar-muted-sellers-bar" hidden></span>
+        </div>
       </div>
 
       <div class="drops-grid" id="radar-drops-grid"></div>

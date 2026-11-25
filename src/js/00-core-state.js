@@ -36,6 +36,7 @@ const STORAGE_KEYS = {
   AUTO_HYDRATE: "krunked_sniper_autohydrate_v3",
   RADAR_LAYOUT: "krunked_sniper_radar_layout_v3",
   UI_PREFS: "krunked_sniper_ui_prefs_v3",
+  DISMISSED: "krunked_sniper_dismissed_v3",
 };
 
 const HTML_ENTITY_MAP = {
@@ -271,6 +272,9 @@ const appState = {
   sellerSearchQuery: "",
   showAllSellers: false,
   expandedHistoryIds: new Set(),
+  expandedApiIds: new Set(),
+  dismissedListingIds: new Set(),
+  filtersDrawerOpen: false,
   liveApiResults: {},
   prunedReleaseIds: new Set(),
   liveWantlistIds: initialLiveWantIds,
@@ -332,12 +336,26 @@ try {
   }
 } catch (_) {}
 
+try {
+  const cachedDismissed = safeGetStorage(STORAGE_KEYS.DISMISSED);
+  if (cachedDismissed) {
+    const parsed = JSON.parse(cachedDismissed);
+    if (Array.isArray(parsed)) {
+      appState.dismissedListingIds = new Set(parsed.map((x) => String(x)).filter(Boolean));
+    }
+  }
+} catch (_) {}
+
 function saveArtCache() {
   safeSetStorage(STORAGE_KEYS.ART_CACHE, JSON.stringify(appState.artCache));
 }
 
 function savePrunedReleaseIds() {
   safeSetStorage(STORAGE_KEYS.PRUNED, JSON.stringify([...appState.prunedReleaseIds]));
+}
+
+function saveDismissedListingIds() {
+  safeSetStorage(STORAGE_KEYS.DISMISSED, JSON.stringify([...appState.dismissedListingIds]));
 }
 
 function saveUiPrefs() {
@@ -433,7 +451,7 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function showToast(message, variant = "cyan", durationMs = 3400) {
+function showToast(message, variant = "cyan", durationMs = 3400, action = null) {
   const stack = document.getElementById("toast-stack");
   if (!stack) return;
   while (stack.children.length >= 2) {
@@ -441,14 +459,37 @@ function showToast(message, variant = "cyan", durationMs = 3400) {
   }
   const item = document.createElement("div");
   item.className = `toast-item toast-${variant}`;
-  item.textContent = message;
-  stack.appendChild(item);
-  setTimeout(() => {
+  let removed = false;
+  const dismissToast = () => {
+    if (removed) return;
+    removed = true;
     item.style.opacity = "0";
     item.style.transform = "translateX(16px)";
     item.style.transition = "all 0.2s ease";
     setTimeout(() => item.remove(), 220);
-  }, durationMs);
+  };
+  if (action && action.label && typeof action.onClick === "function") {
+    item.style.display = "flex";
+    item.style.alignItems = "center";
+    item.style.justifyContent = "space-between";
+    item.style.gap = "10px";
+    const msgSpan = document.createElement("span");
+    msgSpan.textContent = message;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-micro toast-undo-btn";
+    btn.textContent = action.label;
+    btn.addEventListener("click", () => {
+      action.onClick();
+      dismissToast();
+    });
+    item.appendChild(msgSpan);
+    item.appendChild(btn);
+  } else {
+    item.textContent = message;
+  }
+  stack.appendChild(item);
+  setTimeout(dismissToast, durationMs);
 }
 
 async function copyTextSafe(text, successMsg) {

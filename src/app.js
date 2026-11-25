@@ -39,6 +39,7 @@ const STORAGE_KEYS = {
   AUTO_HYDRATE: "krunked_sniper_autohydrate_v3",
   RADAR_LAYOUT: "krunked_sniper_radar_layout_v3",
   UI_PREFS: "krunked_sniper_ui_prefs_v3",
+  DISMISSED: "krunked_sniper_dismissed_v3",
 };
 
 const HTML_ENTITY_MAP = {
@@ -274,6 +275,9 @@ const appState = {
   sellerSearchQuery: "",
   showAllSellers: false,
   expandedHistoryIds: new Set(),
+  expandedApiIds: new Set(),
+  dismissedListingIds: new Set(),
+  filtersDrawerOpen: false,
   liveApiResults: {},
   prunedReleaseIds: new Set(),
   liveWantlistIds: initialLiveWantIds,
@@ -335,12 +339,26 @@ try {
   }
 } catch (_) {}
 
+try {
+  const cachedDismissed = safeGetStorage(STORAGE_KEYS.DISMISSED);
+  if (cachedDismissed) {
+    const parsed = JSON.parse(cachedDismissed);
+    if (Array.isArray(parsed)) {
+      appState.dismissedListingIds = new Set(parsed.map((x) => String(x)).filter(Boolean));
+    }
+  }
+} catch (_) {}
+
 function saveArtCache() {
   safeSetStorage(STORAGE_KEYS.ART_CACHE, JSON.stringify(appState.artCache));
 }
 
 function savePrunedReleaseIds() {
   safeSetStorage(STORAGE_KEYS.PRUNED, JSON.stringify([...appState.prunedReleaseIds]));
+}
+
+function saveDismissedListingIds() {
+  safeSetStorage(STORAGE_KEYS.DISMISSED, JSON.stringify([...appState.dismissedListingIds]));
 }
 
 function saveUiPrefs() {
@@ -436,7 +454,7 @@ function hexToRgba(hex, alpha) {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-function showToast(message, variant = "cyan", durationMs = 3400) {
+function showToast(message, variant = "cyan", durationMs = 3400, action = null) {
   const stack = document.getElementById("toast-stack");
   if (!stack) return;
   while (stack.children.length >= 2) {
@@ -444,14 +462,37 @@ function showToast(message, variant = "cyan", durationMs = 3400) {
   }
   const item = document.createElement("div");
   item.className = `toast-item toast-${variant}`;
-  item.textContent = message;
-  stack.appendChild(item);
-  setTimeout(() => {
+  let removed = false;
+  const dismissToast = () => {
+    if (removed) return;
+    removed = true;
     item.style.opacity = "0";
     item.style.transform = "translateX(16px)";
     item.style.transition = "all 0.2s ease";
     setTimeout(() => item.remove(), 220);
-  }, durationMs);
+  };
+  if (action && action.label && typeof action.onClick === "function") {
+    item.style.display = "flex";
+    item.style.alignItems = "center";
+    item.style.justifyContent = "space-between";
+    item.style.gap = "10px";
+    const msgSpan = document.createElement("span");
+    msgSpan.textContent = message;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-micro toast-undo-btn";
+    btn.textContent = action.label;
+    btn.addEventListener("click", () => {
+      action.onClick();
+      dismissToast();
+    });
+    item.appendChild(msgSpan);
+    item.appendChild(btn);
+  } else {
+    item.textContent = message;
+  }
+  stack.appendChild(item);
+  setTimeout(dismissToast, durationMs);
 }
 
 async function copyTextSafe(text, successMsg) {
@@ -1649,9 +1690,17 @@ function updateHydratorStatusUI() {
       : `${hydratedCount} Live / ${soldCount} Sold`;
   }
   if (inlineHint) {
-    inlineHint.textContent = appState.autoHydrateEnabled
-      ? `Token-bucket sweeper: ${hydratedCount} live verified${soldCount ? `, ${soldCount} sold` : ""}`
-      : "Auto-hydrator paused (click Hydrate pill to resume)";
+    if (coolingDown) {
+      inlineHint.textContent = "● Rate cooldown (429)";
+    } else if (!appState.autoHydrateEnabled) {
+      inlineHint.textContent = "○ Auto-sync paused";
+    } else if (hydratedCount > 0) {
+      inlineHint.textContent = `● ${hydratedCount} live verified${soldCount ? ` · ${soldCount} sold` : ""}`;
+    } else if (appState.hydrationInFlight || queued > 0) {
+      inlineHint.textContent = "● Verifying live...";
+    } else {
+      inlineHint.textContent = "● Live sync ready";
+    }
   }
   if (consoleReadout) {
     consoleReadout.textContent = `IDB/Session: ${hydratedCount} live // ${queued} queued // ${soldCount} sold`;
@@ -2121,6 +2170,10 @@ function renderTopKPIs(filteredRadarCount = null) {
   );
   setTxt("nav-count-forensics", `-${s.spam_reduction_pct ?? 47.9}%`);
   setTxt("dedup-status-chip", appState.dedupEnabled ? `ON (-${s.auto_relists_intercepted ?? 105})` : `OFF (${rawTotal})`);
+  document.querySelectorAll(".kpi-grid .kpi-card").forEach((card) => {
+    const sub = card.querySelector(".kpi-sub");
+    if (sub && sub.textContent) card.title = sub.textContent.trim();
+  });
   updateRigHeartbeatUI();
   updateHydratorStatusUI();
 }
@@ -2191,6 +2244,32 @@ function renderPriceSparklineSVG(points, width = 108, height = 26) {
   </svg>`;
 }
 
+function hasPriceMovement(points) {
+  if (!Array.isArray(points) || points.length < 2) return false;
+  const vals = points.map((p) => (typeof p === "number" ? p : Number(p.price_usd || 0))).filter((v) => v > 0);
+  if (vals.length < 2) return false;
+  return Math.max(...vals) - Math.min(...vals) >= 0.01;
+}
+
+function formatCompactFreshness(item) {
+  const iso = item?.alerted_at || "";
+  if (iso) {
+    const ts = Date.parse(iso);
+    if (!Number.isNaN(ts)) {
+      const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+      if (diffSec < 60) return "now";
+      const diffMin = Math.floor(diffSec / 60);
+      if (diffMin < 60) return `${diffMin}m ago`;
+      const diffHr = Math.floor(diffMin / 60);
+      if (diffHr < 48) return `${diffHr}h ago`;
+      const diffDay = Math.floor(diffHr / 24);
+      if (diffDay < 30) return `${diffDay}d ago`;
+      return iso.slice(5, 10).replace("-", "/");
+    }
+  }
+  return item?.listed_age || "";
+}
+
 function passesConditionGrade(mediaCond, minGrade) {
   if (minGrade === "ALL") return true;
   const rankMap = { M: 4, NM: 3, "M-": 3, "VG+": 2, VG: 1 };
@@ -2203,12 +2282,126 @@ function isListingVerifiedDeal(item) {
   return item.deal_tier === "STEAL" || item.deal_tier === "GREAT_DEAL";
 }
 
+function getActiveAdvancedFilterConstraints() {
+  const chips = [];
+  if (!appState.dedupEnabled) {
+    chips.push({ key: "dedup", label: "Relist Shield: OFF" });
+  }
+  if (appState.hideRecordmule) {
+    chips.push({ key: "recordmule", label: "Hide recordmule" });
+  }
+  if (appState.hideSold) {
+    chips.push({ key: "sold", label: "Hide Sold" });
+  }
+  if (appState.conditionFilter !== "ALL") {
+    chips.push({ key: "condition", label: `Grade: ${appState.conditionFilter}+` });
+  }
+  if (appState.maxPriceUsd < appState.sliderMaxUsd) {
+    chips.push({ key: "price", label: `Max: $${appState.maxPriceUsd}` });
+  }
+  return chips;
+}
+
+function syncFiltersDrawerUI() {
+  const drawer = document.getElementById("radar-advanced-drawer");
+  const toggleBtn = document.getElementById("btn-radar-filters-toggle");
+  const badge = document.getElementById("radar-filters-badge");
+  const adv = getActiveAdvancedFilterConstraints();
+  const otherCount = adv.filter((c) => c.key !== "dedup").length;
+
+  if (drawer) {
+    drawer.hidden = !appState.filtersDrawerOpen;
+  }
+  if (toggleBtn) {
+    toggleBtn.setAttribute("aria-expanded", String(Boolean(appState.filtersDrawerOpen)));
+    toggleBtn.classList.toggle("active", Boolean(appState.filtersDrawerOpen) || adv.length > 0);
+    toggleBtn.classList.toggle("has-active-filters", adv.length > 0);
+  }
+  if (badge) {
+    if (appState.dedupEnabled) {
+      badge.textContent = otherCount > 0 ? `Shield · ${otherCount}` : "Shield";
+    } else {
+      badge.textContent = otherCount > 0 ? `Shield OFF · ${otherCount}` : "Shield OFF";
+    }
+  }
+}
+
+function clearAdvancedFilter(key) {
+  if (key === "dedup") {
+    appState.dedupEnabled = true;
+    document.getElementById("btn-toggle-dedup")?.classList.add("active");
+  } else if (key === "recordmule") {
+    appState.hideRecordmule = false;
+    document.getElementById("btn-hide-recordmule")?.classList.remove("active");
+  } else if (key === "sold") {
+    appState.hideSold = false;
+    document.getElementById("btn-hide-sold")?.classList.remove("active");
+  } else if (key === "condition") {
+    appState.conditionFilter = "ALL";
+    const condSel = document.getElementById("radar-condition-select");
+    if (condSel) condSel.value = "ALL";
+    if (typeof updateConfigJsonPreview === "function") updateConfigJsonPreview();
+  } else if (key === "price") {
+    appState.maxPriceUsd = appState.sliderMaxUsd;
+    const slider = document.getElementById("radar-max-price-slider");
+    if (slider) slider.value = String(appState.sliderMaxUsd);
+    const readout = document.getElementById("max-price-readout");
+    if (readout) readout.textContent = "No Limit";
+  } else {
+    return;
+  }
+  saveUiPrefs();
+  renderRadarGrid();
+}
+
+function dismissListing(listingId) {
+  const id = String(listingId || "");
+  if (!id) return;
+  const item = getListingById(id);
+
+  if (appState.focusedListingId === id) {
+    const curList = getFilteredListings();
+    const curIdx = curList.findIndex((x) => String(x.id) === id);
+    const nextItem = curIdx >= 0 ? curList[curIdx + 1] || curList[curIdx - 1] || null : null;
+    appState.focusedListingId = nextItem ? String(nextItem.id) : null;
+  }
+
+  appState.dismissedListingIds.add(id);
+  saveDismissedListingIds();
+  renderRadarGrid();
+
+  const label = item ? `${decodeHtmlEntities(item.artist)} — ${decodeHtmlEntities(getDisplayAlbumTitle(item))}` : `#${id}`;
+  showToast(`Skipped ${label}`, "amber", 4600, {
+    label: "Undo",
+    onClick: () => restoreDismissedListing(id),
+  });
+}
+
+function restoreDismissedListing(listingId) {
+  const id = String(listingId || "");
+  if (!id || !appState.dismissedListingIds.has(id)) return;
+  appState.dismissedListingIds.delete(id);
+  saveDismissedListingIds();
+  renderRadarGrid();
+  showToast("Restored skipped listing.", "cyan", 2200);
+}
+
+function restoreAllDismissedListings() {
+  const count = appState.dismissedListingIds.size;
+  if (count === 0) return;
+  appState.dismissedListingIds.clear();
+  saveDismissedListingIds();
+  renderRadarGrid();
+  showToast(`Restored ${count} skipped listing${count === 1 ? "" : "s"}.`, "lime", 2600);
+}
+
 function hasActiveFilters() {
   return (
     Boolean(appState.searchQuery) ||
     appState.scopeMode !== "ALL" ||
     appState.categoryFilter !== "ALL" ||
     appState.conditionFilter !== "ALL" ||
+    !appState.dedupEnabled ||
     appState.hideRecordmule ||
     appState.hideSold ||
     appState.maxPriceUsd < appState.sliderMaxUsd
@@ -2221,6 +2414,7 @@ function resetAllRadarFilters() {
   appState.categoryFilter = "ALL";
   appState.conditionFilter = "ALL";
   appState.sortMode = "SNAPSHOT_ORDER";
+  appState.dedupEnabled = true;
   appState.hideRecordmule = false;
   appState.hideSold = false;
   appState.maxPriceUsd = appState.sliderMaxUsd;
@@ -2235,6 +2429,7 @@ function resetAllRadarFilters() {
   if (slider) slider.value = String(appState.sliderMaxUsd);
   const readout = document.getElementById("max-price-readout");
   if (readout) readout.textContent = "No Limit";
+  document.getElementById("btn-toggle-dedup")?.classList.add("active");
   document.getElementById("btn-hide-recordmule")?.classList.remove("active");
   document.getElementById("btn-hide-sold")?.classList.remove("active");
 
@@ -2247,12 +2442,20 @@ function resetAllRadarFilters() {
 
   saveUiPrefs();
   renderRadarGrid();
+  if (appState.dismissedListingIds.size > 0) {
+    const n = appState.dismissedListingIds.size;
+    showToast(`Filters reset (${n} skipped listing${n === 1 ? "" : "s"} hidden).`, "cyan", 4200, {
+      label: "Restore",
+      onClick: restoreAllDismissedListings,
+    });
+  }
 }
 
 function getFilteredListings() {
   const all = SNIPER_STATE.listings || [];
 
   const basePool = all.filter((item) => {
+    if (appState.dismissedListingIds.has(String(item.id))) return false;
     if (appState.dedupEnabled && !item.is_latest_in_group) return false;
     if (appState.scopeMode === "LIVE_P1" && !item.is_live_page1) return false;
     if (appState.hideSold && isListingSold(item)) return false;
@@ -2283,19 +2486,23 @@ function getFilteredListings() {
     ALREADY_OWNED: basePool.filter((x) => x.vault_status === "ALREADY_OWNED").length,
   };
 
-  const setCnt = (id, n) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = String(n);
-  };
-  setCnt("pill-cnt-all", counts.ALL);
-  setCnt("pill-cnt-grails", counts.MISSING_GRAIL);
-  setCnt("pill-cnt-steals", counts.STEALS);
-  setCnt("pill-cnt-pricedrop", counts.PRICE_DROP);
-  setCnt("pill-cnt-bundles", counts.BUNDLE_READY);
-  setCnt("pill-cnt-offers", counts.MAKE_OFFER);
-  setCnt("pill-cnt-targets", counts.TARGET_HITS);
-  setCnt("pill-cnt-variants", counts.VARIANT_UPGRADE);
-  setCnt("pill-cnt-owned", counts.ALREADY_OWNED);
+  const pillMap = [
+    ["pill-filter-all", "pill-cnt-all", counts.ALL],
+    ["pill-filter-grails", "pill-cnt-grails", counts.MISSING_GRAIL],
+    ["pill-filter-steals", "pill-cnt-steals", counts.STEALS],
+    ["pill-filter-pricedrop", "pill-cnt-pricedrop", counts.PRICE_DROP],
+    ["pill-filter-bundles", "pill-cnt-bundles", counts.BUNDLE_READY],
+    ["pill-filter-offers", "pill-cnt-offers", counts.MAKE_OFFER],
+    ["pill-filter-targets", "pill-cnt-targets", counts.TARGET_HITS],
+    ["pill-filter-variants", "pill-cnt-variants", counts.VARIANT_UPGRADE],
+    ["pill-filter-owned", "pill-cnt-owned", counts.ALREADY_OWNED],
+  ];
+  for (const [pillId, cntId, n] of pillMap) {
+    const cntEl = document.getElementById(cntId);
+    if (cntEl) cntEl.textContent = String(n);
+    const pillEl = document.getElementById(pillId);
+    if (pillEl) pillEl.classList.toggle("is-empty", n === 0);
+  }
 
   const filtered = basePool.filter((item) => {
     switch (appState.categoryFilter) {
@@ -2360,51 +2567,118 @@ function renderVaultStatusPill(item) {
   return `<span class="tag-pill badge-lime">MISSING GRAIL</span>`;
 }
 
-function renderDealAndRelistPills(item) {
+function renderStageVaultPills(item) {
   const pills = [];
-  const live = appState.liveApiResults[item.id];
-  if (isListingSold(item)) {
-    pills.push(`<span class="tag-pill badge-crimson">${escapeHtml(live?.status || "SOLD")}</span>`);
-  } else if (live && !live.loading && !live.error && live.status === "For Sale") {
-    pills.push(`<span class="tag-pill badge-lime">LIVE FOR SALE</span>`);
+  if (item.vault_status === "ALREADY_OWNED") {
+    const cleared = isReleaseClearedFromLiveWantlist(item.release_id);
+    if (cleared) {
+      pills.push(`<span class="tag-pill badge-neutral" title="Owned in Vault &amp; already cleared from live Wantlist">CLEARED</span>`);
+    } else {
+      pills.push(`<span class="tag-pill badge-crimson" title="Exact release_id (#${escapeHtml(item.release_id)}) is in your Collection Vault">IN VAULT</span>`);
+    }
+  } else if (item.vault_status === "VARIANT_UPGRADE") {
+    const ownedFmt = item.vault_owned_detail ? item.vault_owned_detail.format_string : "Another pressing";
+    pills.push(`<span class="tag-pill badge-magenta" title="Alternate variant of album in your Vault: ${escapeHtml(ownedFmt)}">VARIANT</span>`);
+  } else {
+    pills.push(`<span class="tag-pill badge-lime" title="Missing from your Collection Vault">GRAIL</span>`);
   }
 
-  if (item.is_live_page1) pills.push(`<span class="tag-pill badge-cyan">LIVE P1</span>`);
-  if (isListingTargetHit(item)) {
-    pills.push(`<span class="tag-pill badge-gold">${ICONS.target}<span>TARGET HIT</span></span>`);
-  }
-  if (item.allow_offers) pills.push(`<span class="tag-pill badge-amber">MAKE OFFER</span>`);
-  if (Number(item.seller_bundle_count || 1) >= 2) {
-    pills.push(
-      `<button type="button" class="tag-pill tag-pill-btn badge-cyan btn-jump-bundle" data-bundle-seller="${escapeHtml(item.seller_info)}" title="Seller holds ${item.seller_bundle_count} Wantlist LPs — jump to Bundle Optimizer">
-        ${item.seller_bundle_count}x BUNDLE
-      </button>`
-    );
-  }
-  if (item.is_price_drop) {
-    pills.push(
-      `<span class="tag-pill badge-lime" title="Price dropped from $${Number(item.group_highest_price_usd || 0).toFixed(2)}">DROP -$${Number(item.price_drop_usd || 0).toFixed(2)}</span>`
-    );
-  } else if (item.deal_delta_pct !== null && item.deal_delta_pct !== undefined && item.deal_delta_pct <= -15) {
-    pills.push(`<span class="tag-pill badge-lime">STEAL ${item.deal_delta_pct.toFixed(0)}%</span>`);
-  } else if (item.deal_delta_pct !== null && item.deal_delta_pct !== undefined && item.deal_delta_pct <= -3) {
-    pills.push(`<span class="tag-pill badge-cyan">${item.deal_delta_pct.toFixed(0)}% DEAL</span>`);
-  }
-
-  if (item.relist_group_total > 1) {
-    const bluffTag = item.relist_behavior === "YOYO_BLUFF" ? " BLUFF" : "";
-    pills.push(
-      `<button type="button" class="tag-pill tag-pill-btn badge-amber btn-toggle-relist-history" data-id="${escapeHtml(item.id)}" title="Inspect ${item.relist_group_total}x relist history">
-        ${ICONS.repeat}<span>${item.relist_group_total}x${bluffTag}</span>
-      </button>`
-    );
+  const isSold = isListingSold(item);
+  if (isSold) {
+    const live = appState.liveApiResults[item.id];
+    pills.push(`<span class="tag-pill badge-crimson stage-sold-pill">${escapeHtml(live?.status || "SOLD")}</span>`);
+  } else if (item.is_live_page1) {
+    pills.push(`<span class="tag-pill badge-cyan stage-live-pill" title="Active on Discogs Wantlist Page 1"><span class="live-ping"></span>LIVE</span>`);
   }
   return pills.join("");
 }
 
-function renderCardDrawersHtml(item) {
+function renderStageAlphaPill(item) {
+  if (isListingTargetHit(item)) {
+    return `<span class="tag-pill badge-gold" title="At or below your ${formatUsd(item.target_price_usd)} target">${ICONS.target}<span>TARGET HIT</span></span>`;
+  }
+  if (item.is_price_drop) {
+    return `<span class="tag-pill badge-lime" title="Price dropped from ${formatUsd(item.group_highest_price_usd)}">DROP -$${Number(item.price_drop_usd || 0).toFixed(2)}</span>`;
+  }
+  if (item.deal_delta_pct !== null && item.deal_delta_pct !== undefined && item.deal_delta_pct <= -15) {
+    return `<span class="tag-pill badge-lime" title="${escapeHtml(item.deal_tier_label || "")}">STEAL ${item.deal_delta_pct.toFixed(0)}%</span>`;
+  }
+  if (item.deal_delta_pct !== null && item.deal_delta_pct !== undefined && item.deal_delta_pct <= -3) {
+    return `<span class="tag-pill badge-cyan" title="${escapeHtml(item.deal_tier_label || "")}">DEAL ${item.deal_delta_pct.toFixed(0)}%</span>`;
+  }
+  if (item.allow_offers) {
+    return `<span class="tag-pill badge-amber" title="Seller accepts Make Offer">OFFER</span>`;
+  }
+  return "";
+}
+
+function getGradeChipClass(item) {
+  const mc = String(item.media_condition || "").toUpperCase();
+  if (item.has_wear_warning || mc === "VG" || mc === "G+" || mc === "G" || mc === "F" || mc === "P") {
+    return "grade-warn";
+  }
+  if (mc === "M" || mc === "NM" || mc === "M-") {
+    return "grade-mint";
+  }
+  return "grade-good";
+}
+
+function getSnipeVerdictMeta(item) {
+  const live = appState.liveApiResults[item.id];
+  const mkt = item.market_stats || {};
+  const benchUsd = Number(live?.suggested_usd || mkt.condition_suggested_usd || 0);
+  const deltaPct = item.deal_delta_pct;
+  const offerUsd = Number(item.offer_strategy?.recommended_offer_usd || 0);
+
+  if (benchUsd > 0 && deltaPct !== null && deltaPct !== undefined) {
+    if (deltaPct <= -15) {
+      return { cls: "verdict-steal", label: `STEAL ${deltaPct.toFixed(0)}%`, benchUsd };
+    }
+    if (deltaPct <= -3) {
+      return { cls: "verdict-deal", label: `${deltaPct.toFixed(0)}% vs Mkt`, benchUsd };
+    }
+    if (deltaPct <= 12) {
+      if (item.allow_offers && offerUsd > 0) {
+        return { cls: "verdict-offer", label: `Offer ~${formatUsd(offerUsd)}`, benchUsd };
+      }
+      return { cls: "verdict-fair", label: "Fair Mkt", benchUsd };
+    }
+    if (item.allow_offers && offerUsd > 0) {
+      return { cls: "verdict-offer", label: `+${deltaPct.toFixed(0)}% · Offer`, benchUsd };
+    }
+    return { cls: "verdict-high", label: `+${deltaPct.toFixed(0)}% High`, benchUsd };
+  }
+
+  if (item.allow_offers && offerUsd > 0) {
+    return { cls: "verdict-offer", label: `Offer ~${formatUsd(offerUsd)}`, benchUsd: 0 };
+  }
+  if (item.is_price_drop) {
+    return { cls: "verdict-deal", label: `Cut -$${Number(item.price_drop_usd || 0).toFixed(2)}`, benchUsd: 0 };
+  }
+  return { cls: "verdict-unrated", label: "Unrated", benchUsd: 0 };
+}
+
+function renderSnipeVerdictHtml(item) {
+  const mkt = item.market_stats || {};
+  const verdict = getSnipeVerdictMeta(item);
+  const sparkHtml = hasPriceMovement(item.price_trajectory)
+    ? ` <span class="snipe-sparkline-inline" title="Observed price movement">${renderPriceSparklineSVG(item.price_trajectory, 48, 14)}</span>`
+    : "";
+
+  const benchLineHtml =
+    verdict.benchUsd > 0
+      ? `<span class="snipe-bench-line" title="${escapeHtml(mkt.benchmark_source || "Market Benchmark")}">Mkt <strong data-bench-val="${escapeHtml(item.id)}">${escapeHtml(formatUsd(verdict.benchUsd))}</strong>${sparkHtml}</span>`
+      : `<span class="snipe-bench-line" data-bench-val="${escapeHtml(item.id)}"><button type="button" class="snipe-verify-link" data-live-api-id="${escapeHtml(item.id)}" title="Verify live status &amp; Discogs market benchmark">Verify Mkt ↻</button>${sparkHtml}</span>`;
+
+  return `
+    <span class="snipe-verdict-pill ${verdict.cls}">${escapeHtml(verdict.label)}</span>
+    ${benchLineHtml}`;
+}
+
+function renderCardDrawersHtml(item, { forceApiDrawer = false } = {}) {
   const liveResult = appState.liveApiResults[item.id];
   const historyOpen = appState.expandedHistoryIds.has(item.id);
+  const apiOpen = forceApiDrawer || appState.expandedApiIds.has(item.id);
   const mkt = item.market_stats || {};
   let html = "";
 
@@ -2413,7 +2687,7 @@ function renderCardDrawersHtml(item) {
       .map(
         (h, idx) => `
         <div class="history-row">
-          <span>#${idx + 1} // <a href="${escapeHtml(sanitizeHttpUrl(h.item_url))}" target="_blank" rel="noopener" style="color:var(--neon-cyan);">ID #${escapeHtml(h.id)}</a></span>
+          <span>#${idx + 1} // <a href="${escapeHtml(sanitizeHttpUrl(h.item_url))}" target="_blank" rel="noopener noreferrer" style="color:var(--neon-cyan);">ID #${escapeHtml(h.id)}</a></span>
           <span style="color:var(--neon-lime);font-weight:600;">${escapeHtml(h.total_price)}</span>
           <span style="color:var(--text-muted);">${escapeHtml((h.alerted_at || "").replace("T", " ").slice(0, 16))}</span>
         </div>`
@@ -2430,11 +2704,23 @@ function renderCardDrawersHtml(item) {
       </div>`;
   }
 
-  if (liveResult) {
+  if (liveResult && apiOpen) {
+    const closeBtn = forceApiDrawer
+      ? ""
+      : `<span style="display:inline-flex;align-items:center;gap:4px;">
+           <button type="button" class="btn-micro" data-refresh-live-api-id="${escapeHtml(item.id)}" title="Re-query live Discogs API">↻</button>
+           <button type="button" class="btn-micro" data-close-api-drawer="${escapeHtml(item.id)}" title="Collapse API drawer" aria-label="Collapse API drawer">×</button>
+         </span>`;
     if (liveResult.loading) {
       html += `<div class="live-api-drawer" style="color:var(--neon-cyan);">Querying api.discogs.com for Listing #${escapeHtml(item.id)} &amp; Release #${escapeHtml(item.release_id)}...</div>`;
     } else if (liveResult.error) {
-      html += `<div class="live-api-drawer" style="color:#ff6082;">${escapeHtml(liveResult.error)}</div>`;
+      html += `
+        <div class="live-api-drawer" style="color:#ff6082;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;">
+            <span>${escapeHtml(liveResult.error)}</span>
+            ${closeBtn}
+          </div>
+        </div>`;
     } else {
       const statusClass = liveResult.status === "For Sale" ? "badge-lime" : liveResult.status === "Unknown" ? "badge-amber" : "badge-crimson";
       const statusText = liveResult.status === "For Sale" ? "STILL FOR SALE" : liveResult.status;
@@ -2442,7 +2728,10 @@ function renderCardDrawersHtml(item) {
         <div class="live-api-drawer">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
             <strong style="color:var(--neon-cyan);">DISCOGS API LIVE TELEMETRY</strong>
-            <span class="kpi-badge ${statusClass}">${escapeHtml(statusText)}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <span class="kpi-badge ${statusClass}">${escapeHtml(statusText)}</span>
+              ${closeBtn}
+            </span>
           </div>
           <div>Market: <strong>${liveResult.num_for_sale ?? "?"}</strong> for sale (Lowest: <strong>${escapeHtml(liveResult.lowest_price_str || "N/A")}</strong>) // <strong>${liveResult.want ?? "?"}</strong> Want / <strong>${liveResult.have ?? "?"}</strong> Have</div>
           <div>Suggested (${escapeHtml(item.media_condition)}): <strong style="color:var(--neon-lime);">${escapeHtml(liveResult.suggested_str || mkt.condition_suggested_formatted || "Connect Token")}</strong></div>
@@ -2467,17 +2756,12 @@ function renderDropCard(item) {
   const isSpinning = isPlaying && appState.isAudioActuallyPlaying;
   const isFocused = appState.focusedListingId === item.id;
   const isSold = isListingSold(item);
-  const mkt = item.market_stats || {};
+  const live = appState.liveApiResults[item.id];
+  const liveDone = Boolean(live && !live.loading && !live.error);
   const waxPrimary = item.wax_shader?.primary && item.wax_shader.primary !== "#181a1f" ? item.wax_shader.primary : "#22d3ee";
   const waxGlow = hexToRgba(waxPrimary, 0.24);
-  const liveBench = appState.liveApiResults[item.id]?.suggested_usd;
-  const benchDisplay = liveBench ? formatUsd(liveBench) : mkt.condition_suggested_formatted || "Live API";
-  const benchSub = liveBench
-    ? "Official Discogs API"
-    : mkt.condition_suggested_usd > 0
-    ? `Low ${formatUsd(mkt.observed_low_usd)} / Hi ${formatUsd(mkt.observed_high_usd)}`
-    : "Auto-hydrating...";
-  const shipText = item.shipping_price_usd > 0 ? `+ ${formatUsd(item.shipping_price_usd)} ship` : "incl. ship";
+  const priceBreakText =
+    item.shipping_price_usd > 0 ? `${item.list_price} + ${formatUsd(item.shipping_price_usd)} ship` : "Free ship";
   const vaultCardCls =
     item.vault_status === "VARIANT_UPGRADE"
       ? "card-variant"
@@ -2485,8 +2769,13 @@ function renderDropCard(item) {
       ? "card-owned"
       : "card-grail";
 
+  const gradeCls = getGradeChipClass(item);
+  const freshnessText = formatCompactFreshness(item);
+  const alphaPillHtml = renderStageAlphaPill(item);
+
   const collectorBadgesHtml = (item.collector_badges || [])
-    .slice(0, 4)
+    .filter((b) => !(item.has_wear_warning && b.id === "WEAR_WARN"))
+    .slice(0, 2)
     .map((b) => `<span class="tag-pill badge-${escapeHtml(b.tone)}">${escapeHtml(decodeHtmlEntities(b.label))}</span>`)
     .join("");
 
@@ -2498,99 +2787,117 @@ function renderDropCard(item) {
       : "";
   const cleanNote = decodeHtmlEntities(rawNote);
 
+  const bundleBtnHtml =
+    Number(item.seller_bundle_count || 1) >= 2
+      ? `<button type="button" class="tag-pill tag-pill-btn badge-cyan btn-jump-bundle" data-bundle-seller="${escapeHtml(sellerClean)}" title="Seller holds ${item.seller_bundle_count} Wantlist LPs — open Bundle Optimizer">${item.seller_bundle_count}x Bundle</button>`
+      : "";
+
+  const relistBtnHtml =
+    item.relist_group_total > 1
+      ? `<button type="button" class="tag-pill tag-pill-btn badge-amber btn-toggle-relist-history" data-id="${escapeHtml(item.id)}" title="Inspect ${item.relist_group_total}x relist history">${ICONS.repeat}<span>${item.relist_group_total}x${item.relist_behavior === "YOYO_BLUFF" ? " Bluff" : ""}</span></button>`
+      : "";
+
+  const noteChipHtml =
+    cleanNote && !item.has_wear_warning
+      ? `<button type="button" class="seller-note-chip" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(cleanNote)}">Note</button>`
+      : "";
+
+  const wearBannerHtml = item.has_wear_warning
+    ? `<div class="seller-notes notes-wear" title="${escapeHtml(cleanNote || "Wear noted in listing")}">${escapeHtml(cleanNote || "Jacket / sleeve wear noted in listing — inspect before buying.")}</div>`
+    : "";
+
   return `
     <article class="drop-card card-record ${vaultCardCls} ${isPlaying ? "card-playing" : ""} ${isFocused ? "card-kbd-focused" : ""} ${isSold ? "card-sold" : ""}" style="--wax-glow:${waxGlow};--card-wax-glow:${waxGlow};" data-listing-id="${escapeHtml(item.id)}" data-release-id="${escapeHtml(item.release_id)}" data-artist="${escapeHtml(artistClean)}" data-album="${escapeHtml(albumClean)}">
-      <div class="drop-card-top">
-        <div class="status-pills">
-          ${renderVaultStatusPill(item)}
-          ${renderDealAndRelistPills(item)}
+      <div class="drop-card-stage">
+        <button type="button" class="artwork-stage sleeve-peek-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect pressing, seller notes, Haggle &amp; Target Price">
+          <div class="sleeve-frame sleeve-peek-jacket holo-sleeve">
+            <img
+              src="${escapeHtml(coverSrc)}"
+              data-fallback-src="${escapeHtml(fallbackUri)}"
+              alt="${escapeHtml(titleClean)}"
+              class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
+              loading="lazy"
+              data-release-id="${escapeHtml(item.release_id)}"
+              data-norm-key="${escapeHtml(item.norm_album_key)}"
+              data-artist="${escapeHtml(artistClean)}"
+              data-album="${escapeHtml(albumClean)}"
+            />
+          </div>
+          <div class="vinyl-platter-wrap sleeve-peek-disc uv-reactive ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
+            ${renderVinylDiscSVG(item.wax_shader, item.id, 120)}
+          </div>
+        </button>
+
+        <div class="stage-overlay-tl" data-stage-tl="${escapeHtml(item.id)}">${renderStageVaultPills(item)}</div>
+        <div class="stage-overlay-tr" data-alpha-slot="${escapeHtml(item.id)}">${alphaPillHtml}</div>
+        <div class="stage-overlay-bl">
+          <span class="grade-chip ${gradeCls}" title="Media: ${escapeHtml(item.media_condition_full || item.media_condition)} / Sleeve: ${escapeHtml(item.sleeve_condition)}">${escapeHtml(item.media_condition)} / ${escapeHtml(item.sleeve_condition)}</span>
         </div>
-        <span class="listing-id-label">#${escapeHtml(item.id)}</span>
+        <button type="button" class="btn-triage-dismiss" data-dismiss-id="${escapeHtml(item.id)}" aria-label="Skip listing" title="Skip listing (X)">×</button>
       </div>
 
-      <button type="button" class="artwork-stage sleeve-peek-stage" data-inspect-id="${escapeHtml(item.id)}" title="Inspect full vinyl pressing, Haggle &amp; Target Price">
-        <div class="sleeve-frame sleeve-peek-jacket holo-sleeve">
-          <img
-            src="${escapeHtml(coverSrc)}"
-            data-fallback-src="${escapeHtml(fallbackUri)}"
-            alt="${escapeHtml(titleClean)}"
-            class="sleeve-img ${needsHydration ? "needs-art-hydration" : ""}"
-            loading="lazy"
-            data-release-id="${escapeHtml(item.release_id)}"
-            data-norm-key="${escapeHtml(item.norm_album_key)}"
-            data-artist="${escapeHtml(artistClean)}"
-            data-album="${escapeHtml(albumClean)}"
-          />
-        </div>
-        <div class="vinyl-platter-wrap sleeve-peek-disc uv-reactive ${isSpinning ? "spinning" : ""}" id="platter-${escapeHtml(item.id)}">
-          ${renderVinylDiscSVG(item.wax_shader, item.id, 120)}
-        </div>
-      </button>
-
       <div class="drop-meta">
-        <div class="drop-artist">${escapeHtml(artistClean)}</div>
+        <div class="drop-meta-head">
+          <div class="drop-artist">${escapeHtml(artistClean)}</div>
+          <span class="drop-freshness" title="Listing #${escapeHtml(item.id)} • ${escapeHtml((item.alerted_at || "").replace("T", " ").slice(0, 16) || item.listed_age || "")}">${escapeHtml(freshnessText)}</span>
+        </div>
         <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" title="${escapeHtml(albumClean)}">
           <h2 class="drop-album">${escapeHtml(decodeHtmlEntities(getDisplayAlbumTitle(item)))}</h2>
         </button>
-        <div class="drop-variant" title="${escapeHtml(variantClean)}">
-          <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
-          <span class="drop-variant-text">${escapeHtml(waxNameClean)}</span>
+        <div class="drop-variant-row">
+          <div class="drop-variant" title="${escapeHtml(variantClean)}">
+            <span class="wax-swatch" style="background:${escapeHtml(waxPrimary)};box-shadow:0 0 8px ${waxGlow};"></span>
+            <span class="drop-variant-text">${escapeHtml(waxNameClean)}</span>
+          </div>
+          ${collectorBadgesHtml ? `<div class="collector-badges-inline">${collectorBadgesHtml}</div>` : ""}
         </div>
-        ${collectorBadgesHtml ? `<div class="collector-badges-row">${collectorBadgesHtml}</div>` : ""}
       </div>
 
-      <div class="price-matrix anodized-panel">
-        <div class="matrix-cell">
-          <span class="matrix-label">Total Shipped</span>
-          <span class="matrix-val matrix-val-price">${escapeHtml(item.total_price)}</span>
-          <span class="matrix-sub">${escapeHtml(item.list_price)} ${shipText}</span>
+      <div class="snipe-price-bar anodized-panel" data-price-bar="${escapeHtml(item.id)}">
+        <div class="snipe-price-primary">
+          <span class="snipe-price-total">${escapeHtml(item.total_price)}</span>
+          <span class="snipe-price-break">${escapeHtml(priceBreakText)}</span>
         </div>
-        <div class="matrix-cell">
-          <span class="matrix-label">Benchmark (${escapeHtml(item.media_condition)})</span>
-          <span class="matrix-val ${benchDisplay === "Live API" ? "matrix-val-muted" : ""}" data-bench-val="${escapeHtml(item.id)}">${escapeHtml(benchDisplay)}</span>
-          <span class="matrix-sub" title="${escapeHtml(mkt.benchmark_source || "")}">${escapeHtml(benchSub)}</span>
-        </div>
-        <div class="matrix-cell">
-          <span class="matrix-label">Grade / Alpha</span>
-          <span class="matrix-val">${escapeHtml(item.media_condition)} / ${escapeHtml(item.sleeve_condition)}</span>
-          <span class="matrix-sub">${
-            item.allow_offers && item.offer_strategy?.recommended_offer_usd
-              ? `Offer ~${formatUsd(item.offer_strategy.recommended_offer_usd)}`
-              : item.deal_tier === "UNRATED"
-              ? "Queueing API"
-              : `Score ${item.deal_score}/100`
-          }</span>
+        <div class="snipe-price-verdict">
+          ${renderSnipeVerdictHtml(item)}
         </div>
       </div>
 
       <div class="seller-strip">
         <div class="seller-left">
-          <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener" class="seller-link">${escapeHtml(sellerClean)}</a>
-          ${item.seller_rating ? `<span style="color:var(--mint-lock, var(--neon-lime));font-family:var(--font-mono);font-size:0.67rem;">${escapeHtml(item.seller_rating)}</span>` : ""}
-          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(sellerClean)}" title="Mute all listings from ${escapeHtml(sellerClean)}">Mute</button>
+          <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener noreferrer" class="seller-link" title="View ${escapeHtml(sellerClean)} on Discogs">${escapeHtml(sellerClean)}</a>
+          ${item.seller_rating ? `<span class="seller-rating">${escapeHtml(item.seller_rating)}</span>` : ""}
+          ${bundleBtnHtml}
+          ${relistBtnHtml}
         </div>
-        <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);">
-          ${escapeHtml((item.alerted_at || "").replace("T", " ").slice(0, 16) || item.listed_age)}
-        </span>
+        <div class="seller-tools">
+          ${noteChipHtml}
+          <button type="button" class="seller-icon-btn ${liveDone ? "is-verified" : ""}" data-live-api-id="${escapeHtml(item.id)}" title="${liveDone ? "Live API verified — click to inspect telemetry" : "Verify live availability &amp; market benchmark via Discogs API"}" aria-label="Verify live API telemetry">
+            ${ICONS.bolt}
+          </button>
+          <button type="button" class="mute-seller-inline" data-mute-seller="${escapeHtml(sellerClean)}" title="Mute all listings from ${escapeHtml(sellerClean)}" aria-label="Mute seller ${escapeHtml(sellerClean)}">Mute</button>
+        </div>
       </div>
 
-      ${cleanNote ? `<div class="seller-notes ${item.has_wear_warning ? "notes-wear" : ""}" title="${escapeHtml(cleanNote)}">${escapeHtml(cleanNote)}</div>` : ""}
+      ${wearBannerHtml}
 
       <div class="card-drawers-slot" data-drawers-for="${escapeHtml(item.id)}">${renderCardDrawersHtml(item)}</div>
 
       <div class="card-actions">
-        <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-cart" title="1-Click Add to Discogs Cart">
-          ${ICONS.cart}<span>Cart (${escapeHtml(item.total_price)})</span>
+        <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener noreferrer" class="btn-action btn-cart" title="${isSold ? "Listing marked sold/removed" : "1-Click Add to Discogs Cart"}">
+          ${ICONS.cart}<span>${isSold ? "Sold" : `Cart · ${escapeHtml(item.total_price)}`}</span>
         </a>
-        <a href="${escapeHtml(sanitizeHttpUrl(item.item_url))}" target="_blank" rel="noopener" class="btn-action" title="Open Discogs Listing #${escapeHtml(item.id)}">
-          <span>Listing</span>${ICONS.ext}
-        </a>
+        ${
+          item.allow_offers
+            ? `<button type="button" class="btn-action btn-offer-cta" data-inspect-id="${escapeHtml(item.id)}" title="Open Make-Offer Haggle Desk &amp; Inspector"><span>Offer</span></button>`
+            : `<button type="button" class="btn-action btn-inspect-cta" data-inspect-id="${escapeHtml(item.id)}" title="Inspect pressing details, seller notes &amp; target price"><span>Inspect</span></button>`
+        }
         <button type="button" class="btn-action btn-audition ${isPlaying ? "playing" : ""}" data-audition-id="${escapeHtml(item.id)}" title="Audition 30-second studio preview (Space)">
           ${isPlaying ? ICONS.stop : ICONS.play}<span>${isPlaying ? "Stop" : "30s"}</span>
         </button>
-        <button type="button" class="btn-action" data-live-api-id="${escapeHtml(item.id)}" title="Verify live status &amp; Discogs API price suggestions">
-          ${ICONS.bolt}<span>API</span>
-        </button>
+        <a href="${escapeHtml(sanitizeHttpUrl(item.item_url))}" target="_blank" rel="noopener noreferrer" class="btn-action btn-icon-only" title="Open Discogs Listing #${escapeHtml(item.id)}" aria-label="Open Discogs Listing #${escapeHtml(item.id)}">
+          ${ICONS.ext}
+        </a>
       </div>
     </article>
   `;
@@ -2599,9 +2906,12 @@ function renderDropCard(item) {
 function renderMatrixTapeTable(filtered) {
   const rows = filtered
     .map((item) => {
-      const mkt = item.market_stats || {};
-      const live = appState.liveApiResults[item.id];
-      const bench = live?.suggested_usd ? formatUsd(live.suggested_usd) : mkt.condition_suggested_formatted || "—";
+      const artistClean = decodeHtmlEntities(item.artist);
+      const albumClean = decodeHtmlEntities(getDisplayAlbumTitle(item));
+      const waxClean = decodeHtmlEntities(item.wax_shader?.wax_name || item.variant);
+      const sellerClean = decodeHtmlEntities(item.seller_info);
+      const verdict = getSnipeVerdictMeta(item);
+      const gradeCls = getGradeChipClass(item);
       const isFocused = appState.focusedListingId === item.id;
       const isSold = isListingSold(item);
       const isPlaying = appState.currentlyPlayingId === item.id;
@@ -2612,29 +2922,41 @@ function renderMatrixTapeTable(filtered) {
         : item.vault_status === "ALREADY_OWNED"
         ? `<span class="kpi-badge badge-crimson">Vault</span>`
         : `<span class="kpi-badge badge-lime">Grail</span>`;
+      const benchHtml =
+        verdict.benchUsd > 0
+          ? `<div class="matrix-bench-sub">Mkt ${escapeHtml(formatUsd(verdict.benchUsd))}</div>`
+          : "";
+      const trajHtml = hasPriceMovement(item.price_trajectory)
+        ? renderPriceSparklineSVG(item.price_trajectory, 68, 18)
+        : `<span style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.68rem;">—</span>`;
 
       return `
         <tr class="drop-card-row ${isFocused ? "matrix-row-focused" : ""} ${isSold ? "matrix-row-sold" : ""}" data-listing-id="${escapeHtml(item.id)}">
           <td>${statusBadge}</td>
           <td>
             <button type="button" class="drop-album-btn" data-inspect-id="${escapeHtml(item.id)}" style="color:#fff;font-weight:700;">
-              ${escapeHtml(item.artist)} — ${escapeHtml(getDisplayAlbumTitle(item))}
+              ${escapeHtml(artistClean)} — ${escapeHtml(albumClean)}
             </button>
-            <div style="font-size:0.69rem;color:var(--text-muted);">${escapeHtml(item.wax_shader?.wax_name || item.variant)}</div>
+            <div style="font-size:0.69rem;color:var(--text-muted);">${escapeHtml(waxClean)}</div>
           </td>
           <td style="font-family:var(--font-mono);color:var(--neon-lime);font-weight:700;">${escapeHtml(item.total_price)}</td>
-          <td style="font-family:var(--font-mono);">${escapeHtml(bench)}</td>
-          <td style="font-family:var(--font-mono);">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</td>
-          <td style="font-family:var(--font-mono);">
-            ${escapeHtml(item.seller_info)}
-            ${item.seller_bundle_count >= 2 ? `<span class="kpi-badge badge-cyan">${item.seller_bundle_count}x</span>` : ""}
+          <td>
+            <span class="snipe-verdict-pill ${verdict.cls}">${escapeHtml(verdict.label)}</span>
+            ${benchHtml}
           </td>
-          <td>${renderPriceSparklineSVG(item.price_trajectory, 74, 20)}</td>
+          <td><span class="grade-chip ${gradeCls}">${escapeHtml(item.media_condition)}/${escapeHtml(item.sleeve_condition)}</span></td>
+          <td style="font-family:var(--font-mono);">
+            <a href="https://www.discogs.com/seller/${encodeURIComponent(sellerClean)}/profile" target="_blank" rel="noopener noreferrer" class="seller-link">${escapeHtml(sellerClean)}</a>
+            ${item.seller_bundle_count >= 2 ? `<button type="button" class="tag-pill tag-pill-btn badge-cyan btn-jump-bundle" data-bundle-seller="${escapeHtml(sellerClean)}">${item.seller_bundle_count}x</button>` : ""}
+          </td>
+          <td>${trajHtml}</td>
           <td>
             <div class="seller-ctrl-group">
-              <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-neon-lime btn-sm">Cart</a>
-              <button type="button" class="btn-action btn-sm" data-audition-id="${escapeHtml(item.id)}">${isPlaying ? "Stop" : "30s"}</button>
-              <button type="button" class="btn-action btn-sm" data-inspect-id="${escapeHtml(item.id)}">Inspect</button>
+              <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener noreferrer" class="btn-action btn-neon-lime btn-sm">${isSold ? "Sold" : "Cart"}</a>
+              <button type="button" class="btn-action btn-sm ${item.allow_offers ? "btn-offer-cta" : "btn-inspect-cta"}" data-inspect-id="${escapeHtml(item.id)}">${item.allow_offers ? "Offer" : "Inspect"}</button>
+              <button type="button" class="btn-action btn-audition btn-sm ${isPlaying ? "playing" : ""}" data-audition-id="${escapeHtml(item.id)}">${isPlaying ? "Stop" : "30s"}</button>
+              <a href="${escapeHtml(sanitizeHttpUrl(item.item_url))}" target="_blank" rel="noopener noreferrer" class="btn-action btn-icon-only btn-sm" title="Open Discogs Listing #${escapeHtml(item.id)}" aria-label="Open Discogs Listing">${ICONS.ext}</a>
+              <button type="button" class="btn-triage-dismiss btn-triage-dismiss-inline" data-dismiss-id="${escapeHtml(item.id)}" aria-label="Skip listing" title="Skip listing (X)">×</button>
             </div>
           </td>
         </tr>`;
@@ -2649,10 +2971,10 @@ function renderMatrixTapeTable(filtered) {
             <th>Vault</th>
             <th>Release &amp; Pressing</th>
             <th>Shipped</th>
-            <th>Benchmark</th>
+            <th>Verdict / Mkt</th>
             <th>Grade</th>
             <th>Seller</th>
-            <th>Trajectory</th>
+            <th>Trend</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -2664,27 +2986,46 @@ function renderMatrixTapeTable(filtered) {
 function updateCardInPlace(listingId, { flash = false } = {}) {
   const item = getListingById(listingId);
   if (!item) return;
-  const slot = document.querySelector(`.card-drawers-slot[data-drawers-for="${CSS.escape(String(listingId))}"]`);
+  const escId = CSS.escape(String(listingId));
+
+  const slot = document.querySelector(`.card-drawers-slot[data-drawers-for="${escId}"]`);
   if (slot) slot.innerHTML = renderCardDrawersHtml(item);
 
-  const live = appState.liveApiResults[listingId];
-  const liveBench = live?.suggested_usd;
-  if (liveBench) {
-    const benchEl = document.querySelector(`[data-bench-val="${CSS.escape(String(listingId))}"]`);
-    if (benchEl) {
-      benchEl.textContent = formatUsd(liveBench);
-      benchEl.classList.remove("matrix-val-muted");
-    }
+  const priceBar = document.querySelector(`.snipe-price-bar[data-price-bar="${escId}"]`);
+  if (priceBar) {
+    const verdictEl = priceBar.querySelector(".snipe-price-verdict");
+    if (verdictEl) verdictEl.innerHTML = renderSnipeVerdictHtml(item);
   }
-  const cardEl = document.querySelector(`.drop-card[data-listing-id="${CSS.escape(String(listingId))}"]`);
+
+  const alphaSlot = document.querySelector(`[data-alpha-slot="${escId}"]`);
+  if (alphaSlot) alphaSlot.innerHTML = renderStageAlphaPill(item);
+
+  const stageTl = document.querySelector(`[data-stage-tl="${escId}"]`);
+  if (stageTl) stageTl.innerHTML = renderStageVaultPills(item);
+
+  const isSold = isListingSold(item);
+  const live = appState.liveApiResults[listingId];
+  const liveDone = Boolean(live && !live.loading && !live.error);
+
+  const cardEl = document.querySelector(`.drop-card[data-listing-id="${escId}"]`);
   if (cardEl) {
-    cardEl.classList.toggle("card-sold", isListingSold(item));
+    cardEl.classList.toggle("card-sold", isSold);
+    const cartSpan = cardEl.querySelector(".btn-cart span");
+    if (cartSpan) cartSpan.textContent = isSold ? "Sold" : `Cart · ${item.total_price}`;
+    const apiIconBtn = cardEl.querySelector(`.seller-icon-btn[data-live-api-id="${escId}"]`);
+    if (apiIconBtn) apiIconBtn.classList.toggle("is-verified", liveDone);
     if (flash) {
       cardEl.classList.remove("api-hydrated-flash");
       void cardEl.offsetWidth;
       cardEl.classList.add("api-hydrated-flash");
     }
   }
+
+  const rowEl = document.querySelector(`.drop-card-row[data-listing-id="${escId}"]`);
+  if (rowEl) {
+    rowEl.classList.toggle("matrix-row-sold", isSold);
+  }
+
   if (appState.inspectListingId === listingId) {
     openInspectModal(listingId);
   }
@@ -2704,6 +3045,15 @@ function syncAudioPlayingClassesInDOM() {
       btn.innerHTML = `${isPlaying ? ICONS.stop : ICONS.play}<span>${isPlaying ? "Stop" : "30s"}</span>`;
     }
   });
+  document.querySelectorAll(".drop-card-row").forEach((row) => {
+    const lid = row.dataset.listingId;
+    const isPlaying = appState.currentlyPlayingId === lid;
+    const btn = row.querySelector(".btn-audition");
+    if (btn) {
+      btn.classList.toggle("playing", isPlaying);
+      btn.textContent = isPlaying ? "Stop" : "30s";
+    }
+  });
   const eq = document.getElementById("audio-eq-bars");
   if (eq) eq.classList.toggle("eq-active", appState.isAudioActuallyPlaying);
 
@@ -2718,44 +3068,78 @@ function syncAudioPlayingClassesInDOM() {
 function renderRadarGrid() {
   const grid = document.getElementById("radar-drops-grid");
   const summaryEl = document.getElementById("radar-showing-summary");
+  const activeChipsEl = document.getElementById("radar-active-chips");
+  const dismissedBar = document.getElementById("radar-dismissed-bar");
   const mutedBar = document.getElementById("radar-muted-sellers-bar");
   const quickResetBtn = document.getElementById("btn-quick-reset-filters");
   if (!grid) return;
 
   const filtered = getFilteredListings();
   renderTopKPIs(filtered.length);
+  syncFiltersDrawerUI();
 
   if (quickResetBtn) quickResetBtn.hidden = !hasActiveFilters();
   if (summaryEl) {
-    const scopeLabel = appState.scopeMode === "LIVE_P1" ? "Live Top-25 drops" : appState.dedupEnabled ? "unique deduplicated offerings" : "raw tracked listings";
-    summaryEl.textContent = `Showing ${filtered.length} ${scopeLabel} (of ${SNIPER_STATE.listings?.length || 219} in snapshot)`;
+    const liveCount = filtered.filter((x) => x.is_live_page1).length;
+    if (appState.scopeMode === "LIVE_P1") {
+      summaryEl.textContent = `${filtered.length} live P1 drop${filtered.length === 1 ? "" : "s"}`;
+    } else if (appState.dedupEnabled) {
+      summaryEl.textContent = `${filtered.length} drop${filtered.length === 1 ? "" : "s"}${liveCount > 0 ? ` · ${liveCount} live` : ""}`;
+    } else {
+      summaryEl.textContent = `${filtered.length} raw listing${filtered.length === 1 ? "" : "s"}${liveCount > 0 ? ` · ${liveCount} live` : ""}`;
+    }
+  }
+
+  if (activeChipsEl) {
+    const advChips = getActiveAdvancedFilterConstraints();
+    if (advChips.length > 0) {
+      activeChipsEl.hidden = false;
+      activeChipsEl.innerHTML = advChips
+        .map(
+          (c) =>
+            `<button type="button" class="snipe-active-chip" data-clear-adv="${escapeHtml(c.key)}" title="Clear ${escapeHtml(c.label)}">${escapeHtml(c.label)} ×</button>`
+        )
+        .join("");
+    } else {
+      activeChipsEl.innerHTML = "";
+      activeChipsEl.hidden = true;
+    }
+  }
+
+  if (dismissedBar) {
+    const skipCount = appState.dismissedListingIds.size;
+    if (skipCount > 0) {
+      dismissedBar.hidden = false;
+      dismissedBar.innerHTML = `<button type="button" class="snipe-restore-btn" data-restore-dismissed="all" title="Restore all skipped listings">Skipped (${skipCount}) · Restore</button>`;
+    } else {
+      dismissedBar.innerHTML = "";
+      dismissedBar.hidden = true;
+    }
   }
 
   if (mutedBar) {
     if (appState.mutedSellers.size > 0) {
       const names = Array.from(appState.mutedSellers).join(", ");
-      mutedBar.innerHTML = `Muted: <strong style="color:var(--neon-crimson);">${escapeHtml(names)}</strong> <button type="button" id="btn-clear-muted" class="mute-seller-inline" style="margin-left:6px;">Unmute All</button>`;
-      document.getElementById("btn-clear-muted")?.addEventListener("click", () => {
-        appState.mutedSellers.clear();
-        syncRuleInputsFromState();
-        saveConfigOverrides();
-        renderRadarGrid();
-        renderForensicsView();
-        showToast("Cleared all muted sellers.", "cyan");
-      });
+      mutedBar.hidden = false;
+      mutedBar.innerHTML = `Muted: <strong style="color:var(--neon-crimson);">${escapeHtml(names)}</strong> <button type="button" id="btn-clear-muted" class="mute-seller-inline" data-clear-muted="all" style="margin-left:6px;">Unmute All</button>`;
     } else {
       mutedBar.innerHTML = "";
+      mutedBar.hidden = true;
     }
   }
 
   grid.classList.toggle("layout-matrix", appState.radarLayout === "matrix");
 
   if (filtered.length === 0) {
+    const skipCount = appState.dismissedListingIds.size;
     grid.innerHTML = `
-      <div class="panel-card" style="grid-column: 1 / -1; text-align: center; padding: 50px 20px;">
+      <div class="panel-card" style="grid-column: 1 / -1; text-align: center; padding: 48px 20px;">
         <h3 style="font-family: var(--font-display); font-size: 1.12rem; margin-bottom: 8px; color: #fff;">No Wantlist Drops Match Current Filters</h3>
-        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">Reset filters, unhide sold items, or widen the max price ceiling.</p>
-        <button type="button" class="btn-action btn-neon-cyan" id="btn-reset-all-filters">Reset All Filters</button>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 16px;">Reset filters, widen your price ceiling, or restore skipped listings.</p>
+        <div style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+          <button type="button" class="btn-action btn-neon-cyan" id="btn-reset-all-filters">Reset All Filters</button>
+          ${skipCount > 0 ? `<button type="button" class="btn-action" data-restore-dismissed="all">Restore Skipped (${skipCount})</button>` : ""}
+        </div>
       </div>`;
     document.getElementById("btn-reset-all-filters")?.addEventListener("click", resetAllRadarFilters);
     return;
@@ -3959,7 +4343,7 @@ function openInspectModal(listingId) {
 
     ${vaultPhoto ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px;border-radius:8px;background:rgba(255,31,143,0.07);border:1px solid rgba(255,31,143,0.25);"><img src="${escapeHtml(vaultPhoto)}" data-fallback-src="${escapeHtml(fallbackUri)}" alt="Vault pressing photo" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:1px solid var(--neon-magenta);" /><div style="font-size:0.78rem;"><strong style="color:#ff6cb9;">Your Vault Pressing Reference:</strong><div style="color:var(--text-secondary);">${escapeHtml(item.vault_owned_detail?.format_string || "")}</div></div></div>` : ""}
 
-    <div style="margin-bottom:14px;">${renderCardDrawersHtml(item)}</div>
+    <div style="margin-bottom:14px;">${renderCardDrawersHtml(item, { forceApiDrawer: true })}</div>
 
     <div class="card-actions" style="flex-wrap:wrap;">
       <a href="${escapeHtml(sanitizeHttpUrl(item.add_to_cart_url))}" target="_blank" rel="noopener" class="btn-action btn-cart">
@@ -4038,6 +4422,26 @@ function renderCommandPaletteResults(query) {
     { kind: "SUITE", label: "Open Sibling Collection Vault (v6.0)", hint: "krunked-fpv", action: () => window.open(SIBLING_VAULT_BASE_URL, "_blank", "noopener") },
     { kind: "MODE", label: "Cycle Lighting Profile (Obsidian / UV 395nm / Tube Amp)", hint: "Shortcut: U", action: cycleLightingMode },
     { kind: "ACTION", label: "Toggle Matrix Tape / Card Layout", hint: "Radar", action: () => setRadarLayout(appState.radarLayout === "cards" ? "matrix" : "cards") },
+    {
+      kind: "ACTION",
+      label: "Toggle Advanced Radar Filters Drawer",
+      hint: "Radar",
+      action: () => {
+        switchView("radar");
+        appState.filtersDrawerOpen = !appState.filtersDrawerOpen;
+        syncFiltersDrawerUI();
+      },
+    },
+    ...(appState.dismissedListingIds.size > 0
+      ? [
+          {
+            kind: "ACTION",
+            label: `Restore Skipped Listings (${appState.dismissedListingIds.size})`,
+            hint: "Triage",
+            action: restoreAllDismissedListings,
+          },
+        ]
+      : []),
     { kind: "ACTION", label: "Pull Fresh Snapshot from GitHub main", hint: "Remote Sync", action: () => pullLiveRepoSnapshotFromGitHub({ silent: false }) },
     { kind: "ACTION", label: "Sync Live Collection Vault JSON", hint: "Sibling Repo", action: () => fetchSiblingVaultJson({ silent: false }) },
   ];
@@ -4297,6 +4701,12 @@ function bindEvents() {
   if (initSortSel) initSortSel.value = appState.sortMode;
   document.querySelectorAll(".filter-pill").forEach((p) => {
     p.classList.toggle("active", p.dataset.filter === appState.categoryFilter);
+  });
+  syncFiltersDrawerUI();
+
+  document.getElementById("btn-radar-filters-toggle")?.addEventListener("click", () => {
+    appState.filtersDrawerOpen = !appState.filtersDrawerOpen;
+    syncFiltersDrawerUI();
   });
 
   // Navigation
@@ -4700,9 +5110,71 @@ function bindEvents() {
       return;
     }
 
+    const dismissBtn = e.target.closest("[data-dismiss-id]");
+    if (dismissBtn) {
+      dismissListing(dismissBtn.dataset.dismissId);
+      return;
+    }
+
+    const restoreDismissedBtn = e.target.closest("[data-restore-dismissed]");
+    if (restoreDismissedBtn) {
+      restoreAllDismissedListings();
+      return;
+    }
+
+    const clearAdvBtn = e.target.closest("[data-clear-adv]");
+    if (clearAdvBtn) {
+      clearAdvancedFilter(clearAdvBtn.dataset.clearAdv);
+      return;
+    }
+
+    const clearMutedBtn = e.target.closest("[data-clear-muted]");
+    if (clearMutedBtn) {
+      appState.mutedSellers.clear();
+      syncRuleInputsFromState();
+      saveConfigOverrides();
+      renderRadarGrid();
+      renderForensicsView();
+      showToast("Cleared all muted sellers.", "cyan");
+      return;
+    }
+
+    const closeApiDrawerBtn = e.target.closest("[data-close-api-drawer]");
+    if (closeApiDrawerBtn) {
+      const id = closeApiDrawerBtn.dataset.closeApiDrawer;
+      appState.expandedApiIds.delete(id);
+      updateCardInPlace(id);
+      return;
+    }
+
+    const refreshLiveApiBtn = e.target.closest("[data-refresh-live-api-id]");
+    if (refreshLiveApiBtn) {
+      const id = refreshLiveApiBtn.dataset.refreshLiveApiId;
+      appState.expandedApiIds.add(id);
+      verifyLiveListingViaAPI(id);
+      return;
+    }
+
     const liveApiBtn = e.target.closest("[data-live-api-id]");
     if (liveApiBtn) {
-      verifyLiveListingViaAPI(liveApiBtn.dataset.liveApiId);
+      const id = liveApiBtn.dataset.liveApiId;
+      const inInspectModal = Boolean(liveApiBtn.closest("#inspect-modal-backdrop"));
+      if (inInspectModal) {
+        verifyLiveListingViaAPI(id);
+        return;
+      }
+      const existing = appState.liveApiResults[id];
+      if (appState.expandedApiIds.has(id) && existing && !existing.loading && !existing.error) {
+        appState.expandedApiIds.delete(id);
+        updateCardInPlace(id);
+      } else {
+        appState.expandedApiIds.add(id);
+        if (existing && !existing.loading && !existing.error && !liveApiBtn.classList.contains("snipe-verify-link")) {
+          updateCardInPlace(id);
+        } else {
+          verifyLiveListingViaAPI(id);
+        }
+      }
       return;
     }
 
@@ -5177,6 +5649,9 @@ function bindEvents() {
       } else if (e.key.toLowerCase() === "o" && appState.focusedListingId) {
         e.preventDefault();
         openInspectModal(appState.focusedListingId);
+      } else if (e.key.toLowerCase() === "x" && appState.focusedListingId) {
+        e.preventDefault();
+        dismissListing(appState.focusedListingId);
       } else if (e.key.toLowerCase() === "c" && appState.focusedListingId) {
         const item = getListingById(appState.focusedListingId);
         if (item) window.open(sanitizeHttpUrl(item.add_to_cart_url), "_blank", "noopener");

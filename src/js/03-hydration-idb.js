@@ -263,9 +263,17 @@ function updateHydratorStatusUI() {
       : `${hydratedCount} Live / ${soldCount} Sold`;
   }
   if (inlineHint) {
-    inlineHint.textContent = appState.autoHydrateEnabled
-      ? `Token-bucket sweeper: ${hydratedCount} live verified${soldCount ? `, ${soldCount} sold` : ""}`
-      : "Auto-hydrator paused (click Hydrate pill to resume)";
+    if (coolingDown) {
+      inlineHint.textContent = "● Rate cooldown (429)";
+    } else if (!appState.autoHydrateEnabled) {
+      inlineHint.textContent = "○ Auto-sync paused";
+    } else if (hydratedCount > 0) {
+      inlineHint.textContent = `● ${hydratedCount} live verified${soldCount ? ` · ${soldCount} sold` : ""}`;
+    } else if (appState.hydrationInFlight || queued > 0) {
+      inlineHint.textContent = "● Verifying live...";
+    } else {
+      inlineHint.textContent = "● Live sync ready";
+    }
   }
   if (consoleReadout) {
     consoleReadout.textContent = `IDB/Session: ${hydratedCount} live // ${queued} queued // ${soldCount} sold`;
