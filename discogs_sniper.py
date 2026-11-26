@@ -355,13 +355,13 @@ def resolve_runtime_credentials(
             if env_val and not is_env_reference_or_placeholder(env_val):
                 return env_val.strip(), f"process env ({k})"
         for k in keys:
-            file_val = dotenv_vars.get(k)
-            if file_val and not is_env_reference_or_placeholder(file_val):
-                return file_val.strip(), token_source or f".env ({k})"
-        for k in keys:
             reg_val = query_windows_env_var(k)
             if reg_val and not is_env_reference_or_placeholder(reg_val):
                 return reg_val, f"Windows HKCU/HKLM ({k})"
+        for k in keys:
+            file_val = dotenv_vars.get(k)
+            if file_val and not is_env_reference_or_placeholder(file_val):
+                return file_val.strip(), token_source or f".env ({k})"
         return default, ""
 
     token = ""

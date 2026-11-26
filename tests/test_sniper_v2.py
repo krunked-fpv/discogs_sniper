@@ -993,6 +993,24 @@ class TestDiscogsSniperV2(unittest.TestCase):
             creds = sniper.resolve_runtime_credentials(config={"alerts": {"email_to": "user@example.com"}})
             self.assertEqual(creds["gmail_app_password"], "")
 
+        # 1b. Windows HKCU/HKLM GMAIL_APP_PASSWORD env var takes precedence over any stale .env value
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            stale_env = Path(tmpdir) / ".env"
+            stale_env.write_text("GMAIL_APP_PASSWORD=stale0000old1111\n", encoding="utf-8")  # secret-guard: allow
+            with (
+                patch.dict(os.environ, {}, clear=True),
+                patch.object(sniper, "get_candidate_dotenv_paths", return_value=[stale_env]),
+                patch.object(
+                    sniper,
+                    "query_windows_env_var",
+                    side_effect=lambda k: "fresh9999env2222" if k == "GMAIL_APP_PASSWORD" else "",
+                ),
+            ):
+                creds_env = sniper.resolve_runtime_credentials(config={"alerts": {"email_to": "user@example.com"}})
+                self.assertEqual(creds_env["gmail_app_password"], "fresh9999env2222")
+
         # 2. send_alerts must skip SMTP login cleanly when gmail_app_password is empty
         with patch("smtplib.SMTP_SSL") as mock_smtp:
             sniper.send_alerts(
