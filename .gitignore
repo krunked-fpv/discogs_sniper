@@ -1,7 +1,17 @@
-# Local secrets & environment overrides (NEVER commit .env to git)
+# Local secrets & environment overrides (NEVER commit .env files to git)
 .env
-.env.local
-.env.*.local
+.env.*
+*.env
+!.env.example
+
+# Private keys, certificates & credential files
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+credentials.json
+token.json
 
 # Backup & cookie backup files
 *.bak
@@ -26,6 +36,8 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+
+# Local-only notes & tooling artifacts
 *.md
 !README.md
 dna/

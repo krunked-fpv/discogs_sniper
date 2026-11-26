@@ -978,6 +978,66 @@ class TestDiscogsSniperV2(unittest.TestCase):
         ):
             self.assertIn(marker, html_text, f"Missing Drop Radar revamp marker in index.html: {marker}")
 
+    def test_secret_hygiene_and_guard_enforcement(self):
+        import os
+        from unittest.mock import patch
+
+        from scripts import secret_guard
+
+        # 1. resolve_runtime_credentials must NEVER fall back to a hardcoded Gmail App Password
+        with (
+            patch.dict(os.environ, {}, clear=True),
+            patch.object(sniper, "get_candidate_dotenv_paths", return_value=[]),
+            patch.object(sniper, "query_windows_env_var", return_value=""),
+        ):
+            creds = sniper.resolve_runtime_credentials(config={"alerts": {"email_to": "user@example.com"}})
+            self.assertEqual(creds["gmail_app_password"], "")
+
+        # 2. send_alerts must skip SMTP login cleanly when gmail_app_password is empty
+        with patch("smtplib.SMTP_SSL") as mock_smtp:
+            sniper.send_alerts(
+                {
+                    "id": "1",
+                    "title": "Artist - Album",
+                    "variant": "LP",
+                    "media_condition": "NM",
+                    "sleeve_condition": "NM",
+                    "list_price": "$20.00",
+                    "total_price": "$25.00",
+                    "seller_info": "shop",
+                    "item_url": "https://www.discogs.com/sell/item/1",
+                    "add_to_cart_url": "https://www.discogs.com/sell/cart/?add=1",
+                    "release_url": "https://www.discogs.com/release/1",
+                    "raw_description": "",
+                },
+                {"low": "$20", "median": "$25", "high": "$30"},
+                {"email_to": "user@example.com", "email_cc": "", "gmail_app_password": "", "ntfy_topic": ""},
+            )
+            mock_smtp.assert_not_called()
+
+        # 3. secret_guard blocks .env, browser profiles, and hardcoded credentials while allowing .env.example
+        self.assertIsNotNone(secret_guard.is_forbidden_path(".env"))
+        self.assertIsNotNone(secret_guard.is_forbidden_path(".env.production"))
+        self.assertIsNotNone(secret_guard.is_forbidden_path("chrome_discogs_profile/Default/Network/Cookies"))
+        self.assertIsNone(secret_guard.is_forbidden_path(".env.example"))
+
+        leaked_default = secret_guard.scan_text(
+            "discogs_sniper.py",
+            'gmail_app_password, _ = get_var(("GMAIL_APP_PASSWORD",), "abcd1234efgh5678")\n',  # secret-guard: allow
+        )
+        self.assertEqual(len(leaked_default), 1)
+        self.assertEqual(leaked_default[0].rule, "hardcoded_gmail_app_password_default")
+
+        leaked_env = secret_guard.scan_text(
+            "config.txt",
+            "GMAIL_APP_PASSWORD=abcd1234efgh5678\n",  # secret-guard: allow
+        )
+        self.assertEqual(len(leaked_env), 1)
+        self.assertEqual(leaked_env[0].rule, "gmail_app_password_assignment")
+
+        # 4. Tracked repository passes secret_guard with zero violations
+        self.assertEqual(secret_guard.scan_repo_tracked(REPO_ROOT), [])
+
 
 if __name__ == "__main__":
     unittest.main()

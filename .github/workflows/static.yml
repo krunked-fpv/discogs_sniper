@@ -27,6 +27,10 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Secret & Forbidden File Guard
+        run: |
+          python scripts/secret_guard.py --repo
+
       # scripts/build_dashboard.py & unit tests use Python stdlib only — never install Playwright/Chromium in CI.
       - name: Compile Sniper State & Stage Static Web Artifact (_site)
         env:

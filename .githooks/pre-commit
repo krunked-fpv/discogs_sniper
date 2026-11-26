@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+# Discogs Sniper pre-commit secret & forbidden-file guard.
+# Activated via: git config core.hooksPath .githooks
+
+set -eu
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+GUARD="$REPO_ROOT/scripts/secret_guard.py"
+
+if [ ! -f "$GUARD" ]; then
+  exit 0
+fi
+
+if command -v python >/dev/null 2>&1; then
+  exec python "$GUARD" --staged
+elif command -v python3 >/dev/null 2>&1; then
+  exec python3 "$GUARD" --staged
+elif command -v py >/dev/null 2>&1; then
+  exec py -3 "$GUARD" --staged
+else
+  echo "[secret-guard] ERROR: Python interpreter not found; cannot run pre-commit secret check." >&2
+  exit 1
+fi

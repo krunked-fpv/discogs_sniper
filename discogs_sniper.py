@@ -1691,9 +1691,17 @@ def send_alerts(item: dict[str, Any], stats: dict[str, Any], creds: dict[str, st
 
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 
+    gmail_app_password = (creds.get("gmail_app_password") or "").replace(" ", "").strip()
+    if not gmail_app_password:
+        logging.error(
+            "GMAIL_APP_PASSWORD is not configured in .env or environment; skipping Gmail SMTP alert for %s.",
+            subject,
+        )
+        return
+
     recipients = [r for r in (email_to, email_cc) if r]
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(email_to, creds["gmail_app_password"].replace(" ", ""))
+        server.login(email_to, gmail_app_password)
         server.sendmail(email_to, recipients, msg.as_string())
 
     logging.info(f"ALERT SENT -> {subject} | CC: {email_cc} | Listing URL: {item['item_url']}")
