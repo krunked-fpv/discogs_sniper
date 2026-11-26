@@ -29,3 +29,4 @@ venv/
 *.md
 !README.md
 dna/
+export-dna.ts
